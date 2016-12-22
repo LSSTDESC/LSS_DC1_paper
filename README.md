@@ -2,7 +2,7 @@
 ## desc-0000-lss_dc1_paper-lss_dc1
 # Characterizing the LSS transfer function on LSST
 
-*J. Sanchez, A. Slosar, E. Gawiser, C. Walter, J. Chiang, and the DESC-LSS WG*
+*J. Sanchez, A. Slosar, E. Gawiser, D. Kirkby, C. Walter, J. Chiang, and the DESC-LSS WG*
 
 This is a paper to sum up the lessons and work done for the DESC DC1. We want to characterize the LSS transfer function , study systematics and sensor effects, test and improve the current analysis pipeline, and prepare the working group for the upcoming challenges that we will have to face when LSST produces its first data.
 
