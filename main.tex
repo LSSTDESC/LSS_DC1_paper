@@ -53,40 +53,36 @@ One of the most critical aspects in Stage IV experiments is the characterization
 
 \section{DC1 data}
 \label{sec:data}
-In this paper we are going to analyze data from the LSST-DESC Data Challenge 1 (DC1)\CHECK{Add reference}. In particular, we are interested in the images from the DC1 dataset generated with a Fourier optics/analytic modeling using the \texttt{ImSim} package~\footnote{\url{https://github.com/LSSTDESC/imSim}}, which internally calls the GalSim package~\citep{2015A&C....10..121R}  to generate the images for the different objects. The input catalog for these simulations is the CatSim~\footnote{\url{https://www.lsst.org/scientists/simulations/catsim}} catalog. This catalog is based on the dark matter haloes from the Millenium simulation and a semi-analytic baryon model described in \citep{2006MNRAS.366..499D}. The galaxies are described as bulge+disk with no cosmic shear. This catalog covers a redshift range from $0 < z < 6$. It has a higher number density of galaxies than the expected for LSST, since it contains sources fainter than its detectable limits. This simulation also contains stars represented as point sources and drawn from the Galfast model~\citep{2008ApJ...673..864J} with peculiar motion. CatSim also contains associates each source with an SED.
+In this paper we are going to analyze data from the LSST-DESC Data Challenge 1 (DC1)\CHECK{Add reference}. In particular, we are interested in the images from the DC1 dataset generated with a Fourier optics/analytic modeling using the \texttt{ImSim} package\footnote{\url{https://github.com/LSSTDESC/imSim}}, which internally calls the GalSim package~\citep{2015A&C....10..121R}  to generate the images for the different objects. The input catalog for these simulations is the CatSim\footnote{\url{https://www.lsst.org/scientists/simulations/catsim}} catalog. This catalog is based on the dark matter haloes from the Millenium simulation and a semi-analytic baryon model described in \citep{2006MNRAS.366..499D}. The galaxies are described as bulge+disk with no cosmic shear. This catalog covers a redshift range from $0 < z < 6$. The redshift and magnitude distribution can be seen at \figref{catalog_plots}. It has a higher number density of galaxies than the expected for LSST, since it contains sources fainter than its detectable limits. This simulation also contains stars represented as point sources and drawn from the Galfast model~\citep{2008ApJ...673..864J} with peculiar motion. CatSim also contains associates each source with an SED.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{n_z_galaxies.pdf}
+\includegraphics[width=0.9\columnwidth]{n_m_galaxies.pdf}
+\caption{Redshift (top) and magnitude (bottom) distribution for the galaxies used as inputs for DC1.}
+\label{fig:catalog_plots}
+\end{figure}
 
 In total the input catalog contains approximately $63.1$ million sources of which, $61.3$ million are galaxies and $1.8$ million are stars. Using this catalog we generate images covering an area of approximately $40$ square degrees ($4$ pointings) in r-band to LSST full depth ($10$ years). The final footprint can be seen in \figref{footprint}
 
 \begin{figure}
 \centering
-\includegraphics[trim={4cm, 4cm, 4cm, 4cm},clip,width=0.9\columnwidth]{footprint.pdf}
+\includegraphics[trim={4cm, 6cm, 4cm, 6cm},clip,width=0.9\columnwidth]{footprint.pdf}
 \caption{Footprint of the DC1 dataset. We simulate 4 LSST full focal plane pointings which roughly corresponds to 40 square degrees.}
 \label{fig:footprint}
 \end{figure}
 
-%Two sets of images were generated using \texttt{imSim}: One with no dithering, which we will refer to \textit{undithered}; and the other one which includes the dithering strategy in the \texttt{minion_1016_new_dithers} OpSim~\footnote{\url{https://www.lsst.org/scientists/simulations/opsim}} database presented in ref.~\citep{2016ApJ...829...50A}. We will refer to the latter dataset as the \textit{dithered} run. We do not simulate images out of the footprint in \figref{footprint}. Using these two datasets allows us to make a fair comparison between them, and see the advantages and disadvantages of each approach.
+Two sets of images were generated using \texttt{imSim}: One with no dithering, which we will refer to \textit{undithered}; and the other one which includes the dithering strategy in the \texttt{minion\_1016\_new\_dithers} OpSim\footnote{\url{https://www.lsst.org/scientists/simulations/opsim}} database presented in ref.~\citep{2016ApJ...829...50A}. We will refer to the latter dataset as the \textit{dithered} run. We do not simulate images out of the footprint in \figref{footprint}. Using these two datasets allows us to make a fair comparison between them, and see the advantages and disadvantages of each approach.
 
-The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper}  \CHECK{Is there any other reference for the stack?}. The DM stack is intended to be the software used to process the data produced by LSST. Although it is still under development, most of the pieces are already meeting the science requirements or very close to do that. Running the DM stack on this dataset also constitutes a necessary test for this invaluable piece of LSST. The stack can be divided into three main steps: the coadding step where the images are put together to form a deeper image than each individual exposure; the detection step, where the coadded image is analyzed searching for peaks on the counts; and the measurement step, where these peaks are characterized. The DM stack performs these three steps automatically and provides an image and a source catalog with $N_{sources}$ and the following columns: $X$ \COMMENT{Depending on the extensions used at the time of DC1 we will have a different number of columns, i.e., if you use the shape measurement extension you have extra columns with the GalSim shape measurement results. You can also have extra columns with the Kron photometry extension.}
+The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper,2017arXiv170506766B}  \CHECK{Is there any other reference for the stack?}. The DM stack is intended to be the software used to process the data produced by LSST. Although it is still under development, most of the pieces are already meeting the science requirements or very close to do that. Running the DM stack on this dataset also constitutes a necessary test for this invaluable piece of LSST. The stack can be divided into three main steps: the coadding step where the images are put together to form a deeper image than each individual exposure; the detection step, where the coadded image is analyzed searching for peaks on the counts; and the measurement step, where these peaks are characterized. The DM stack performs these three steps automatically and provides calibrated images and a source catalog with $\sim 10.6$ million objects with position, flux and shape information.
 
-We show a small patch of the generated coadd in \figref{coadd_example}.
+An example of a coadd image can be seen at \figref{coadd_example}.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{field.png}
+\includegraphics[trim={3cm, 14cm, 12cm, 12cm},clip,width=0.9\columnwidth]{field.png}
 \caption{Example of a 550 $\times$ 200 pixel simulated field. The axes show the pixel number in the CCD. The input galaxies are marked with cyan $+$, the input stars are marked with red $+$, and the detected sources are marked with blue $\times$. We can appreciate the vast difference in density between the simulation and the output given that CatSim contains objects fainter than what LSST can detect.}
 \label{fig:coadd_example}
-\end{figure}
-
-\section{Quality checks}
-\label{sec:quality}
-
-One of the goals of this exercise is to check the quality and status of all pieces in the catalog generation and analysis process, and afterwards, check the capabilities and quality of the science working groups analysis pipelines. The first step is to match the input and output catalogs. In order to do that we generate a three-dimensional position and magnitude based tree using the \texttt{sklearn} package. Once the sources are matched we perform basic tests such as checking the differences between positions, redshift, and magnitudes, and their distributions. The results of these checks can be seen at \figref{basic_tests}. \CHECK{Generate more plots like this}.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{mag_scatter.png}
-\caption{Scatter plot showing the observed r-band magnitude for the detected sources in the vertical axis and their input r-band magnitude.}
-\label{fig:basic_tests}
 \end{figure}
 
 % ----------------------------------------------------------------------
@@ -98,52 +94,112 @@ In order to estimate the depth in the coadd catalogs we select the stars by usin
 PSF-like objects. After this, we have two different approaches:
 
 \begin{enumerate}
-\item In the first approach we generate a HEALPix\citep{2005ApJ...622..759G} map containing the PSF-like objects detected with a signal-to-noise ratio (SNR) higher or equal than 5 (\texttt{base\_PsfFlux\_flux/base\_PsfFlux\_fluxSigma>=5}), and we assign to each pixel the value of the
+\item In the first approach we generate a HEALPix~\citep{2005ApJ...622..759G} map containing the PSF-like objects detected with a signal-to-noise ratio (SNR) higher or equal than 5 (\texttt{base\_PsfFlux\_flux/base\_PsfFlux\_fluxSigma>=5}), and we assign to each pixel the value of the
 dimmest object contained in it.
-\item The second procedure also generates a HEALPix\citep{2005ApJ...622..759G} map containing the PSF-like objects. Then in each pixel, we compute the median SNR as a function of the magnitude and get the magnitude at which SNR is the closest to 5.
+\item The second procedure also generates a HEALPix~\citep{2005ApJ...622..759G} map containing the PSF-like objects. Then in each pixel, we compute the median SNR as a function of the magnitude and get the magnitude at which SNR is the closest to 5.
 \end{enumerate}
 
-These two procedures yield very similar results (within $\sim 4\%$) as it can be seen in figure \figref{depth_comparison}. We select our footprint according to the mask using the second methodology. We try two different cuts that maximize the used area
-in our analyses we choose two cuts $r \geq 25.7$, and $r \geq 26.25$.
+These two procedures yield very similar results (within $\sim 4\%$) as it can be seen in \figref{depth_comparison}. We checked that the maps built selecting galaxies instead of stars are compatible as well. We will select our footprint according to the depth map using the second methodology which can be seen in \figref{depth_maps}.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.45\textwidth]{imsim_dithered_depth_difference.pdf}
-\includegraphics[width=0.45\textwidth]{imsim_undithered_depth_difference.pdf}
-\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (left) and undithered (right) fields.}
+\includegraphics[width=0.9\columnwidth]{imsim_dithered_depth_difference.pdf}
+\includegraphics[width=0.9\columnwidth]{imsim_undithered_depth_difference.pdf}
+\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (top) and undithered (bottom) fields.}
 \label{fig:depth_comparison}
 \end{figure}
-\subsection{Bright objects masking}
 
-Bright objects produce significant effects in the image that affects the detection and measurement of neighboring objects. Some examples of the effect of these objects are: saturation of the CCD, large diffraction spikes, obscuration of neighboring sources, etc. Thus, masking a region around these sources makes a more complicated footprint but largely simplifies the analysis of systematic effects. In order to evaluate the effect of this sources, we use the stars from the input catalog, we divide them in different magnitude bins, and we count the detected objects in a given radius. \CHECK{It has been suggested to count the detected objects in a given direction for certain distance because there are direction-dependent effects.} However, the number of objects in a given radius is dependent of the number of stars in each bin and subject to statistical fluctuations. Therefore, we use instead the average on this number for the different magnitude bins. This analysis is largely simplified if we use the numerical derivative of this quantity. In \figref{galdens_derivative} we can see that there is an excess of sources at distances lower than 10 arcseconds for the brightest stars. This is mainly due to the existence of fake sources around these bright objects. The brighter sources also have a larger noise, the DM deblender models the brightest source and subtracts this model looking for fainter sources that can be blended together with it. However, sometimes there are large noise peaks that have not been subtracted. These large noise peaks are detected in later stages as individual sources giving as a result these fake sources. \CHECK{Perform similar tests and establish a threshold (or thresholds) of distance to bright objects. Show a plot with fake sources.}.
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{imsim_dithered_depth_snr_stars.pdf}
+\includegraphics[width=0.9\columnwidth]{imsim_undithered_depth_snr_stars.pdf}
+\caption{5-$\sigma$ depth for the dithered (top) and undithered (bottom) fields.}
+\label{fig:depth_maps}
+\end{figure}
+
+\subsection{Bright objects masking and data selection}
+
+Bright objects produce significant effects in the image that affects the detection and measurement of neighboring objects. Some examples of the effect of these objects are: saturation of the CCD, large diffraction spikes, obscuration of neighboring sources, etc. Thus, masking a region around these sources makes a more complicated footprint but largely simplifies the analysis of systematic effects. In order to evaluate the effect of this sources, we use the stars from the input catalog, we divide them in different magnitude bins, and we count the detected objects in a given radius. However, the number of objects in a given radius is dependent of the number of stars in each bin and subject to statistical fluctuations. Therefore, we use instead the average on this number for the different magnitude bins. This analysis is largely simplified if we use the numerical derivative of this quantity. In \figref{galdens_derivative} we can see that there is an excess of sources at distances lower than 10 arcseconds for the brightest stars. This is mainly due to the existence of fake sources around these bright objects. The brighter sources also have a larger noise, the DM deblender models the brightest source and subtracts this model looking for fainter sources that can be blended together with it. However, sometimes there are large noise peaks that have not been subtracted. These large noise peaks are detected in later stages as individual (point-like) sources giving as a result these fake sources. However, we do not see any obscuration present at the scales that we are interested (1 arcmin and higher) so it seems that no masking is required but we need to select the objects for our analysis carefully.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{dngal_dtheta.png}
-\caption{Mean increment in the number of detected objects around stars in the 95th flux percentile (magenta), the 75th percentile (cyan), the 55th percentile (red), the 35th percentile (green) and the 15th percentile (blue).}
+\caption{Mean increment in the number of detected objects around stars in the 95th flux percentile (magenta), the 75th percentile (cyan), the 55th percentile (red), the 35th percentile (green) and the 15th percentile (blue). We see that for the brightest percentiles there is no obscuration present but a overdensity of targets. These are mainly noise peaks identified as point sources.}
 \label{fig:galdens_derivative}
 \end{figure}
 
+We checked the detection efficiency of galaxies in our sample. In order to do so we selected galaxies in the catalog using the variable \texttt{base\_ClassificationExtendedness\_value} as a star/galaxy separator as in ref.~\citep{2017arXiv170506766B}. Objects where this variable is 1 are more likely to be galaxies, whereas the objects where it is 0 are more likely to be stars. We also made some quality cuts by selecting the objects with \texttt{detect\_isPrimary==True}. This ensures that the object has been fully deblended and that the detection was not close to the edge of a coadded image. The results can be seen in \figref{completeness} where we computed the ratio o of detected objects classified as galaxies and the input number of galaxies, $\varepsilon$ as a function of magnitude. We checked this ratio for both the dithered and undithered catalogs and in pixels where the depths were higher than 25.7 and 26.25. We used \texttt{CMODEL\_MAG} (see ref.~\citep{2017arXiv170506766B} for more details) as the reference magnitude for the detected objects and the true magnitude for the input galaxies.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{completeness.png}
+\caption{Number of detected objects classified as galaxies divided by the number input galaxies as a function of magnitude. We see that the detection efficiency is larger than 80\% for the most part and a considerable fraction of objects with magnitude lower than 20 are being misclassified.}
+\label{fig:completeness}
+\end{figure}
+
+Looking at \figref{completeness} it seems that selecting galaxies with \texttt{base\_ClassificationExtendedness\_value==1}, \texttt{detect\_isPrimary==True} and \texttt{CMODEL\_MAG $>$ 21} is enough to get rid of most potential problems with fake detections. On top of that, it seems that selecting \texttt{CMODEL\_MAG $<$ 25.3} ensures good level of completeness ($\sim 80\%$). Uniformity is ensured by selecting the galaxies that lie in HEALPixels where the depth is greater or equal than 25.3.
 % ----------------------------------------------------------------------
 
 \section{Clustering results}
 \label{sec:results}
 
-Once we produce the mask we can proceed to measure the clustering statistics for our samples. One way to maximize this information is by characterizing the potential instrumental and systematic effects by using a transfer function. The fact that we have these realistic simulations allows us to compare the input \textit{truth} catalog to the output catalog which has been affected by these effects. We will analyze the transfer function using two different tools: the two point correlation function, and the angular power-spectrum. \CHECK{Describe the procedures and codes to measure these quantities, i.e, Landy-Szalay, ML-estimator, etc.}
+\CHECK{Add something as intro for this section}. In this section we analyze the two point clustering statistics for both the dithered and undithered catalogs in real and harmonic space and check the consistency between the input and measured observables. 
 
+\subsection{2-point correlation function}
+We measure the 2-point correlation function using the package \texttt{TreeCorr}~\citep{2004MNRAS.352..338J} with the Landy \& Szalay estimator~\citep{1993ApJ...412...64L}.
+
+\begin{equation}
+w(\theta) = \frac{DD - 2 DR + RR}{RR}
+\end{equation} 
+where $DD, DR$, and $RR$ are the number of pairs of objects taking from the data $D$ or the random catalog $R$ that covers the footprint. We use 15 angular log-spaced bins between $\theta=0.05^{\circ}$ and $\theta=10^{\circ}$. The number of bins has been chosen so that the resulting covariance matrix is nearly diagonal. The covariance matrices are calculated using the delete-one jackknife technique~\citep{Shao:1986:DJB,2009MNRAS.396...19N}. We divide the footprint in $N_{JK}=100$ regions. These regions are defined using the K-means algorithm from the package \texttt{kmeans\_radec}\footnote{\url{https://github.com/esheldon/kmeans\_radec}}. The covariance matrix is then computed as
+\begin{equation}
+\mathrm{Cov}_{JK}(\theta_{i},\theta_{j})=\frac{N_{JK}-1}{N_{JK}}\sum_{k=1}^{N_{JK}}\Delta w_{k}(\theta_{i}) \Delta w_{k}(\theta_{j})
+\end{equation}
+\begin{equation}
+\Delta w_{k}(\theta_{i}) = w_{k}(\theta_{i})-\bar{w}(\theta_{i})
+\end{equation}
+Where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting the $k$-th region at the scale $\theta_{i}$, and $\bar{w}(\theta_{i})$ is the average correlation function at that same scale. We compute the correlation function on the dithered and undithered catalogs using their respective footprints, and we compare with the truth catalog in the dithered footprint using the same magnitude cuts. The results can be seen at \figref{2pt_corr}.
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{w_comp_25p3.pdf}
+\caption{Measured two point correlation function for the dithered (blue), undithered (green) and input (red) catalogs. The error bars have been computed using 100 jackknife regions.}
+\label{fig:2pt_corr}
+\end{figure}
+We also show the correlation matrix,
+\begin{equation}
+\mathrm{Corr}_{ij}=\frac{\mathrm{Cov}_{ij}}{\sqrt{\mathrm{Cov}_{ii}\mathrm{Cov}_{jj}}}
+\end{equation}
+in \figref{2pt_cov} where we can see that in both cases the matrices are almost diagonal.
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{correlation_matrix_dithered_25p3.pdf}
+\includegraphics[width=0.9\columnwidth]{correlation_matrix_undithered_25p3.pdf}
+\caption{Correlation matrices for the dithered (top) and undithered catalogs (bottom).}
+\label{fig:2pt_cov}
+\end{figure}
+\subsection{Angular power spectrum}
+We measure the angular power spectrum using the \texttt{NaMaster}\footnote{\url{https://github.com/damonge/NaMaster}} package. This package computes the cross-power-spectra of masked fields with an arbitrary number of contaminants using a pseudo-$C_{\ell}$ approach~\citep{2002ApJ...567....2H,2017MNRAS.465.1847E}.
+
+\subsection{Systematic effects}
+In this section we analyze the different systematic effects affecting the DC1 data. We will consider the following observational quantities as sources for systematic uncertainties:
+\begin{itemize}
+\item Extinction: The CatSim catalog provides the value for the magnitudes already corrected for extinction using the SFD map~\citep{1998ApJ...500..525S}. We use this map to cross-correlate with our galaxy catalogs.
+\item Stellar contamination: In this case we just build a HEALPix map using the input CatSim stellar catalog to cross-correlate with our galaxy catalogs.
+\item Sky-background: We use the observed background level in each exposure and assign that value to the HEALPixel with $N_{side}=2048$ that corresponds to the pointing position. After this we calculate the median value in each HEALPixel and use them to compute the cross-correlations with the galaxy catalogs. The caveat of this approach is that we are not propagating the geometry of the focal plane.
+\item Sky-noise: We use the observed noise background level in each exposure and proceed as in the previous case to build a HEALPix map with which we will cross-correlate.
+\item Seeing: We proceed as before and use the observed seeing in each exposure and build a HEALPix map.
+\end{itemize}
+These maps are shown in \figref{systematic_maps} \CHECK{Move maps to appendix}.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{input_cf.png}
-\caption{Input two point correlation function for different redshift bins. We assume a Planck $\Lambda$CDM model to compute the comoving distances.}
-\label{fig:input_corr}
+\includegraphics[width=0.9\columnwidth]{median_seeing_2048.pdf}
+\includegraphics[width=0.9\columnwidth]{median_skybg_2048.pdf}
+\includegraphics[width=0.9\columnwidth]{median_skynoise_2048.pdf}
+\includegraphics[width=0.9\columnwidth]{extinction_SFD.pdf}
+\includegraphics[width=0.9\columnwidth]{stars_map_2048.pdf}
+\caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
+\label{fig:systematic_maps}
 \end{figure}
-
-\subsection{Systematic effects}
-
-In this section we analyze the different systematic effects affecting the DC1 data.
-
-
 
 % ----------------------------------------------------------------------
 
