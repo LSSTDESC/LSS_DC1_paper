@@ -34,7 +34,7 @@
 
 \begin{abstract}
 
-The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic effects for the various cosmological probes.  Simulations are critical for developing the methodology to estimate and mitigate these systematics.  In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering.  We utilized two approaches to simulate LSST images, one of which involves fully realistic ray-tracing.  Simulated images were then processed, combined, and analyzed using the current version of the LSST Data Management pipeline.  Here we characterize the resulting systematics and implement corrections.  Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
+The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic effects for the various cosmological probes.  Simulations are critical for developing the methodology to estimate and mitigate these systematics.  In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering.  We utilized two approaches to simulate LSST images, one of which involves fully realistic ray-tracing.  Simulated images were then processed, combined, and analyzed using the current version of the LSST Data Management pipeline.  Here we characterize the resulting systematics and implement corrections.  Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.\CHECK{Rewrite?}
 \end{abstract}
 
 % Keywords are ignored in the LSST DESC Note style:
@@ -137,7 +137,7 @@ We checked the detection efficiency of galaxies in our sample. In order to do so
 \label{fig:completeness}
 \end{figure}
 
-Looking at \figref{completeness} it seems that selecting galaxies with \texttt{base\_ClassificationExtendedness\_value==1}, \texttt{detect\_isPrimary==True} and \texttt{CMODEL\_MAG $>$ 21} is enough to get rid of most potential problems with fake detections. On top of that, it seems that selecting \texttt{CMODEL\_MAG $<$ 25.3} ensures good level of completeness ($\sim 80\%$). Uniformity is ensured by selecting the galaxies that lie in HEALPixels where the depth is greater or equal than 25.3.
+Looking at \figref{completeness} it seems that selecting galaxies with \texttt{base\_ClassificationExtendedness\_value==1}, \texttt{detect\_isPrimary==True} and \texttt{CMODEL\_MAG $>$ 21} is enough to get rid of most potential problems with fake detections. On top of that, it seems that selecting \texttt{CMODEL\_MAG $<$ 25.3} ensures good level of completeness ($\sim 80\%$). Uniformity is ensured by selecting the galaxies that lie within HEALPixels where the depth is greater or equal than 25.3. After these selection cuts we end up with 4.4 million galaxies for the dithered field and 4.3 for the undithered field. 
 % ----------------------------------------------------------------------
 
 \section{Clustering results}
@@ -146,7 +146,7 @@ Looking at \figref{completeness} it seems that selecting galaxies with \texttt{b
 \CHECK{Add something as intro for this section}. In this section we analyze the two point clustering statistics for both the dithered and undithered catalogs in real and harmonic space and check the consistency between the input and measured observables. 
 
 \subsection{2-point correlation function}
-We measure the 2-point correlation function using the package \texttt{TreeCorr}~\citep{2004MNRAS.352..338J} with the Landy \& Szalay estimator~\citep{1993ApJ...412...64L}.
+Using the samples presented in previous sections, we measure the 2-point correlation function using the package \texttt{TreeCorr}~\citep{2004MNRAS.352..338J} with the Landy \& Szalay estimator~\citep{1993ApJ...412...64L}.
 
 \begin{equation}
 w(\theta) = \frac{DD - 2 DR + RR}{RR}
@@ -158,12 +158,8 @@ where $DD, DR$, and $RR$ are the number of pairs of objects taking from the data
 \begin{equation}
 \Delta w_{k}(\theta_{i}) = w_{k}(\theta_{i})-\bar{w}(\theta_{i})
 \end{equation}
-Where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting the $k$-th region at the scale $\theta_{i}$, and $\bar{w}(\theta_{i})$ is the average correlation function at that same scale. We compute the correlation function on the dithered and undithered catalogs using their respective footprints, and we compare with the truth catalog in the dithered footprint using the same magnitude cuts. The results can be seen at \figref{2pt_corr}.
-\begin{figure}
-\includegraphics[width=0.9\columnwidth]{w_comp_25p3.pdf}
-\caption{Measured two point correlation function for the dithered (blue), undithered (green) and input (red) catalogs. The error bars have been computed using 100 jackknife regions.}
-\label{fig:2pt_corr}
-\end{figure}
+Where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting the $k$-th region at the scale $\theta_{i}$, and $\bar{w}(\theta_{i})$ is the average correlation function at that same scale. We compute the correlation function on the dithered and undithered catalogs using their respective footprints, and we compare with the truth catalog in the dithered footprint using the same magnitude cuts. The results can be seen at \figref{2pt_corr}. 
+
 We also show the correlation matrix,
 \begin{equation}
 \mathrm{Corr}_{ij}=\frac{\mathrm{Cov}_{ij}}{\sqrt{\mathrm{Cov}_{ii}\mathrm{Cov}_{jj}}}
@@ -177,8 +173,21 @@ in \figref{2pt_cov} where we can see that in both cases the matrices are almost 
 \label{fig:2pt_cov}
 \end{figure}
 \subsection{Angular power spectrum}
-We measure the angular power spectrum using the \texttt{NaMaster}\footnote{\url{https://github.com/damonge/NaMaster}} package. This package computes the cross-power-spectra of masked fields with an arbitrary number of contaminants using a pseudo-$C_{\ell}$ approach~\citep{2002ApJ...567....2H,2017MNRAS.465.1847E}.
-
+We measure the angular power spectrum using the \texttt{NaMaster}\footnote{\url{https://github.com/damonge/NaMaster}} package. This package computes the cross-power-spectra of masked fields with an arbitrary number of contaminants using a pseudo-$C_{\ell}$ approach~\citep{2002ApJ...567....2H,2017MNRAS.465.1847E}. As we do for real space, we select the number of $\ell$ bins so that the covariance matrix is almost diagonal. In this case we calculate the power spectrum in the range $0 < \ell < 2000$ and $\Delta \ell = 75$. We calculate the covariance matrices with two different approaches: One consists in the same delete-one jackknife technique performed in real space; in the other approach we compute the Gaussian covariances~\citep{Dodelson:1282338,2007MNRAS.381.1347C}
+\begin{equation}
+\mathrm{Cov}_{\ell\ell'}=\frac{2}{f_{sky}}\left(\frac{C_{\ell}^{2}}{2\ell+1}+\frac{1}{\bar{n}^{2}}\right)\delta_{\ell\ell'}
+\end{equation}
+where $\bar{n}$ is the number density (objects per steradian). We compute the theoretical prediction for the power-spectra with \texttt{CCL}\footnote{\url{https://github.com/LSSTDESC/CCL}} and use them to calculate the covariance matrices given that the predictions are noise-free.
+\begin{equation}
+C_{\ell}^{TH} = \frac{2}{\pi}\int{dz} \left(\frac{dn(z)}{dz}\right)^{2} b^{2}(z) \int{dk k^{2} P(k,z)j^{2}_{\ell}(kr(z))}
+\end{equation}
+Where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is the number density as a function of redshift. We use the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$,$\Omega_{b}=0.045$,$\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $\frac{dn}{dz}$ built with the input catalog using the same magnitude cuts. The results can be seen in \figref{power_spectra}. It seems that there is a small bias between the measured power-spectra and the input data power-spectrum (and between the dithered and undithered data), however, the error bars in the data are large enough to make this bias negligible.
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{results_Cl_25p3.png}
+\caption{Measured power spectra for the input (red), undithered (green) and dithered (blue) datasets with \texttt{NaMaster}. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (cyan) within 1-$\sigma$.}
+\label{fig:power_spectra}
+\end{figure}
 \subsection{Systematic effects}
 In this section we analyze the different systematic effects affecting the DC1 data. We will consider the following observational quantities as sources for systematic uncertainties:
 \begin{itemize}
@@ -188,18 +197,38 @@ In this section we analyze the different systematic effects affecting the DC1 da
 \item Sky-noise: We use the observed noise background level in each exposure and proceed as in the previous case to build a HEALPix map with which we will cross-correlate.
 \item Seeing: We proceed as before and use the observed seeing in each exposure and build a HEALPix map.
 \end{itemize}
-These maps are shown in \figref{systematic_maps} \CHECK{Move maps to appendix}.
+These maps are shown in \figref{systematic_maps} and \figref{systematic_maps2}. 
+
+In the case of the real space measurements, we proceed the same way as ref.~\citep{2016MNRAS.455.4301C} to compute the impact of the different potential sources for systematic uncertainty. We compute the auto and cross-correlations of these maps and our data samples to obtain the ``true`` correlation function and since the cross-correlations between different systematic maps are negligible (\textit{i.e.} they are independent) we can write,
+\begin{equation}
+w(\theta)_{true} =w(\theta)_{obs} -  \sum_{sys}  \frac{{w}^{2}_{sys,cross}}{w_{sys,auto}}
+\end{equation}
+where we sum over all relevant systematics, $w_{sys,cross}$ is the cross-correlation between the considered map and the observed data, and $w_{sys,auto}$ is the auto-correlation of the considered maps. For the stellar contamination we also follow the procedure presented in ref.~\citep{2016MNRAS.455.4301C}. Given a stellar fraction $f_{star}$ the ``true`` galaxy correlation function is given by
+\begin{equation}
+w_{gal} = \left(1+f_{star}\right)^{2}\left(w_{obs} - f_{star}^{2}w_{sg} - \frac{f_{star}^{4}}{\left(1+f_{star}\right)^{2}}\right)
+\end{equation}
+where $w_{sg}$ is the cross-correlation between our stellar map and the observed galaxies.
+
+Comparing with the input catalog we select those objects classified as galaxies whose centroids lie within 2 pixels of a star from the input catalog. From those, we select the objects that have a magnitude difference smaller than 30 mmags. Doing this we estimate a stellar contamination of $f_{star}=7.2\%$ in our sample.
+
+We compare the correction term for the different systematics to the measured signal obtaining the results in \figref{sys_realspace}, where we can appreciate that the dithering strategy is working reducing the impact of the systematics, keeping them under control and at percent level for this ``small`` area, improving the signal-to-noise in addition to other benefits explored in ref.~\citep{2016ApJ...829...50A}. This is also seen \figref{2pt_corr} where we clearly see that the uncorrected and corrected correlation function for the dithered field are essentially the same.
+\begin{figure}
+\centering
+%\includegraphics[width=0.9\columnwidth]{w_dithered_25p3.pdf}
+%\includegraphics[width=0.9\columnwidth]{w_undithered_25p3.pdf}
+\includegraphics[width=0.9\columnwidth]{sys_dithered_25p3.pdf}
+\includegraphics[width=0.9\columnwidth]{sys_undithered_25p3.pdf}
+\caption{Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (top) and undithered (bottom) datasets.}
+\label{fig:sys_realspace}
+\end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{median_seeing_2048.pdf}
-\includegraphics[width=0.9\columnwidth]{median_skybg_2048.pdf}
-\includegraphics[width=0.9\columnwidth]{median_skynoise_2048.pdf}
-\includegraphics[width=0.9\columnwidth]{extinction_SFD.pdf}
-\includegraphics[width=0.9\columnwidth]{stars_map_2048.pdf}
-\caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
-\label{fig:systematic_maps}
+\includegraphics[width=0.9\columnwidth]{w_comp_corr25p3.pdf}
+\caption{Results for the two-point correlation function in the input (green), dithered (blue) and undithered (orange) datasets. We can see that after the correction (triangles) for the systematic effects the agreement is better than without the correction (circles) between the input and output data especially for the undithered case (for the dithered case the corrections are negligible).} 
+\label{fig:2pt_corr}
 \end{figure}
+\subsection{Pushing the dataset further}
 
 % ----------------------------------------------------------------------
 
@@ -222,6 +251,24 @@ Here is where you should add your specific acknowledgments, remembering that som
 % Include both collaboration papers and external citations:
 \bibliography{lsstdesc,main}
 
+\appendix
+\section{Mapping observational effects}
+\label{sec:systematic_maps}
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{median_seeing_2048.pdf}
+\includegraphics[width=0.9\columnwidth]{median_skybg_2048.pdf}
+\includegraphics[width=0.9\columnwidth]{median_skynoise_2048.pdf}
+\caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
+\label{fig:systematic_maps}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{extinction_SFD.pdf}
+\includegraphics[width=0.9\columnwidth]{stars_map_2048.pdf}
+\caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
+\label{fig:systematic_maps2}
+\end{figure}
 \end{document}
 % ======================================================================
 %
