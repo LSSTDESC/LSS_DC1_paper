@@ -199,11 +199,11 @@ In this section we analyze the different systematic effects affecting the DC1 da
 \end{itemize}
 These maps are shown in \figref{systematic_maps} and \figref{systematic_maps2}. 
 
-In the case of the real space measurements, we proceed the same way as ref.~\citep{2016MNRAS.455.4301C} to compute the impact of the different potential sources for systematic uncertainty. We compute the auto and cross-correlations of these maps and our data samples to obtain the ``true`` correlation function and since the cross-correlations between different systematic maps are negligible (\textit{i.e.} they are independent) we can write,
+In the case of the real space measurements, we proceed the same way as ref.~\citep{2016MNRAS.455.4301C} to compute the impact of the different potential sources for systematic uncertainty. We compute the auto and cross-correlations of these maps and our data samples to obtain the ``true`` correlation function:
 \begin{equation}
-w(\theta)_{true} =w(\theta)_{obs} -  \sum_{sys}  \frac{{w}^{2}_{sys,cross}}{w_{sys,auto}}
+w^{gg}(\theta)_{true} =w^{gg}(\theta)_{obs} -  \vec{w}_{g,sys} \cdot W_{sys,sys}^{-1} \cdot \vec{w}_{g,sys}
 \end{equation}
-where we sum over all relevant systematics, $w_{sys,cross}$ is the cross-correlation between the considered map and the observed data, and $w_{sys,auto}$ is the auto-correlation of the considered maps. For the stellar contamination we also follow the procedure presented in ref.~\citep{2016MNRAS.455.4301C}. Given a stellar fraction $f_{star}$ the ``true`` galaxy correlation function is given by
+Where $w^{gg}_{true}$ is the corrected galaxy-galaxy correlation function, $w^{gg}_{obs}$ is the measured galaxy-galaxy autocorrelation, $\vec{w}_{g,sys}$ is the vector containing the cross-correlation between the galaxies and the different maps and $W_{sys,sys}^{-1}$ is the inverse of the matrix containing the cross-correlations between different systematics. For the stellar contamination we also follow the procedure presented in ref.~\citep{2016MNRAS.455.4301C}. Given a stellar fraction $f_{star}$ the ``true`` galaxy correlation function is given by
 \begin{equation}
 w_{gal} = \left(1+f_{star}\right)^{2}\left(w_{obs} - f_{star}^{2}w_{sg} - \frac{f_{star}^{4}}{\left(1+f_{star}\right)^{2}}\right)
 \end{equation}
