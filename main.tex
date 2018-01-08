@@ -228,8 +228,12 @@ We compare the correction term for the different systematics to the measured sig
 \caption{Results for the two-point correlation function in the input (green), dithered (blue) and undithered (orange) datasets. We can see that after the correction (triangles) for the systematic effects the agreement is better than without the correction (circles) between the input and output data especially for the undithered case (for the dithered case the corrections are negligible).} 
 \label{fig:2pt_corr}
 \end{figure}
+
+In the case of harmonic space we use the mode projection from \texttt{NaMaster} to correct for the different templates.\CHECK{Add figure with corrected and uncorrected power-spectra.}
+
 \subsection{Pushing the dataset further}
 
+We also wanted to check what happens if we choose a sample where the uniformity across the footprint is still good even though completeness is not as good. We extended our sample by selecting galaxies with \texttt{ $16 < $ CMODEL\_MAG $ < 26.25$} and depth$\geq 26.25$. This increases the sample from 4.3 million galaxies to 6.5 million in the dithered sample, even though the footprint is reduced by $8\%$. However, these selection criteria reduce the number of galaxies to 4.2 million in the undithered sample, as well as the footprint by $35\%$.
 % ----------------------------------------------------------------------
 
 \section{Conclusions}
