@@ -28,7 +28,7 @@
 
 \begin{document}
 
-\title{ The LSST DESC Data Challenge 1: Generation and Analysis of Synthetic Images for Next Generation Surveys }
+\title[LSST DESC DC1]{The LSST DESC Data Challenge 1: Generation and Analysis of Synthetic Images for Next Generation Surveys }
 
 \maketitlepre
 
@@ -300,8 +300,15 @@ than 25 mmag given the narrow peak. However we can appreciate the presence of lo
 
 In order to ensure the accuracy of shape measurements a robust and accurate estimation of the PSF is required. In the case of imSim, we have
 a perfectly known input PSF that only depends on the airmass at the time of observation. We can check if the measurement pipeline can reconstruct
-the PSF and at which level of precision. To do that, we select 50 randoms visits, retrieve the measured PSF using the pipeline, and compare this
-to the input model given the observing conditions and compute the residual.\textcolor{red}{Include the PSF results!!!!}
+the PSF and at which level of precision. To do that, we select 200 visits randomly, retrieve the measured PSF using the pipeline, and compare this
+to the input model given the observing conditions and compute the residual. We obtain the residual depicted in \figref{psf_residual}, where we can see that the PSF is recovered correctly with a high level of precision and accuracy. We can appreciate a very small residual in the center and the tails are dominated by noise.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{psf_residual.png}
+\caption{Average difference between the input PSF model (41$\times$41 pixels, normalized to unity) and the measured PSF (with the same normalization) for 200 visits.}
+\label{fig:psf_residual}
+\end{figure}
 
 \section{Matching input and output catalogs}
 \label{sec:matching}
@@ -310,6 +317,27 @@ Potentially, in end-to-end simulations, one can trace back each measured photon 
 
 The simplest way to connect two catalogs is by using the positions of the objects in the sky. This approach has been extensively used in the literature and performs reasonably well when blending is low, since the probability of confusing two objects is small. However, when blending is high, this approach might be not enough and matching other quantities like flux or shape can become useful, even though these can introduce some subtleties, an example being, how to weigh positions versus fluxes (and/or shapes) and whether or not we should consider the correlations between the two.
 
+We compare two different matching strategies: simple spatial matching, where we match the find the objects in the truth catalog closest to the detected objects; and spatial matching with magnitude matching, where for each detected object we find which objects from the input catalog lie within one pixel radius ($0.2 \arcsec$). After this we select the object that is closest in magnitude, as long as the difference in magnitude is less than a certain threshold. In our case, we arbitrarily chose $0.5$. If any of these conditions are not fulfilled, then the object is thrown away.
+
+In the former approach all detected objects are matched to an object in the input catalog and, in principle, the two point statistics should be preserved between these two catalogs. However, in the latter approach, we can potentially bias the results since we are throwing away galaxies where the accuracy in the magnitude measurement is low, regardless of the precision. To compare both approaches we check the possible biases in the measured magnitude $\Delta$mag = mag$_{meas} - $mag$_{true}$. In \figref{matching_comparison} we can see that spatial matching is enough to get a good match in magnitude as evidenced by the median value of $\Delta$mag compared with the spatial+magnitude matching.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{matching_comparison_galaxies.pdf}
+\includegraphics[width=0.9\columnwidth]{mag_hist_total.pdf}
+\caption{Mean (top), and median (middle) of $\Delta$mag as a function of the true magnitude, with pure spatial matching (blue) and spatial+magnitude matching (orange). Bottom: Histogram of $\Delta$ mag.}
+\label{fig:matching_comparison}
+\end{figure}
+
+We also compared the power-spectra of the detected objects and the matched input objects in \figref{matching_cls}. In this figure we can see that the spatial matching recovers really well the power-spectrum, with some wiggling at very low scales due to mismatches and small differences in position between the detected and the input catalogs. In the case of spatial+magnitude matching, we see that the power for the matched catalog is consistently lower. This is due to the galaxies that are detected but not matched to any object in the true catalog, since this effect disappears when we just consider the objects that have been matched.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{cl_comparison_matching.pdf}
+\caption{Relative difference between the power-spectrum measured for the detected objects and the matched objects in the input catalog with spatial matching compared to all detected objects (blue, solid line), spatial+magnitude matching compared to all detected objects (orange, dash dotted line), and spatial+magnitude matching compared to matched objects using this schema (green dashed line).}
+\label{fig:matching_cls}
+\end{figure}
+ 
 % ----------------------------------------------------------------------
 
 \section{Generating depth maps}
@@ -408,8 +436,8 @@ C_{\ell}^{TH} = \frac{2}{\pi}\int{dz} \left(\frac{dn(z)}{dz}\right)^{2} b^{2}(z)
 Where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is the number density as a function of redshift. We use the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$,$\Omega_{b}=0.045$,$\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $\frac{dn}{dz}$ built with the input catalog using the same magnitude cuts. The results can be seen in \figref{power_spectra}. It seems that there is a small bias between the measured power-spectra and the input data power-spectrum (and between the dithered and undithered data), however, the error bars in the data are large enough to make this bias negligible.
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{results_Cl_25p3.png}
-\caption{Measured power spectra for the input (red), undithered (green) and dithered (blue) datasets with \texttt{NaMaster}. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (cyan) within 1-$\sigma$.}
+\includegraphics[width=0.9\columnwidth]{Cl_25p3_errors}
+\caption{Measured power spectra undithered (hollow orange circles) and dithered (solid blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (green line) within 1-$\sigma$.}
 \label{fig:power_spectra}
 \end{figure}
 \subsection{Systematic effects}
@@ -448,16 +476,33 @@ We compare the correction term for the different systematics to the measured sig
 
 \begin{figure}
 \centering
+\includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
+\caption{Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets.}
+\label{fig:sys_realspace}
+\end{figure}
+
+\begin{figure}
+\centering
 \includegraphics[width=0.9\columnwidth]{w_comp_corr25p3.pdf}
 \caption{Results for the two-point correlation function in the input (green), dithered (blue) and undithered (orange) datasets. We can see that after the correction (triangles) for the systematic effects the agreement is better than without the correction (circles) between the input and output data especially for the undithered case (for the dithered case the corrections are negligible).} 
 \label{fig:2pt_corr}
 \end{figure}
 
-In the case of harmonic space we use the mode projection from \texttt{NaMaster} to correct for the different templates.\CHECK{Add figure with corrected and uncorrected power-spectra.}
+In the case of harmonic space we use the mode deprojection from \texttt{NaMaster} (Alonso et. al, in prep.) to correct for the different templates. In \figref{sys_harmonic_space} we show the relative size of the correction due to the presence of the considered sources of systematic uncertainty. Again, we see that the dithering strategy diminishes the effect of the potential sources of systematic uncertainty in the power-spectrum measurements.
 
-\subsection{Pushing the dataset further}
+%\CHECK{Add figure with corrected and uncorrected power-spectra.}
 
-We also wanted to check what happens if we choose a sample where the uniformity across the footprint is still good even though completeness is not as good. We extended our sample by selecting galaxies with \texttt{ $16 < $ CMODEL\_MAG $ < 26.25$} and depth$\geq 26.25$. This increases the sample from 4.3 million galaxies to 6.5 million in the dithered sample, even though the footprint is reduced by $8\%$. However, these selection criteria reduce the number of galaxies to 4.2 million in the undithered sample, as well as the footprint by $35\%$.
+%\subsection{Pushing the dataset further}
+
+%We also wanted to check what happens if we choose a sample where the uniformity across the footprint is still good even though completeness is not as good. We extended our sample by selecting galaxies with \texttt{ $16 < $ CMODEL\_MAG $ < 26.25$} and depth$\geq 26.25$. This increases the sample from 4.3 million galaxies to 6.5 million in the dithered sample, even though the footprint is reduced by $8\%$. However, these selection criteria reduce the number of galaxies to 4.2 million in the undithered sample, as well as the footprint by $35\%$.
+
+
+\subsection{Reconstructing the selection function}
+
+As we mentioned before, one of the potential applications of this kind of end-to-end studies is the possibility of analyzing how the pipeline performs the data detection and measurement. In terms of the two-point statistics we could think of this as a selection (window) function. In this section we are going to try to reconstruct, to the best of our ability, the selection function given our input and output catalogs.
+
+We will use the spatial matching in \secref{matching} to get the magnitude and the error distribution for our detected galaxies. Then, we bin our sample in 50 true-magnitude bins from 18 to 28, and construct a try fit the value of $\Delta$mag using a Gaussian Mixture model with 6 components for objects brighter than 26.4, and 3 components for fainter objects. We chose this threshold since this is our fainter $5-\sigma$ limiting magnitude.
+
 % ----------------------------------------------------------------------
 
 \section{Conclusions}
