@@ -34,7 +34,7 @@
 
 \begin{abstract}
 
-The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic effects for the various cosmological probes.  Simulations are critical for developing the methodology to estimate and mitigate these systematics.  In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering.  We utilized two approaches to simulate LSST images, one of which involves fully realistic ray-tracing.  Simulated images were then processed, combined, and analyzed using the current version of the LSST Data Management pipeline.  Here we characterize the resulting systematics and implement corrections.  Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.\CHECK{Rewrite}
+The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic effects for the various cosmological probes.  Simulations are critical for developing the methodology to estimate and mitigate these systematics.  In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering.  We simulate LSST images using \texttt{imSim}. Simulated images are then processed, combined, and analyzed using the current version of the LSST Data Management pipeline.  Here we characterize the resulting systematics and implement corrections.  Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
 \end{abstract}
 
 % Keywords are ignored in the LSST DESC Note style:
@@ -55,7 +55,7 @@ kind of end-to-end simulations becomes necessary. With $\sim 50$ PB of raw data 
 In this paper, we use simulated images that resemble the data that will be produced by
 LSST~\citep{2008arXiv0805.2366I} after 10 years of operation in $r$-band using state of the art tools. We characterize the products of this process, measuring photometric, astrometric and clustering properties of the sample. These products encompass single-visit and coadded calibrated exposures (i.e., flattened, background subtracted, etc) and source catalogs that add up to $\sim 225 TB$. They are the result of two different simulations that will be introduced later.
 
-This paper is structured as follows: In \secref{inputs} we describe the inputs for our simulated images. In \secref{image_generation_pipeline} we describe the process to generate our LSST-like artificial images. Finally, in \secref{conclusions} we present some concluding remarks.
+This paper is structured as follows: In \secref{inputs} we describe the inputs for our simulated images. In \secref{dithering} we discuss the dithering strategies used for this study. In \secref{image_generation_pipeline} we describe the process to generate our LSST-like artificial images. In \secref{catalogs} we describe the data products generated after processing. The, in \secref{matching} we discuss different matching strategies to relate the input and output catalogs. In \secref{masking} we present the methodology followed to generate estimate the depth of our simulated data and the data selection process. In \secref{results} we describe the clustering analyses performed on the simulated data products. Finally, in \secref{conclusions} we present some concluding remarks.
 
 %One of the most critical aspects in Stage IV experiments is the characterization of their instrumentation and systematic effects~\citep{2006astro.ph..9591A}. In the case of  LSST~\citep{Overview,ScienceBook,WhitePaper} this becomes especially difficult given its wide variety of cosmological probes. In this paper we present a methodology to characterize the LSST large-scale structure (LSS) transfer function and an analysis of potential systematic effects present in LSS analyses. \CHECK{rewrite}
 % ---------------------------------------------------------------------
@@ -338,6 +338,8 @@ We also compared the power-spectra of the detected objects and the matched input
 \label{fig:matching_cls}
 \end{figure}
  
+The problem with these matching techniques is the lack of very small scale information, and details about blended objects and groups, therefore, for analyses involving blending and/or very small scale information, different approaches should be considered. 
+ 
 % ----------------------------------------------------------------------
 
 \section{Generating depth maps}
@@ -403,41 +405,41 @@ Using the samples presented in previous sections, we measure the 2-point correla
 \begin{equation}
 w(\theta) = \frac{DD - 2 DR + RR}{RR}
 \end{equation} 
-where $DD, DR$, and $RR$ are the number of pairs of objects taking from the data $D$ or the random catalog $R$ that covers the footprint. We use 15 angular log-spaced bins between $\theta=0.05^{\circ}$ and $\theta=10^{\circ}$. The number of bins has been chosen so that the resulting covariance matrix is nearly diagonal. The covariance matrices are calculated using the delete-one jackknife technique~\citep{Shao:1986:DJB,2009MNRAS.396...19N}. We divide the footprint in $N_{JK}=100$ regions. These regions are defined using the K-means algorithm from the package \texttt{kmeans\_radec}\footnote{\url{https://github.com/esheldon/kmeans\_radec}}. The covariance matrix is then computed as
+where $DD, DR$, and $RR$ are the number of pairs of objects taking from the data $D$ or the random catalog $R$ that covers the footprint. We use 30 angular log-spaced bins between $\theta=0.0001^{\circ}$ and $\theta=10^{\circ}$. The number of bins has been chosen so that the resulting covariance matrix is nearly diagonal. The covariance matrices are calculated using the delete-one jackknife technique~\citep{Shao:1986:DJB,2009MNRAS.396...19N}. We divide the footprint in $N_{JK}=100$ regions. These regions are defined using the K-means algorithm from the package \texttt{kmeans\_radec}\footnote{\url{https://github.com/esheldon/kmeans\_radec}}. The covariance matrix is then computed as
 \begin{equation}
 \mathrm{Cov}_{JK}(\theta_{i},\theta_{j})=\frac{N_{JK}-1}{N_{JK}}\sum_{k=1}^{N_{JK}}\Delta w_{k}(\theta_{i}) \Delta w_{k}(\theta_{j})
 \end{equation}
 \begin{equation}
 \Delta w_{k}(\theta_{i}) = w_{k}(\theta_{i})-\bar{w}(\theta_{i})
 \end{equation}
-Where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting the $k$-th region at the scale $\theta_{i}$, and $\bar{w}(\theta_{i})$ is the average correlation function at that same scale. We compute the correlation function on the dithered and undithered catalogs using their respective footprints, and we compare with the truth catalog in the dithered footprint using the same magnitude cuts. The results can be seen at \figref{2pt_corr}. 
+Where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting the $k$-th region at the scale $\theta_{i}$, and $\bar{w}(\theta_{i})$ is the average correlation function at that same scale. We compute the correlation function on the dithered and undithered catalogs using their respective footprints, and we compare with the predicted correlation function given the $N(z)$ obtained by matching using \texttt{CCL}\footnote{https://github.com/LSSTDESC/CCL} (Chisari et al., in prep). The results can be seen at \figref{2pt_corr}. 
 
-We also show the correlation matrix,
-\begin{equation}
-\mathrm{Corr}_{ij}=\frac{\mathrm{Cov}_{ij}}{\sqrt{\mathrm{Cov}_{ii}\mathrm{Cov}_{jj}}}
-\end{equation}
-in \figref{2pt_cov} where we can see that in both cases the matrices are almost diagonal.
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{correlation_matrix_dithered_25p3.pdf}
-\includegraphics[width=0.9\columnwidth]{correlation_matrix_undithered_25p3.pdf}
-\caption{Correlation matrices for the dithered (top) and undithered catalogs (bottom).}
-\label{fig:2pt_cov}
-\end{figure}
+%We also show the correlation matrix,
+%\begin{equation}
+%\mathrm{Corr}_{ij}=\frac{\mathrm{Cov}_{ij}}{\sqrt{\mathrm{Cov}_{ii}\mathrm{Cov}_{jj}}}
+%\end{equation}
+%in \figref{2pt_cov} where we can see that in both cases the matrices are almost diagonal.
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.9\columnwidth]{correlation_matrix_dithered_25p3_v2.pdf}
+%\includegraphics[width=0.9\columnwidth]{correlation_matrix_undithered_25p3_v2.pdf}
+%\caption{Correlation matrices for the dithered (top) and undithered catalogs (bottom).}
+%\label{fig:2pt_cov}
+%\end{figure}
 \subsection{Angular power spectrum}
-We measure the angular power spectrum using the \texttt{NaMaster}\footnote{\url{https://github.com/damonge/NaMaster}} package. This package computes the cross-power-spectra of masked fields with an arbitrary number of contaminants using a pseudo-$C_{\ell}$ approach~\citep{2002ApJ...567....2H,2017MNRAS.465.1847E}. As we do for real space, we select the number of $\ell$ bins so that the covariance matrix is almost diagonal. In this case we calculate the power spectrum in the range $0 < \ell < 2000$ and $\Delta \ell = 75$. We calculate the covariance matrices with two different approaches: One consists in the same delete-one jackknife technique performed in real space; in the other approach we compute the Gaussian covariances~\citep{Dodelson:1282338,2007MNRAS.381.1347C}
+We measure the angular power spectrum using the \texttt{NaMaster}\footnote{\url{https://github.com/damonge/NaMaster}} package (Alonso, et al., in prep.). This package computes the cross-power-spectra of masked fields with an arbitrary number of contaminants using a pseudo-$C_{\ell}$ approach~\citep{2002ApJ...567....2H,2017MNRAS.465.1847E}. As we do for real space, we select the number of $\ell$ bins so that the covariance matrix is almost diagonal. In this case we calculate the power spectrum in the range $0 < \ell < 6144$ and $\Delta \ell = 75$. We calculate the covariance matrices with three different approaches: One consists in the same delete-one jackknife technique performed in real space; in the other approach we compute the covariances using the mode-counting formula~\citep{Dodelson:1282338,2007MNRAS.381.1347C}
 \begin{equation}
-\mathrm{Cov}_{\ell\ell'}=\frac{2}{f_{sky}}\left(\frac{C_{\ell}^{2}}{2\ell+1}+\frac{1}{\bar{n}^{2}}\right)\delta_{\ell\ell'}
+\mathrm{Cov}_{\ell\ell'}=\frac{2}{f_{sky}\Delta\ell}\left(\frac{C_{\ell}^{2}}{2\ell+1}+\frac{1}{\bar{n}^{2}}\right)\delta_{\ell\ell'}
 \end{equation}
-where $\bar{n}$ is the number density (objects per steradian). We compute the theoretical prediction for the power-spectra with \texttt{CCL}\footnote{\url{https://github.com/LSSTDESC/CCL}} and use them to calculate the covariance matrices given that the predictions are noise-free.
+where $\bar{n}$ is the number density (objects per steradian). The last approach we compute the Gaussian covariance with \texttt{NaMaster}. The three methods give consistent results. We compute the theoretical prediction for the power-spectra with \texttt{CCL}:
 \begin{equation}
 C_{\ell}^{TH} = \frac{2}{\pi}\int{dz} \left(\frac{dn(z)}{dz}\right)^{2} b^{2}(z) \int{dk k^{2} P(k,z)j^{2}_{\ell}(kr(z))}
 \end{equation}
-Where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is the number density as a function of redshift. We use the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$,$\Omega_{b}=0.045$,$\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $\frac{dn}{dz}$ built with the input catalog using the same magnitude cuts. The results can be seen in \figref{power_spectra}. It seems that there is a small bias between the measured power-spectra and the input data power-spectrum (and between the dithered and undithered data), however, the error bars in the data are large enough to make this bias negligible.
+Where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is the number density as a function of redshift. We use the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$,$\Omega_{b}=0.045$,$\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $\frac{dn}{dz}$ built with the input catalog using the same magnitude cuts. The results can be seen in \figref{power_spectra}. We can appreciate that the results for both datasets seem to follow the theoretical prediction within errors.
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{Cl_25p3_errors}
-\caption{Measured power spectra undithered (hollow orange circles) and dithered (solid blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (green line) within 1-$\sigma$.}
+\caption{Measured power spectra undithered (open orange circles) and dithered (solid blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (green line) within 1-$\sigma$.}
 \label{fig:power_spectra}
 \end{figure}
 \subsection{Systematic effects}
@@ -468,8 +470,8 @@ We compare the correction term for the different systematics to the measured sig
 \centering
 %\includegraphics[width=0.9\columnwidth]{w_dithered_25p3.pdf}
 %\includegraphics[width=0.9\columnwidth]{w_undithered_25p3.pdf}
-\includegraphics[width=0.9\columnwidth]{sys_dithered_25p3.pdf}
-\includegraphics[width=0.9\columnwidth]{sys_undithered_25p3.pdf}
+\includegraphics[width=0.9\columnwidth]{sys_dithered_25p3_v2.pdf}
+\includegraphics[width=0.9\columnwidth]{sys_undithered_25p3_v2.pdf}
 \caption{Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (top) and undithered (bottom) datasets.}
 \label{fig:sys_realspace}
 \end{figure}
@@ -478,7 +480,7 @@ We compare the correction term for the different systematics to the measured sig
 \centering
 \includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
 \caption{Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets.}
-\label{fig:sys_realspace}
+\label{fig:sys_harmonic_space}
 \end{figure}
 
 \begin{figure}
@@ -501,16 +503,29 @@ In the case of harmonic space we use the mode deprojection from \texttt{NaMaster
 
 As we mentioned before, one of the potential applications of this kind of end-to-end studies is the possibility of analyzing how the pipeline performs the data detection and measurement. In terms of the two-point statistics we could think of this as a selection (window) function. In this section we are going to try to reconstruct, to the best of our ability, the selection function given our input and output catalogs.
 
-We will use the spatial matching in \secref{matching} to get the magnitude and the error distribution for our detected galaxies. Then, we bin our sample in 50 true-magnitude bins from 18 to 28, and construct a try fit the value of $\Delta$mag using a Gaussian Mixture model with 6 components for objects brighter than 26.4, and 3 components for fainter objects. We chose this threshold since this is our fainter $5-\sigma$ limiting magnitude.
+We will use the spatial matching in \secref{matching} to get the magnitude and the error distribution for our detected galaxies. Then, we bin our sample in 50 true-magnitude bins from 18 to 28, and construct a try fit the value of $\Delta$mag using a Gaussian mixture model (GMM) with 6 components for objects brighter than 26.4, and 3 components for fainter objects. We chose this threshold since it is close to our faintest $5-\sigma$ limiting magnitude. This way, we have 50 models (one per magnitude bin) to distort the true magnitude and get an emulated magnitude. The caveat is that the models are constructed from detected objects so the estimated distortions will be biased, and when we try to impose some cuts in our emulated magnitudes, we recover a larger number of objects than the detected number. This can be seen in \figref{emulated_magnitudes}, where we used the emulated magnitudes to resemble the selection did for the analyses in previous sections, i.e., we selected objects with $25.3 \geq r_{emulated} \geq 21.4$. In this figure we show the true magnitude distribution for the detected and emulated samples. We see that up to $r _{true} \approx 26$ we have a high level of completeness and our emulation, even though it gives us a larger number of detecte objects, makes a good job following the shape of the magnitude distribution. After that, we are dominated by the outliers that are being detected and this results into a raise of faint emulated objects within our emulated magnitude range. We can also see that just using the objects with true magnitudes between the considered range in measured magnitude, i.e., $25.3 \geq r_{true} \geq 21.4$ will result also in a bias in the measured two-point statistics, given that in that case we would be ignoring the (heavy) tails of the magnitude distribution. 
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{emulated_magnitude_histogram}
+\caption{True magnitude distribution for the detected objects using spatial matching (blue) and for the emulated objects using the same cuts in measured and emulated magnitude, $25.3 \geq r \geq 21.4$}
+\label{fig:emulated_magnitudes}
+\end{figure}
+This has a noticeable effect in the estimated power-spectra as we can see in \figref{emulated_power}. The power-spectrum using the true magnitude cuts is very close to the  power-spectrum of the detected objects. However, it is smaller than the power-spectrum of the detected objects at small scales probably due to the presence of fainter objects in the latter that are correlated with them, in addition, blended objects can create a small contribution at these scales, and finally, the larger shot-noise can make that the residuals at those scales are larger. At large scales, the power-spectrum using the true magnitude cuts is slightly larger due to the smaller magnitude range considered. On the other hand, we see that the power-spectrum for the emulated magnitude cuts is noticeably lower than the one for the detected objects. This is due to the larger magnitude range considered (so we are averaging over a bigger volume in general). It is clear that this procedure is not good to emulate the selection function of our pipeline and even less with the expected number density of LSST. Also, we see that just performing cuts on the true magnitude distribution is not enough to recover the measured power-spectrum at the level of precision that we will have with LSST data. Therefore, more sophisticated ways of emulating the processing pipeline should be implemented, and tools like \texttt{BALROG}~\citep{2016MNRAS.457..786S}, \texttt{imSim}, or \texttt{PhoSim}~\citep{2015ApJS..218...14P} that generate synthetic images applied to random (zero-power-spectra) catalogs are interesting for future studies, and achieving percent-level sensitivities.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{emulated_power_spectra}
+\caption{Shot-noise subtracted measured power-spectra for the detected objects by the LSST stack (solid blue circles), the objects in the true catalog spatially matched (open orange circles), the objects with $21.4 \leq r_{true} \leq 25.3$ (red crosses), and the objects with $21.4 \leq r_{emulated} \leq 25.3$ (green triangles).}
+\label{fig:emulated_power}
+\end{figure}
 
 % ----------------------------------------------------------------------
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-In this paper we presented the methodology to characterize the transfer function of LSST. This methodology can be easily exported to different photometric surveys. First, we performed a quality assessment of the data produced by the pipeline. Then, we generated the mask to perform our clustering analyses. Finally we compared the input and output two point clustering statistics to characterize the transfer function. \CHECK{Add more things when we have more results}.
-
-
+In this paper we have presented a simulated (end-to-end) imaging dataset to resemble LSST data, corresponding to the first data challenge in LSST DESC. We simulated images using state of the art tools (\textit{imSim}). Then processed these images with the LSST DM stack, and performed two point statistics analyses. We analyzed different matching strategies and saw that the power-spectrum is recovered at a very high-level of precision, however, these matching techniques are not probably good enough for studies about blending or very small scale information. We checked the overall quality of the simulated and processed data, seeing that we have a good photometric and astrometric performance. We estimated the depth and selected a high-completeness sample to perform clustering analysis, in both real and harmonic space. The results of this analysis, indicate that the simulated foregrounds have a low impact at the scales considered for our study. We also studied possible ways to reconstruct the selection function and saw that having information about the undetected sources is critical for this task.
 % ----------------------------------------------------------------------
 
 \subsection*{Acknowledgments}
@@ -529,16 +544,16 @@ Here is where you should add your specific acknowledgments, remembering that som
 \label{sec:systematic_maps}
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{median_seeing_2048.pdf}
-\includegraphics[width=0.9\columnwidth]{median_skybg_2048.pdf}
-\includegraphics[width=0.9\columnwidth]{median_skynoise_2048.pdf}
+\includegraphics[width=0.7\columnwidth]{median_seeing_2048.pdf}
+\includegraphics[width=0.7\columnwidth]{median_skybg_2048.pdf}
+\includegraphics[width=0.7\columnwidth]{median_skynoise_2048.pdf}
 \caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
 \label{fig:systematic_maps}
 \end{figure}
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{extinction_SFD.pdf}
-\includegraphics[width=0.9\columnwidth]{stars_map_2048.pdf}
+\includegraphics[width=0.7\columnwidth]{extinction_SFD.pdf}
+\includegraphics[width=0.7\columnwidth]{stars_map_2048.pdf}
 \caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
 \label{fig:systematic_maps2}
 \end{figure}
