@@ -123,7 +123,7 @@ the parameters given by CatSim; and AGNs that are also modeled as very narrow Ga
 to not include variability in AGNs to simplify the analysis. The zeropoints are computed using the model presented at~\citep{2008arXiv0805.2366I} and the
 throughputs at \url{https://github.com/lsst/throughputs} \textcolor{red}{David and I used the throughputs from the repo to compute these zeropoints. Should I add a table with them?}. We clip the objects at magnitude 10 to simulate saturation.
 
-The final products of this pipeline are FITS images with information about the observing conditions. We generated more than 200,000 images in total (including both the \textit{dithered}, and \textit{undithered} fields). The typical time to simulate each CCD is  seconds\textcolor{red}{Check how long it took to do one chip?/Total imSim time}.
+The final products of this pipeline are FITS images with information about the observing conditions. We generated more than 200,000 images in total (including both the \textit{dithered}, and \textit{undithered} fields). The average time to simulate each CCD is $\sim 4300$ seconds and the total production time was $\sim 270,000$ CPU-hours.
 
 % ----------------------------------------------------------------------
 
