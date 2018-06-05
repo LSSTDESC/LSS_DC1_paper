@@ -113,7 +113,7 @@ imSim follows the path of the fast image simulations in refs.~\citep{2016MNRAS.4
 imSim uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library to generate images that resemble LSST individual visits. Instead of the
 planned two 15 seconds exposures planned~\citep{2008arXiv0805.2366I} we generate a single 30 seconds image to simplify the data handling.
 We simulate each CCD of the focal plane individually but there are no instrumental effects nor variability in the optical model
-across the focal plane except for the sky. We used an ESO sky model and the sky brightness values come from
+across the focal plane except for the sky. We used an ESO~\citep{2016SPIE.9910E..1AY} sky model and the sky brightness values come from
 OpSim~\citep{2014SPIE.9150E..15D}\footnote{We used the values at OpSim's run \texttt{minion\_1016}}. The PSF model that we use is a Gaussian for the system with a FWHM that depends on the airmass
 \footnote{From LSST-20160 eqn. (4.1)} plus a Kolmogorov profile to model the atmosphere that is airmass dependent as well
 \footnote{From LSST-20160 eqn. (4.2)}. The airmass model is taken from~\citep{1991PASP..103.1033K};
