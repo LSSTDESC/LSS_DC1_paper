@@ -308,6 +308,12 @@ to the input model given the observing conditions and compute the residual. We o
 \caption{Average difference between the input PSF model (41$\times$41 pixels, normalized to unity) and the measured PSF (with the same normalization) for 200 visits.}
 \label{fig:psf_residual}
 \end{figure}
+
+\subsection{LSST Science Requirements Document Key Performance Metrics}
+
+We have processed the output individual-visit catalogs through the LSST Project package ``validate_drp'',\footnote{\url{dmtn-0008.lsst.io}}\footnote{\url{https://github.com/lsst/validate_drp}}
+which is designed to calculate the Key Performance Metrics from the LSST Science Requirements Document~\citep{LPM-17}.
+
 \section{Analysis of the simulated dataset}
 \label{sec:analysis}
 In this section we are going to analyze the clustering properties of our output catalog from the end-to-end pipeline and compare to the input catalog.
