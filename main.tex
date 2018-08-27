@@ -317,28 +317,31 @@ to the input model given the observing conditions and compute the residual. We o
 
 \subsection{LSST Science Requirements Document Key Performance Metrics}
 
-We processed the output individual-visit catalogs through the LSST Project package ``validate_drp'',\footnote{\url{dmtn-0008.lsst.io}}\footnote{\url{https://github.com/lsst/validate_drp}}
-The ``validate_drp'' package calculates the Key Performance Metrics (KPMs) from the LSST Science Requirements Document (SRD)~\citep{LPM-17}.
+We processed the output individual-visit catalogs through the LSST Project package \texttt{validate\_drp}\footnote{\url{dmtn-0008.lsst.io}}\footnote{\url{https://github.com/lsst/validate_drp}}
+The \texttt{validate\_drp} package calculates the Key Performance Metrics (KPMs) from the LSST Science Requirements Document (SRD)~\citep{LPM-17}.
 
-Given the simiplified somewhat idealized nature of the DC1 simulations, we expect that the DC1 should pass the SRD KPMs.
+Given the simplified somewhat idealized nature of the DC1 simulations, we expect that the DC1 should pass the SRD KPMs.
 
-The photometric repeatability (PA1) is 6~mmag as measured by the inter-quartile range.  The ultimate design goal is 5~mmag.  The 6~mmag is dominated by a tail of scattered objects, see Fig.~\ref{fig:photometric_drp_check_photometry}.
+The photometric repeatability (PA1) is 6~mmag as measured by the inter-quartile range.  The ultimate design goal is 5~mmag.  The 6~mmag is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
 
-The photometric error model from \citet[][Eq. 6,7]{Ivezic2008} is
+The photometric error model from \citet[][Eq. 6,7]{Ivezic08} is
 \begin{eqnarray}
 \sigma^2 = \sigma^2_{\rm sys} \sigma^2_{\rm rand} \\
 \sigma^2_{\rm rand} = (0.04 - \gamma) 10^{0.4(m-m_5)} + \gamma 10^{0.8(m-m_5)}
 \label{eq:photometric_error}
-\end{equation}
+\end{eqnarray}
 where $\gamma$ describes noise from the sky and detector electronics, and the 5-$\sigma$ point-source depth is given by:
 \begin{equation}
-m_5 = C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) + 2.5 \log_{10} (0.7{\rm arcsec}/\theta_{\rm eff}) + 1.25 \log_{10} (t_{\rm vis} / 30~{\rm s}) - k_m (X-1)
-\end{equation}
+\begin{split}
+m_5 = C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) \\
++ 2.5 \log_{10} (0.7{\arcsec}/\theta_{\rm eff}) \\
++ 1.25 \log_{10} (t_{\rm vis} / 30~{\rm s}) - k_m (X-1)
 \label{eq:photometric_m5}
+\end{split}
 \end{equation}
 where $C_m$ summarizes the throughput of the telescope optics and camera, $m_{\rm sky}$ is the sky brightness, $\theta_{\rm eff}$ is the seeing, $t_{\rm vis}$ is the exposure time, $k_m$ is the airmass coefficient, and $X$ is the airmass.
 
-Our fits find $m_5$ = 24.2~mag/\arcsec^2, $\gamma=0.038$ which are quite consistent with the \citet[][Table 2]{Ivezic2008} values of $m_5=24.35$~mag/\arcsec^2, $\gamma=0.039$.  This validates that were are generating simulations of the telescope, detector, and sky in accordance with the \citet{Ivezic2008} estimates.
+Our fits find $m_5$ = 24.2~mag/arcsec$^2$, $\gamma=0.038$ which are quite consistent with the \citet[][Table 2]{Ivezic08} values of $m_5=24.35$~mag/arcsec$^2$, $\gamma=0.039$.  This validates that were are generating simulations of the telescope, detector, and sky in accordance with the \citet{Ivezic08} estimates.
 
 Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the idealized simulations we ran for DC1 with no additional systematic sources of errors.
 
@@ -354,15 +357,14 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 \includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_check_photometry.png}
 \caption{Photometric performance in more detail.  (upper left) Horizontal histogram of the RMS distribution for each star for the full sample (grey) and ``bright'' sample (blue).  The blue sample is the same as that shown in Figure.~\ref{fig:validate_drp_PA1}.
 (upper right).  Note that this RMS is the RMS of the measurements for a given star and so each entry in the histogram is one star.  Thus the median value here is 2.4~mmag, even thought the median of all RMS measurements in Figure.~\ref{fig:validate_drp_PA1} was 15.8~mmag.  This difference is due to a population of objects that have a poor repeatibility.
-(upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatibile measurements, along with a smaller population of objects with much higher scatter to their measurements.
+(upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatible measurements, along with a smaller population of objects with much higher scatter to their measurements.
 (lower left) Per-object median reported magnitude error by the pipeline versus the observed RMS over all of the measurements for an object.  Our $SNR>100$ cut is in the space of median reported error.
 (lower right)
-Per-object median pipeline-reported magnitude error versus object magnitude.
-
+Per-object median pipeline-reported magnitude error versus object magnitude. 
  {\bf TODO: MWV CLEANUP (1) title, (2) incorrect xlabel (should be \#/bin),  and "Filter name" extra text}
  {\bf TODO: MWV  Are these higher scatter objects galaxies, stars in halos of bright stars, additionally added objects that were done inconsistently with the rest of the catalog?}
- {\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this more.}
-}
+ {\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this more.}}
+
 \label{fig:validate_drp_check_photometry}
 \end{figure}
 
@@ -371,25 +373,22 @@ Per-object median pipeline-reported magnitude error versus object magnitude.
 \centering
 \includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_check_astrometry.png}
 \caption{
-Detailed astrometric performance.  (left) Histogram of the repeatability of distance between pairs of stars.  (right) Astrometric variation as a function of SNR.  We find a systematic floor of 12~milliarcsec.
-
- {\bf TODO: MWV CLEANUP (1) title, (2) fix xlabel, which should be \#/bin}
- {\bf TODO: MWV IS THIS HISTOGRAM DIFFERENT THAN THE check_photometry histogram in terms of per-pair vs. per-object variation.}
-}
+Detailed astrometric performance.  (left) Histogram of the repeatability of distance between pairs of stars.  (right) Astrometric variation as a function of SNR.  We find a systematic floor of 12~milliarcsec. 
+{\bf TODO: MWV CLEANUP (1) title, (2) fix xlabel, which should be \#/bin}
+{\bf TODO: MWV IS THIS HISTOGRAM DIFFERENT THAN THE check\_photometry histogram in terms of per-pair vs. per-object variation.}}
 \label{fig:validate_drp_check_astrometry}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_validate_drp.AM1_D_5_arcmin_17.0_21.5_mag.png}
-\includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_validate_drp.AM2_D_20_arcmin_17.0_21.5_mag.png}
-\includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_validate_drp.AM3_D_200_arcmin_17.0_21.5_mag.png}
+\includegraphics[width=0.9\columnwidth]{{DC1-imsim-dithered_r_validate_drp.AM1_D_5_arcmin_17.0_21.5_mag}.png}
+\includegraphics[width=0.9\columnwidth]{{DC1-imsim-dithered_r_validate_drp.AM2_D_20_arcmin_17.0_21.5_mag}.png}
+\includegraphics[width=0.9\columnwidth]{{DC1-imsim-dithered_r_validate_drp.AM3_D_200_arcmin_17.0_21.5_mag}.png}
 \caption{
-Astrometric repeatibility: variation in distances measurement between pairs of stars at (top) 4-6~\arcmin, (middle) 19-21~\arcmin, (bottom) 199-201~\arcmin.  AM(1,2,3) are the distance measurements, while AF(1,2,3) are the fraction of pairs lying outside the a specified limit.
-The performance is excellent, with characteristic values all below the LSST SRD levels.
-     {\bf TODO: MWV CLEANUP}
-     {\bf TODO: MWV ADD ADx values to interpret AFx values}
-}
+Astrometric repeatibility: variation in distances measurement between pairs of stars at (top) 4-6$\arcmin$, (middle) 19-21$\arcmin$, (bottom) 199-201$\arcmin$.  AM(1,2,3) are the distance measurements, while AF(1,2,3) are the fraction of pairs lying outside the a specified limit.
+The performance is excellent, with characteristic values all below the LSST SRD levels. 
+{\bf TODO: MWV CLEANUP}
+ {\bf TODO: MWV ADD ADx values to interpret AFx values}}
 \label{fig:validate_drp_AMx}
 \end{figure}
 
