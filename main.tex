@@ -14,7 +14,9 @@
 
 % Custom commands from LSST DESC, see texmf/styles/lsstdesc_macros.sty
 \usepackage{lsstdesc_macros}
-
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{mwe}
 \usepackage{graphicx}
 \graphicspath{{./}{./figures/}}
 \bibliographystyle{apj}
@@ -34,7 +36,7 @@
 
 \begin{abstract}
 
-The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic effects for the various cosmological probes.  Simulations are critical for developing the methodology to estimate and mitigate these systematics.  In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering.  We simulate LSST images using \texttt{imSim}. Simulated images are then processed, combined, and analyzed using the current version of the LSST Data Management pipeline.  Here we characterize the resulting systematics and implement corrections.  Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
+The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic effects for the various cosmological probes.  Simulations are critical for developing the methodology to estimate and mitigate these systematics.  In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering.  We simulate, process, combine, and analyze LSST images using the current version of the LSST Data Management pipeline.  Here we characterize the resulting systematics and implement corrections. We also show that the dither strategy reduces the impact of potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
 \end{abstract}
 
 % Keywords are ignored in the LSST DESC Note style:
@@ -48,14 +50,14 @@ The success of the Large Synoptic Survey Telescope (LSST) as a dark energy exper
 \section{Introduction}
 \label{sec:intro}
 
-The increase in statistical power from recent cosmological experiments makes the modeling, and mitigation of systematic uncertainties key to extracting the maximum performance and producing competitive analyses. More traditional in high energy particle physics~\citep{Brun:118715},~\citep{2006JHEP...05..026S}, end-to-end simulations provide a unique framework to
+The increase in statistical power from recent cosmological experiments makes the modeling, and mitigation of systematic uncertainties key to extracting the maximum performance and producing competitive analyses. More traditional in high energy particle physics~\citep{Brun:118715, 2006JHEP...05..026S}, end-to-end simulations provide a unique framework to
 model systematics and streamline processing and analysis pipelines given that we have complete information about the inputs and outputs. With the larger availability of computational resources this approach has also been extended to photometric redshift galaxy surveys~\citep{2016MNRAS.457..786S,2016ApJ...817...25B}, and a similar effort is undergoing in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}. For surveys like the LSST~\citep{2008arXiv0805.2366I}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
-kind of end-to-end simulations becomes necessary. With $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{2008arXiv0805.2366I} the data handling by itself becomes challenging. There are many approaches to generate these end-to-end simulations. Usually, one would start from a source catalog with sources parametrized somehow (\textit{e.g.} sizes, shapes, fluxes), render images from these sources, adding some observational effects and, finally, use some software to detect and measure different properties on these images. Depending on the approach used to generate these images, some difficulties may arise when trying to relate inputs and outputs, especially, in a situation like LSST with its large data volume. 
+kind of end-to-end simulations becomes necessary. With $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{2008arXiv0805.2366I} the data handling by itself becomes challenging. There are many approaches to generate these end-to-end simulations. Usually, one would start from a source catalog where the objects are modeled according to certain parameters (\textit{e.g.} sizes, shapes, fluxes), then render images from these sources, add some observational effects and, finally, use some software to detect and measure different properties on these images. Depending on the approach used to generate these images, some difficulties may arise when trying to relate inputs and outputs, especially, in a situation like LSST with its large data volume. 
 
-In this paper, we use simulated images that resemble the data that will be produced by
-LSST~\citep{2008arXiv0805.2366I} after 10 years of operation in $r$-band using state of the art tools. We characterize the products of this process, measuring photometric, astrometric and clustering properties of the sample. These products encompass single-visit and coadded calibrated exposures (i.e., flattened, background subtracted, etc) and source catalogs that add up to $\sim 225 TB$. They are the result of two different simulations that will be introduced later.
+In this paper, we present and use simulated images that resemble the data that will be produced by
+LSST~\citep{2008arXiv0805.2366I} after 10 years of operation in $r$-band using state of the art tools. We characterize the products of this process, measuring photometric, astrometric and clustering properties of the sample. These products encompass single-visit and coadded calibrated exposures (i.e., flattened, background subtracted, etc) and source catalogs that add up to $\sim 225 TB$. They are the result of two different simulations that will be introduced later. We perform the 2-point clustering analysis in real and harmonic space for these simulations and assess the impact of potential systematics.
 
-This paper is structured as follows: In \secref{inputs} we describe the inputs for our simulated images. In \secref{dithering} we discuss the dithering strategies used for this study. In \secref{image_generation_pipeline} we describe the process to generate our LSST-like artificial images. In \secref{catalogs} we describe the data products generated after processing and perform several validation tests. In \secref{analysis} we present the methodology followed to perform the clustering analyses on the simulated data products. Finally, in \secref{conclusions} we present some concluding remarks.
+This paper is structured as follows: In \secref{inputs} we describe the inputs for our simulated images. In \secref{dithering} we discuss the dither strategies used for this study. In \secref{image_generation_pipeline} we describe the process to generate our LSST-like artificial images. In \secref{catalogs} we describe the data products generated after processing and perform several validation tests. In \secref{analysis} we present the methodology followed to perform the clustering analyses on the simulated data products. Finally, in \secref{conclusions} we present some concluding remarks.
 
 %One of the most critical aspects in Stage IV experiments is the characterization of their instrumentation and systematic effects~\citep{2006astro.ph..9591A}. In the case of  LSST~\citep{2008arXiv0805.2366I,ScienceBook,WhitePaper} this becomes especially difficult given its wide variety of cosmological probes. In this paper we present a methodology to characterize the LSST large-scale structure (LSS) transfer function and an analysis of potential systematic effects present in LSS analyses. \CHECK{rewrite}
 % ---------------------------------------------------------------------
@@ -89,22 +91,20 @@ In total, the input catalog contains approximately $63.1$ million sources of whi
 \label{fig:footprint}
 \end{figure}
 
-\section{Dithering strategy}
+\section{Dither strategy}
 \label{sec:dithering}
-\textcolor{red}{Please, Humna and/or Eric check this section.}
 
-Different dithering strategies impact survey uniformity and systematic effects in photometric redshift surveys~\citep{2016ApJ...829...50A}. Simulating two different strategies is a beneficial check to determine the most effective strategy to mitigate systematic effects and yield better cosmological constraints. For this data challenge we use two different dithering strategies: the \textit{undithered} which points the telescope at the same position and orientation for all exposures in a given field; and the \textit{dithered} which consists in small random rotational and translational dithers for each pointing/exposure. This dithering strategy is stored in the OpSim\footnote{\url{https://www.lsst.org/scientists/simulations/opsim}} database presented in ref.~\citep{2016ApJ...829...50A}. However, with dithering, we might have some visits where part of the focal plane lies outside of our region of interest. We also simulated these visits, however, in order to save computational resources, we decided not to simulate the chips that lie outside of the region of interest.
+As mentioned earlier, we use OpSim to obtain the observing cadence and footprint. OpSim, uses hexagons to tile the celestial sphere. However, one can choose the center, rotation, and overlap of those hexagons freely to survey the desired footprint, this is what we refer as dither strategy. Different dither strategies impact survey uniformity and systematic effects in photometric redshift surveys~\citep{2016ApJ...829...50A}. Simulating more than one dither strategy is a beneficial check to determine the most effective way to mitigate systematic effects and yield better cosmological constraints. For this data challenge we use two different dither strategies contained in OpSim: the \textit{undithered} which points the telescope at the same position and orientation for all exposures in a given field; and the \textit{dithered} which consists in small random rotational and translational dithers (within the hexagon) for each pointing/exposure. For more details about this dither strategy we refer the reader to \citet{2016ApJ...829...50A}. The dithered strategy presents some visits that have part of the focal plane lying outside of our region of interest. For these visits, we decided not to simulate the chips that lie outside of the region of interest in order to save computational resources
+.
 \section{Image generation: pipeline}
 \label{sec:image_generation_pipeline}
 % ---------------------------------------------------------------------
 
 The artificial generation of astronomical images is a complex and computationally demanding process. In the recent
 years there is a big effort in the community in order to create software that allows more realistic and fast image
-generation like \texttt{BALROG}~\citep{2016MNRAS.457..786S} or \texttt{UFIG}~\citep{2016ApJ...817...25B}. In our case, we model the input sources using imSim which uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library driven
+generation like \texttt{BALROG}~\citep{2016MNRAS.457..786S} or \texttt{UFIG}~\citep{2016ApJ...817...25B}. In our case, we model the input sources using imSim (\url{https://github.com/LSSTDESC/imSim}) which uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library driven
 by a LSST specific application. There are other approaches consisting in
-running a full photon-shooting simulation using \textsc{PhoSim}~\citep{2015ApJS..218...14P}. \textcolor{red}{This approach will also be used in future Data Challenges. The former has a speed
-advantage but the latter fully traces each photon coming from the sources through the atmosphere and the instrument,
-increasing the level of realism with a fairly high computational cost. These two approaches can potentially allow us to focus on different systematic effects and science cases. -> Rewrite}
+running a full photon-shooting simulation using \textsc{PhoSim}~\citep{2015ApJS..218...14P}. This approach will also be used in future Data Challenges.
 
 \subsection{imSim}
 \label{sec:imsim_pipeline}
@@ -124,7 +124,7 @@ where $X$ is the airmass, and $Z$ the angular distance to the zenith.
 In this simulation we generated three different types of objects: Stars which are modeled as PSF-like objects; galaxies, which are modeled as S\'{e}rsic profiles~\citep{1963BAAA....6...41S} (bulge plus disk) using
 the parameters given by CatSim; and AGNs that are also modeled as point sources. In this version of the catalog we decided
 to not include variability in AGNs to simplify the analysis. The zeropoints are computed using the model presented at~\citep{2008arXiv0805.2366I} and the
-throughputs at \url{https://github.com/lsst/throughputs} \textcolor{red}{David and I used the throughputs from the repo to compute these zeropoints. Should I add a table with them?}. We clip the objects at magnitude 10 to simulate saturation.
+throughputs at \url{https://github.com/lsst/throughputs}. We clip the objects at magnitude 10 to simulate saturation and improve the numerical performance.
 
 The final products of this pipeline are FITS images with information about the observing conditions. We generated more than 200,000 images in total (including both the \textit{dithered}, and \textit{undithered} fields). The average time to simulate each CCD is $\sim 4300$ seconds and the total production time was $\sim 270,000$ CPU-hours.
 
@@ -207,7 +207,7 @@ We also wanted to check if there is a preferred orientation for the differences 
   \centering
   \includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_interp}
   \caption{Astrometic residuals measured in visit $270675$ from the imSim dithered run. The light blue squares represent the CCD chips in
-  the LSST focal plane. The base of the arrow is on the input matched object. The arrows have been re-scaled 10,000 for visualization purposes.}
+  the LSST focal plane. The base of the arrow is on the input matched object. The arrows have been augmented by a factor 3600 for visualization purposes.}
   \label{fig:astrometry_c}
 \end{figure}
 
@@ -304,7 +304,13 @@ to the input model given the observing conditions and compute the residual. We o
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{psf_residual.png}
+\begin{tikzpicture}
+  \node[inner sep=0pt] (A) {\includegraphics[width=0.9\columnwidth]{psf_residual.png}};
+  \node[black] (B) at ($(A.south)!-.01!(A.north)$) {X [pixels]};
+  \node[black,rotate=90] (C) at ($(A.west)!-.01!(A.east)$) {Y [pixels]};
+  \node[black,rotate=90] at ({$(A.west)!1.0!(A.east)$} |- {$(A.south)!.55!(A.north)$}) {PSF$_{output}-$PSF$_{input}$};
+\end{tikzpicture}
+
 \caption{Average difference between the input PSF model (41$\times$41 pixels, normalized to unity) and the measured PSF (with the same normalization) for 200 visits.}
 \label{fig:psf_residual}
 \end{figure}
@@ -356,15 +362,7 @@ dimmest object contained in it.
 \item The second procedure also generates a HEALPix~\citep{2005ApJ...622..759G} map containing the PSF-like objects. Then in each pixel, we compute the median SNR as a function of the magnitude and get the magnitude at which SNR is the closest to 5.
 \end{enumerate}
 
-These two procedures yield very similar results (within $\sim 4\%$) as it can be seen in \figref{depth_comparison}. We checked that the maps built selecting galaxies instead of stars are compatible as well. We will select our footprint according to the depth map using the second methodology which can be seen in \figref{depth_maps}.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{dithered_difference.png}
-\includegraphics[width=0.9\columnwidth]{undithered_difference.png}
-\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (top) and undithered (bottom) fields.}
-\label{fig:depth_comparison}
-\end{figure}
+These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_comparison}. We checked that the maps built selecting galaxies instead of stars are compatible as well. We will select our footprint according to the depth map using the second methodology which can be seen in \figref{depth_maps}.
 
 \begin{figure}
 \centering
@@ -419,9 +417,21 @@ Where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{w_comp_corr25p3.pdf}
-\caption{Results for the two-point correlation function in the input (green), dithered (blue) and undithered (orange) datasets. We can see that after the correction (triangles) for the systematic effects the agreement is better than without the correction (circles) between the input and output data especially for the undithered case (for the dithered case the corrections are negligible).} 
+\includegraphics[width=0.9\columnwidth]{sys_dithered_25p3_v2.pdf}
+\includegraphics[width=0.9\columnwidth]{sys_undithered_25p3_v2.pdf}
+\caption{{\bf Top panel:} Results for the two-point correlation function in the input (green), dithered (blue) and undithered (orange) datasets. We can see that after the correction (triangles) for the systematic effects, presented in Section \ref{ssec:systematics}, the agreement is better than without the correction (circles) between the input and output data especially for the undithered case (for the dithered case the corrections are negligible). {\bf Middle and bottom panels:} Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (middle panel) and undithered (bottom panel) datasets. We show that the correction is at percent level for $\theta<0.03$ degrees and grows beyond the $20\%$ level for $\theta \approx 0.1$ degrees.} 
 \label{fig:2pt_corr}
 \end{figure}
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.9\columnwidth]{w_dithered_25p3.pdf}
+%\includegraphics[width=0.9\columnwidth]{w_undithered_25p3.pdf}
+
+%\caption{Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (top) and undithered (bottom) datasets. We show that the correction is at percent level for $\theta<0.03$ degrees and grows beyond the $20\%$ level for $\theta \approx 0.1$ degrees.}
+%\label{fig:sys_realspace}
+%\end{figure}
+
 
 %We also show the correlation matrix,
 %\begin{equation}
@@ -448,10 +458,12 @@ Where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is 
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{Cl_25p3_errors}
-\caption{Measured power spectra undithered (open orange circles) and dithered (solid blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (green line) within 1-$\sigma$.}
+\includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
+\caption{{\bf Top panel:} Measured power spectra undithered (open orange circles) and dithered (solid blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (green line) within 1-$\sigma$. {\bf Bottom panel:} Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets}
 \label{fig:power_spectra}
 \end{figure}
 \subsubsection{Systematic effects}
+\label{ssec:systematics}
 In this section we analyze the different systematic effects affecting the DC1 data. We will consider the following observational quantities as sources for systematic uncertainties:
 \begin{itemize}
 \item Extinction: The CatSim catalog provides the value for the magnitudes already corrected for extinction using the SFD map~\citep{1998ApJ...500..525S}. We use this map to cross-correlate with our galaxy catalogs.
@@ -474,26 +486,17 @@ where $w_{sg}$ is the cross-correlation between our stellar map and the observed
 
 Comparing with the input catalog we select those objects classified as galaxies whose centroids lie within 2 pixels of a star from the input catalog. From those, we select the objects that have a magnitude difference smaller than 30 mmags. Doing this we estimate a stellar contamination of $f_{star}=7.2\%$ in our sample.
 
-We compare the correction term for the different systematics to the measured signal obtaining the results in \figref{sys_realspace}, where we can appreciate that the dithering strategy is working to reduce the impact of the systematics, keeping them under control and at percent level for $\theta < 0.03 degrees$ in this ``small`` area, improving the signal-to-noise in addition to other benefits explored in ref.~\citep{2016ApJ...829...50A}. This is also seen \figref{2pt_corr} where we clearly see that the uncorrected and corrected correlation function for the dithered field are essentially the same.
-\begin{figure}
-\centering
-%\includegraphics[width=0.9\columnwidth]{w_dithered_25p3.pdf}
-%\includegraphics[width=0.9\columnwidth]{w_undithered_25p3.pdf}
-\includegraphics[width=0.9\columnwidth]{sys_dithered_25p3_v2.pdf}
-\includegraphics[width=0.9\columnwidth]{sys_undithered_25p3_v2.pdf}
-\caption{Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (top) and undithered (bottom) datasets. We show that the correction is at percent level for $\theta<0.03$ degrees and grows beyond the $20\%$ level for $\theta \approx 0.1$ degrees.}
-\label{fig:sys_realspace}
-\end{figure}
+We compare the correction term for the different systematics to the measured signal obtaining the results in the middle and bottom panels of \figref{2pt_corr}, where we can appreciate that the dither strategy is working to reduce the impact of the systematics, keeping them under control and at percent level for $\theta < 0.03$ degrees in this ``small`` area, improving the signal-to-noise in addition to other benefits explored in ref.~\citep{2016ApJ...829...50A}. This is also seen on the top panel of \figref{2pt_corr} where we clearly see that the uncorrected and corrected correlation function for the dithered field are essentially the same.
 
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
-\caption{Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets.}
-\label{fig:sys_harmonic_space}
-\end{figure}
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
+%\caption{Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets.}
+%\label{fig:sys_harmonic_space}
+%\end{figure}
 
 
-In the case of harmonic space we use the mode deprojection from \texttt{NaMaster}~\citep{Namaster} to correct for the different templates. In \figref{sys_harmonic_space} we show the relative size of the correction due to the presence of the considered sources of systematic uncertainty. Again, we see that the dithering strategy diminishes the effect of the potential sources of systematic uncertainty in the power-spectrum measurements.
+In the case of harmonic space we use the mode deprojection from \texttt{NaMaster}~\citep{Namaster} to correct for the different templates. In the bottom panel of \figref{power_spectra} we show the relative size of the correction due to the presence of the considered sources of systematic uncertainty. Again, we see that the dithered strategy diminishes the effect of the potential sources of systematic uncertainty in the power-spectrum measurements.
 
 %\CHECK{Add figure with corrected and uncorrected power-spectra.}
 
@@ -533,11 +536,11 @@ This has a noticeable effect in the estimated power-spectra as we can see in \fi
 
 End-to-end simulations are very useful tools to test the overall performance of any current and future cosmological experiments like the LSST~\citep{2008arXiv0805.2366I}. They allow us to test and improve different parts involved in the data processing and analysis. On the other hand, they also allow us to model and improve our control of systematic uncertainties.
 
-In this paper we have presented a simulated (end-to-end) imaging dataset to resemble LSST data, corresponding to the first data challenge in LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithering (\textit{undithered}). Then we processed these images with the LSST DM stack. We started by performing several quality assurance tests on the outputs from the DM stack, including photometry and astrometry checks. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets with good photometry and astrometry (with the caveat of uncorrected proper motion). 
+In this paper we have presented a simulated (end-to-end) imaging dataset to resemble LSST data, corresponding to the first data challenge in LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithers (\textit{undithered}). Then we processed these images with the LSST DM stack. We started by performing several quality assurance tests on the outputs from the DM stack, including photometry and astrometry checks. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets with good photometry and astrometry (with the caveat of uncorrected proper motion). 
 
 After this, we studied different ways to relate the output catalogs to the inputs. In particular, we analyzed spatial matching, and spatial matching including magnitude matching. We saw that the angular power-spectrum is recovered at a very high-level of precision for both cases, however, these matching techniques are likely not good enough for studies about blending or very small scale information. One of the main advantages of the end-to-end simulations is that photons can be traced back to the original sources, however, this is not always possible due different factors such as, data volume limitations so, an important topic for these kind of end-to-end simulations will be to find efficient strategies to relate inputs and outputs.
  
-Finally, we estimated the depth and selected a high-completeness sample to perform clustering analysis, in both real and harmonic space. The results of this analysis, indicate that the simulated foregrounds have a low impact at the scales considered for our study (lower than $5\%$ for $\theta < 0.03^{\circ}$ and for the $\ell$ range studied in harmonic space) especially, in the \textit{dithered} dataset. This indicates the success of the dithering strategy considered in this study. We also made a pilot study to try to reconstruct the selection function of our pipeline. We noticed that simple methods cannot capture the complexity of our data given the high sensitivity that we will have in LSST and concluded that more complex methods should be studied in order to perform this operation.
+Finally, we estimated the depth and selected a high-completeness sample to perform clustering analysis, in both real and harmonic space. The results of this analysis, indicate that the simulated foregrounds have a low impact at the scales considered for our study (lower than $5\%$ for $\theta < 0.03^{\circ}$ and for the $\ell$ range studied in harmonic space) especially, in the \textit{dithered} dataset. This indicates the success of the dither strategy considered in this study. We also made a pilot study to try to reconstruct the selection function of our pipeline. We noticed that simple methods cannot capture the complexity of our data given the high sensitivity that we will have in LSST and concluded that more complex methods should be studied in order to perform this operation.
 
 The methodology presented here will serve as basis for future DESC data challenges. In this future data challenges, we aim to perform multi-band studies in a larger area, analyze complementary image generation strategies (\texttt{PhoSim}), increase the complexity of the foregrounds included.
 
@@ -572,6 +575,16 @@ This research used resources of the National Energy Research Scientific Computin
 \caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
 \label{fig:systematic_maps2}
 \end{figure}
+\section{Comparison of depth estimation methods}
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{dithered_difference.png}
+\includegraphics[width=0.9\columnwidth]{undithered_difference.png}
+\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (top) and undithered (bottom) fields.}
+\label{fig:depth_comparison}
+\end{figure}
 \end{document}
+
+
 % ======================================================================
 %
