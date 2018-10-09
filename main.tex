@@ -120,7 +120,7 @@ X = (1 - 0.96\sin{Z})^{-0.5}.
 
 \subsubsection{Source rendering}
 imSim can generate three different types of objects: stars, which are modeled as PSF-like objects; galaxies, which are modeled as S\'{e}rsic profiles~\citep{1963BAAA....6...41S} (bulge plus disk) using
-the parameters given by CatSim; and AGNs that are also modeled as point sources and, for simplicity, their variability has been omitted. Future versions of imSim will have the ability to generate more complex morphologies for these sources. The brightness for these sources is computed using the magnitudes from CatSim and converting them to counts using the latest versio for the LSST throughputs\footnote{\url{https://github.com/lsst/throughputs}}. We clip the objects at magnitude 10 to simulate saturation and improve the numerical performance.
+the parameters given by CatSim; and AGNs that are also modeled as point sources and, for simplicity, their variability has been omitted. Future versions of imSim will have the ability to generate more complex galaxy morphologies. The brightness for these sources is computed using the magnitudes from CatSim and converting them to counts using the latest version for the LSST throughputs\footnote{\url{https://github.com/lsst/throughputs}}. We clip the objects at magnitude 10 to simulate saturation and improve the numerical performance.
 
 The final products of this pipeline are FITS images with information about the observing conditions. We generated more than 200,000 images in total (including both the \textit{dithered}, and \textit{undithered} fields). The average time to simulate each CCD is $\sim 4300$ seconds and the total production time was $\sim 270,000$ CPU-hours.
 
@@ -135,9 +135,9 @@ The final products of this pipeline are FITS images with information about the o
 \subsection{Image processing pipeline}
 \label{sec:image_processing_pipeline}
 
-The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper,2017arXiv170506766B,2015arXiv151207914J}. The DM stack is an open-source high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits and coadds producing the, so-called, Level 2 data products~\citep{2015arXiv151207914J}. Although the DM stack is still under development, most of the pieces already meet the science requirements. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2017arXiv170506766B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
+The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper,2017arXiv170506766B,2015arXiv151207914J}. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits and coadds producing the, so-called, Level 2 data products~\citep{2015arXiv151207914J}. Although the DM stack is still under development, most of the pieces already meet the science requirements. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2017arXiv170506766B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
 
-An example coadd image is shown at \figref{coadd_example}.
+An example coadd cutout is shown at \figref{coadd_example}.
 
 \begin{figure}
 \centering
@@ -150,7 +150,7 @@ An example coadd image is shown at \figref{coadd_example}.
 \label{sec:catalogs}
 
 After being processed, the catalogs are accessible by DESC collaborators and stored at the National Energy Research Scientific Computing Center (NERSC)\footnote{\url{http://www.nersc.gov}}. We generate \texttt{pandas
-dataframes}~\citep{mckinneypandas} and databases for each one of the coadds and input catalogs in order to be accessed by the collaborators and perform their own analyses. The output catalogs contain 10.6 million objects covering an area
+dataframes}~\citep{mckinneypandas} and databases for each one of the coadds and input catalogs in order to be accessed by the collaborators and perform their own analyses. As mentioned earlier, the output catalogs contain 10.6 million objects covering an area
 of $\sim$ 43 deg$^{2}$. The catalogs include information about position, size, shape and magnitude for every object. They include several flags that give information about the presence of interpolated/saturated pixels in the objects or whether these objects are close to the edge of a CCD or not.
 
 In order to check the level of realism and the accuracy of the processed catalogs we perform several quality assurance tests.
@@ -164,10 +164,10 @@ Biases in astrometry can potentially affect both clustering and weak lensing mea
 \label{sec:external_astrometry}
 
 As we have already mentioned, one of the big advantages of using simulations is that we have access to the \textit{true} underlying information. We use this information to check the precision of the astrometric measurements in single exposures and coadds. We select stellar objects using the classifier included in the LSST software stack\footnote{To see more details about the classifier, refer to section 4.9.10 at ~\citet{2017arXiv170506766B}} and choose objects with \texttt{base\_ClassificationExtendedness\_value==0}.
-We also require that \texttt{deblend\_nChild==0} to ensure that the objects are completely deblended, i.e., they are primary sources. We match these objects to the stellar sources in the input catalog. In both cases we use a \texttt{KDTree}~\citep{scikit-learn} to retrieve those objects in the input catalog that are within a 0.2 arc-seconds (one pixel) radius of those detected in the output catalog. We select the matched object that is closest in magnitude. We only consider sources which have a magnitude difference smaller than 0.02 magnitudes. We discuss matching strategies in more detail at \secref{matching}.
+We also require that \texttt{deblend\_nChild==0} to ensure that the objects are completely deblended, i.e., they are primary sources. We match these objects to the stellar sources in the input catalog. In both cases we use a \texttt{KDTree}~\citep{scikit-learn} to retrieve those objects in the input catalog that are within a 0.2 arc-seconds (one pixel) radius of those detected in the output catalog. We select the matched object that is closest in magnitude, only considering sources which have a magnitude difference smaller than 0.02 magnitudes. We discuss matching strategies in more detail at \secref{matching}.
 
 We select a representative single visit (visit number $270675$ for the imSim dithered run) and calculate the difference between the measured and the input positions. These are represented in \figref{astrometry_a}. We see that both RA and Dec distributions are compatible with each other, indicating that there are no anisotropies in the detection.
-However, we find that the distributions are asymmetric and that the median is not zero. This effect is even more noticeable in \figref{astrometry_b}, where we accumulated the results for 50 randomly selected visits of the imSim dithered simulation. This effect is also present in the undithered imSim run. We also checked the mean astrometric residual as a function of magnitude in \figref{astrometry_b}. We notice a mild bias for the brightest objects. This bias arises from the fact that the objects in the images include proper motion, which is unaccounted for in our \textit{truth tables}. However, it is below 15 mas, which is a much smaller scale than the resolution of the input N-body simulation. As a consequence we do not expect that the two point clustering statistics will be affected by this bias. 
+However, we find that the distributions are asymmetric and that the median is not zero. This effect is even more noticeable in \figref{astrometry_b}, where we accumulated the results for 50 randomly selected visits of the imSim dithered simulation. This effect is also present in the undithered imSim run. This bias arises from the fact that the objects in the images include proper motion, which is unaccounted for in our \textit{truth tables}. However, it is below 15 mas, which is a much smaller scale than the resolution of the input N-body simulation. As a consequence we do not expect that the two point clustering statistics will be affected by this bias. We also checked the mean astrometric residual as a function of magnitude in \figref{astrometry_b}. We notice the same bias for the brightest objects which will be dominated by nearby sources, which are the most affected by the effect of proper motion. 
 
 \begin{figure}
   \centering
@@ -226,7 +226,7 @@ for $j \in [1,10]$, i.e.,
   \Delta = \langle X_{coadd,i} - X_{visit_{j},i} \rangle
 \end{equation}
 
-We only consider sources that have been detected in at least 5 exposures. The resulting distribution is shown in \figref{astrometry_internal}. We see that this distribution is noticeably narrower than those shown in \figref{astrometry_a} and \figref{astrometry_b} and no apparent bias is found, indicating that the processing is consistent.
+We only consider sources that have been detected in at least 5 exposures. The resulting distribution is shown in \figref{astrometry_internal}. We see that this distribution is noticeably narrower than those shown in \figref{astrometry_a} and \figref{astrometry_b} and no apparent bias is found, indicating that the processing is consistent among different epochs.
 
 \begin{figure}
   \centering
@@ -350,15 +350,17 @@ dimmest object contained in it.
 \item The second procedure also generates a HEALPix map containing the PSF-like objects. Then in each pixel, we compute the median SNR as a function of the magnitude and get the magnitude at which SNR is the closest to 5.
 \end{enumerate}
 
-These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_comparison}. We checked that the maps built selecting galaxies instead of stars are compatible as well. We will select our footprint according to the depth map using the second methodology. These maps are shown in \figref{depth_maps}.
+These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_maps}. We checked that the maps built selecting galaxies instead of stars are compatible as well. We will select our footprint according to the depth map using the second methodology. These maps are also shown in \figref{depth_maps}.
 
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=0.9\columnwidth]{dithered_depth.png}
-\includegraphics[width=0.9\columnwidth]{undithered_depth.png}
-\caption{5-$\sigma$ depth for the dithered (top) and undithered (bottom) fields.}
+\includegraphics[width=0.45\textwidth]{dithered_depth.png}
+\includegraphics[width=0.45\textwidth]{dithered_difference.png}
+\includegraphics[width=0.45\textwidth]{undithered_depth.png}
+\includegraphics[width=0.45\textwidth]{undithered_difference.png}
+\caption{Left column: 5-$\sigma$ depth for the dithered (top) and undithered (bottom) fields. Right column: Relative difference between the depth estimated using the methods presented in the text for the dithered (top) and undithered (bottom) fields.}
 \label{fig:depth_maps}
-\end{figure}
+\end{figure*}
 
 \subsection{Bright objects masking and data selection}
 
@@ -386,7 +388,7 @@ We checked the detection efficiency of galaxies in our sample. We selected galax
 \subsection{Clustering results}
 \label{sec:results}
 
-In this section, we analyze the two point clustering statistics for both the dithered and undithered catalogs in real and harmonic space and check the consistency between the input and measured observables. When comparing the input and output catalogs, some subtleties arise. For example, if we select a galaxy sample in the input catalog with $m_{low} < m_{true} < m_{high}$, and you select a second galaxy sample in the output catalog with $m_{low} < m_{measured} < m_{high}$, you get that the power in the second sample is lower than in the first sample. This is due to the fact that the second sample includes galaxies that go fainter.
+In this section, we analyze the two point clustering statistics for both the dithered and undithered catalogs in real and harmonic space and check the consistency between the input and measured observables. When comparing the input and output catalogs, some subtleties arise. For example, selecting a galaxy sample in the input catalog with $m_{low} < m_{true} < m_{high}$, and a second galaxy sample in the output catalog with $m_{low} < m_{measured} < m_{high}$, results in a different power-spectra. The power spectrum in the first (selected according to true magnitude) sample will have a larger overall power than the second (selected according to measured magnitude) sample. This is due to the fact that the second sample includes galaxies that go fainter, resulting in a wider window function.
 
 \subsection{2-point correlation function}
 Using the samples presented in previous sections, we measure the 2-point correlation function using \texttt{TreeCorr}~\citep{2004MNRAS.352..338J}, selecting the Landy \& Szalay estimator~\citep{1993ApJ...412...64L},
@@ -566,14 +568,14 @@ The work of JC, RD, SD, TG, AJ, HK, PJM and BVK was supported by the U.S. Depart
 \caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
 \label{fig:systematic_maps2}
 \end{figure}
-\section{Comparison of depth estimation methods}
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{dithered_difference.png}
-\includegraphics[width=0.9\columnwidth]{undithered_difference.png}
-\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (top) and undithered (bottom) fields.}
-\label{fig:depth_comparison}
-\end{figure}
+%\section{Comparison of depth estimation methods}
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.9\columnwidth]{dithered_difference.png}
+%\includegraphics[width=0.9\columnwidth]{undithered_difference.png}
+%\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (top) and undithered (bottom) fields.}
+%\label{fig:depth_comparison}
+%\end{figure}
 \end{document}
 
 
