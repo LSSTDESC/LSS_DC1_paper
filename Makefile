@@ -73,7 +73,7 @@ tar : main
 	rm -rf ${tardir}
 
 # http://stackoverflow.com/q/8028314/
-TARGETS=apj apjl prd prl mnras tex
+TARGETS=apj apjl prd prl mnras tex jcappub
 $(TARGETS): export flag = \def\flag{$(@)}
 $(TARGETS):
 	$(MAKE) -e main
@@ -98,6 +98,7 @@ baseurl=https://raw.githubusercontent.com/DarkEnergyScienceCollaboration/start_p
 UPDATES=\
 texmf/bib/apj.bst \
 texmf/bib/mnras.bst \
+texmf/bib/JHEP.bst \
 texmf/styles/aas_macros.sty \
 texmf/styles/aastex.cls \
 texmf/styles/aastex61.cls \
@@ -108,6 +109,7 @@ texmf/styles/emulateapj.cls \
 texmf/styles/mnras.cls \
 texmf/styles/lsstdescnote.cls \
 texmf/styles/lsstdesc_macros.sty \
+texmf/sytles/jcappub.sty \
 .logos/desc-logo-small.png \
 .logos/desc-logo.png \
 .logos/header.png \
