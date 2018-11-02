@@ -1,13 +1,13 @@
 Lastname,Firstname,Authorname,JoinedAsBuilder,Affiliation,Contribution,Email
 S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","led analysis and wrote most of the paper",francs1@uci.edu
 Walter, Chris W., C.~W.Walter,False,"Duke University, Department of Physics, Durham, NC, U.S.A.","led image generation",chris.walter@duke.edu
-Awan, Humna, H.~Awan,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",awan@physics.rutgers.edu
-Gawiser, Eric, E.~Gawiser,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",gawiser@physics.rutgers.edu
 Slosar, An\v{z}e, A.~Slosar,False,"Brookhaven National Laboratory, Upton, NY, U.S.A.","Participated in analysis and preliminary tests",anze@bnl.gov
 Kirkby, David. P., D.~Kirkby,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA","Participated and advised in analysis",dkirkby@uci.edu
 Chiang, James, J.~Chiang,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, USA","One of the main developers of imSim, participated in image generation and data distribution",jchiang@slac.stanford.edu
 Glanzman, Tom, T.~Glanzman,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, USA","Generated artificial images",Tom.Glanzman@stanford.edu
 Daniel, Scott F.,S.~F.~Daniel,False,"Department of Astronomy, University of Washington, Seattle, WA, USA","Developed imSim and CatSim",scottvalscott@gmail.com
+Awan, Humna, H.~Awan,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",awan@physics.rutgers.edu
+Gawiser, Eric, E.~Gawiser,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",gawiser@physics.rutgers.edu
 Wood-Vasey, Michael, W.~M.~Wood-Vasey,False,"Pittsburgh Particle Physics, Astrophysics, and Cosmology Center (PITT PACC). Physics and Astronomy Department, University of Pittsburgh, Pittsburgh, PA 15260, USA","Ran validation software and wrote part of the document", wmwv@pitt.edu
 AlSayyad, Yusra, Y.~AlSayyad,False,"Affiliation","Contribution",email
 Burke, Colin, C.~Burke,False,"Affiliation","Contribution",email
@@ -15,7 +15,7 @@ Cheng, Jun, J.~Cheng,False,"Affiliation","Contribution",email
 Digel, Seth, S.~Digel,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, USA","Contribution", digel@stanford.edu
 Dubois, Richard, R.~Dubois,False,"Affiliation","Contribution",email
 Jarvis, Mike, M.~Jarvis,False,"Affiliation","Contribution",email
-Johnson, Tony, T.~Johnson,False,"Affiliation","Contribution",email 
+Johnson, Tony, T.~Johnson,False,"Affiliation","Contribution",email
 Kelly, Heather, H.~Kelly,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, USA","DMstack librarian at NERSC",heather@slac.stanford.edu
 Krughoff, Simon, S.~Krughoff,False,"Affiliation","Contribution",email
 Lupton, Robert H., R.~H.~Lupton,False,"Affiliation","Contribution",email
