@@ -24,7 +24,7 @@
 % Add your own macros here:
 %\newcommand{\arcmin}{\unit{arcmin}}
 %\newcommand{\arcsec}{\unit{arcsec}}
-
+\newcommand{\rachel}[1]{{\textcolor{cyan}{{\textbf (RM: #1)}}}}
 
 
 %
@@ -177,7 +177,12 @@ However, we find that the distributions are asymmetric and that the median is no
   \centering
   \includegraphics[width=0.45\textwidth]{astrometry_single_visit_imsim_dithered_hist}
   \includegraphics[width=0.45\textwidth]{astrometry_single_visit_imsim_dithered_hist2d}
-  \caption{Left: Distribution of the difference $\Delta=X_{measured}-X_{input}$ in RA (blue) and Dec (green) coordinates for a randomly selected visit ($270675$ for the dithered run). We cannot see any differences between these. The histograms are normalized such that the total sum of the counts is equal to one. We measure a non-zero median, $\Delta_{median} \approx -2$ mas. Right: 2D histogram showing the bivariate distribution of the difference in RA (horizontal axis) and Dec (vertical axis). The effect is similar for the undithered simulation.}
+  \caption{Top: Distribution of the difference $\Delta=X_{measured}-X_{input}$ in RA (blue) and Dec
+    (green) coordinates for a randomly selected visit ($270675$ for the dithered run). We cannot see
+    any differences between these. The histograms are normalized such that the total sum of the
+    counts is equal to one. We measure a non-zero median, $\Delta_{median} \approx -2$ mas. Bottom:
+    2D histogram showing the bivariate distribution of the difference in RA (horizontal axis) and
+    Dec (vertical axis). The effect is similar for the undithered simulation.}}
   \label{fig:astrometry_a}
 \end{figure}
 
@@ -186,9 +191,9 @@ However, we find that the distributions are asymmetric and that the median is no
   \includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_50visits}
   \includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_50visits_hist2d}
   \includegraphics[width=0.45\textwidth]{astrometry_vs_mag_imsim_50_visits}
-  \caption{Left: Distribution of the difference $\Delta=X_{measured}-X_{input}$ in RA (blue) and Dec (green) coordinates as in
+  \caption{Top: Distribution of the difference $\Delta=X_{measured}-X_{input}$ in RA (blue) and Dec (green) coordinates as in
   \figref{astrometry_a} but, accumulating the results for 50 randomly selected visits from the dithered run. Middle: 2D histogram
-  showing the bivariate distribution of the difference in RA (horizontal axis) and Dec (vertical axis). Right: Mean astrometric residual
+  showing the bivariate distribution of the difference in RA (horizontal axis) and Dec (vertical axis). Bottom: Mean astrometric residual
   as a function of magnitude for RA (blue) and Dec (green). These distributions are similar for the undithered run.}
   \label{fig:astrometry_b}
 \end{figure}
@@ -259,8 +264,8 @@ fainter (as expected). Furthermore, we see that the 0.02 magnitude selection cut
   \centering
   \includegraphics[width=0.45\textwidth]{photometry_imsim_dithered_50visits_hist}
   \includegraphics[width=0.45\textwidth]{photometry_imsim_dithered_50visits}
-  \caption{Left: Distribution of magnitude difference between the input and output catalogs.
-  Right: Difference magnitude between input and output catalogs as a function of the measured magnitude. We considered 50 visits
+  \caption{Top: Distribution of magnitude difference between the input and output catalogs.
+  Bottom: Difference magnitude between input and output catalogs as a function of the measured magnitude. We considered 50 visits
   randomly selected from the imSim dithered run. We find similar results for the imSim undithered run and for the PhoSim run.}
   \label{fig:photometry_a}
 \end{figure}
