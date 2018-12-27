@@ -38,7 +38,7 @@
 
 \begin{abstract}
 
-The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling the systematic effects on cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate the potential systematic effects that will affect observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the current version of the LSST Data Management pipeline. Here, we characterize the resulting systematics and implement corrections. We also show that the dither strategy reduces the impact of potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
+The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the current version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also show that dithering reduces the impact of potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
 \end{abstract}
 
 % Keywords are ignored in the LSST DESC Note style:
@@ -52,6 +52,9 @@ The success of the Large Synoptic Survey Telescope (LSST) as a dark energy exper
 
 \section{Introduction}
 \label{sec:intro}
+
+\rachel{Should enlarge font in tick and axis labels to be comparable to font size in the paper
+  text in all of the following figures: 4, 5, 6, 7, 8, 9, 11, 12, 13, 18, 19, 20.}
 
 The increase in statistical power from recent cosmological experiments makes the modeling and mitigation of systematic uncertainties key to extracting the maximum amount of information from these surveys. More traditional in high energy particle physics~\citep{Brun:118715, 2006JHEP...05..026S}, end-to-end simulations provide a unique framework to
 model systematics and streamline processing and analysis pipelines given out complete understanding of the inputs and outputs. With the incresaing availability of computational resources, this approach has also been extended to photometric redshift galaxy surveys~\citep{2016MNRAS.457..786S,2016ApJ...817...25B}, and similar efforts are seen in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}. For surveys like the LSST~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
@@ -182,7 +185,7 @@ However, we find that the distributions are asymmetric and that the median is no
     any differences between these. The histograms are normalized such that the total sum of the
     counts is equal to one. We measure a non-zero median, $\Delta_{median} \approx -2$ mas. Bottom:
     2D histogram showing the bivariate distribution of the difference in RA (horizontal axis) and
-    Dec (vertical axis). The effect is similar for the undithered simulation.}}
+    Dec (vertical axis). The effect is similar for the undithered simulation. }
   \label{fig:astrometry_a}
 \end{figure}
 
@@ -359,7 +362,8 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 Per-object median pipeline-reported magnitude error versus object magnitude.
  {\bf TODO: MWV CLEANUP (1) title, (2) incorrect xlabel (should be \#/bin),  and "Filter name" extra text}
  {\bf TODO: MWV  Are these higher scatter objects galaxies, stars in halos of bright stars, additionally added objects that were done inconsistently with the rest of the catalog?}
- {\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this more.}}
+ {\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this
+   more.} \rachel{I recommend making this a page-width rather than column-width figure.}}
 
 \label{fig:validate_drp_check_photometry}
 \end{figure}
