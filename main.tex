@@ -329,31 +329,31 @@ to the input model given the observing conditions. We obtain the residual depict
 
 \subsection{LSST Science Requirements Document Key Performance Metrics}
 
-We processed the output individual-visit catalogs through the LSST Project package \texttt{validate\_drp}\footnote{\url{dmtn-0008.lsst.io}}\footnote{\url{https://github.com/lsst/validate_drp}}
-The \texttt{validate\_drp} package calculates the Key Performance Metrics (KPMs) from the LSST Science Requirements Document (SRD)~\citep{LPM-17}.
+We processed the output individual-visit catalogs through the LSST Project package \texttt{validate\_drp}\footnote{\url{dmtn-0008.lsst.io}, \url{https://github.com/lsst/validate_drp}}
+The \texttt{validate\_drp} package calculates the Key Performance Metrics (KPMs) from the LSST Science Requirements Document~\citep[SRD;][]{LPM-17}.
 
-Given the simplified and somewhat idealized nature of the DC1 simulations, we expect that the DC1 should pass the SRD KPMs.
+Given the simplified and somewhat idealized nature of the DC1 simulations, we expect that the DM outputs from processing the DC1 simulations should pass the SRD KPMs. \rachel{I'm not sure this really follows.  The KPMs are dependent as well on the status of the LSST DM stack.}
 
 The photometric repeatability (PA1) is 6~mmag as measured by the inter-quartile range.  The ultimate design goal is 5~mmag.  The 6~mmag is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
 
-The photometric error model from \citet[][Eq. 6,7]{Overview} is
+The photometric error model from \citet[][Eq. 6,7]{Overview} is \rachel{This doesn't look right to me; I'm 99\% sure the equation right below this should be a sum,  not a product (when I looked in the overview paper to check, it is indeed a sum, but it's also not equations 6 and 7 -- it's 4 and 5)}
 \begin{eqnarray}
-\sigma^2 = \sigma^2_{\rm sys} \sigma^2_{\rm rand} \\
-\sigma^2_{\rm rand} = (0.04 - \gamma) 10^{0.4(m-m_5)} + \gamma 10^{0.8(m-m_5)}
+\sigma^2 &= \sigma^2_{\rm sys} \sigma^2_{\rm rand} \\
+\sigma^2_{\rm rand} = (0.04 - \gamma) &10^{0.4(m-m_5)} + \gamma 10^{0.8(m-m_5)}
 \label{eq:photometric_error}
 \end{eqnarray}
 where $\gamma$ describes noise from the sky and detector electronics, and the 5-$\sigma$ point-source depth is given by:
 \begin{equation}
 \begin{split}
-m_5 = C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) \\
-+ 2.5 \log_{10} (0.7{\arcsec}/\theta_{\rm eff}) \\
-+ 1.25 \log_{10} (t_{\rm vis} / 30~{\rm s}) - k_m (X-1)
+m_5 = &C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) \\
+&+ 2.5 \log_{10} (0.7{\arcsec}/\theta_{\rm eff}) \\
+&+ 1.25 \log_{10} (t_{\rm vis} / 30~{\rm s}) - k_m (X-1)
 \label{eq:photometric_m5}
 \end{split}
 \end{equation}
 where $C_m$ summarizes the throughput of the telescope optics and camera, $m_{\rm sky}$ is the sky brightness, $\theta_{\rm eff}$ is the seeing, $t_{\rm vis}$ is the exposure time, $k_m$ is the airmass coefficient, and $X$ is the airmass.
 
-Our fits find $m_5$ = 24.2~mag/arcsec$^2$ and $\gamma=0.038$ which are quite consistent with the \citet[][Table 2]{Overview} values of $m_5=24.35$~mag/arcsec$^2$, $\gamma=0.039$.  This demonstrates that generate simulations of the telescope, detector, and sky in accordance with the \citet{Overview} estimates.
+Our fits find $m_5$ = 24.2~mag/arcsec$^2$ and $\gamma=0.038$ which are quite consistent with the \citet[][Table 2]{Overview} values of $m_5=24.35$~mag/arcsec$^2$, $\gamma=0.039$.  This demonstrates that generate simulations of the telescope, detector, and sky in accordance with the \citet{Overview} estimates. \rachel{Something wrong in this sentence (maybe a missing word?)}
 
 Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the idealized simulations we run for DC1 with no additional systematic sources of errors.
 
@@ -406,6 +406,9 @@ The performance is excellent, with characteristic values all below the LSST SRD 
 \end{figure}
 
 {\bf TODO: MWV Add table of performance metrics}
+
+\rachel{Is this all the KPMs?  I thought some have to do with PSF model quality, etc.}
+\rachel{Note that there are many figures associated with this subsection, but the text doesn't actually refer to or discuss any of them.}
 
 \section{Analysis of the simulated dataset}
 \label{sec:analysis}
