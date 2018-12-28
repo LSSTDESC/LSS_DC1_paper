@@ -640,13 +640,15 @@ In \figref{emulated_power} we show that the power-spectrum using the true magnit
 \section{Conclusions}
 \label{sec:conclusions}
 
+\rachel{Perhaps emphasize further some tests of the pipeline performance?}
+
 End-to-end simulations are very useful tools to test the overall performance of any current and future cosmological experiments like the LSST~\citep{Overview}. They allow us to test and improve different parts involved in the data processing and analysis, as well as, to model and improve our control of systematic uncertainties.
 
 In this paper, we have presented a simulated (end-to-end) imaging dataset that resembles single-band, full-depth LSST data, for the first data challenge in the LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithers (\textit{undithered}). We processed these images with the LSST DM stack. We performed several quality assurance tests on the outputs from the DM stack, including photometry and astrometry checks. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets with good photometry and astrometry (with the caveat of uncorrected proper motion).
 
 We studied different ways to relate the output catalogs to the inputs. In particular, we studied two different matching strategies. The first, using information about positions only; and a second strategy involving positions and magnitudes. We showed that the angular power-spectrum is recovered at a very high-level of precision in both cases. However, these matching techniques are likely not good enough for studies about blending or very small scale information since they do not include information about undetected sources present in blends. An important research topic for these kind of end-to-end simulations is to find efficient strategies to relate inputs and outputs.
 
-Finally, we estimated the depth of our simulated catalogs and selected a high-completeness sample to perform clustering analysis in both real and harmonic space. The results of this analysis, indicate that the simulated foregrounds have a low impact at the scales considered for our study, i.e. lower than $5\%$ for $\theta < 0.03^{\circ}$ (or for $100 < \ell < 6000$), especially in the \textit{dithered} dataset. This indicates the success of the dither strategy considered in this study. We also conducted a pilot study to try to reconstruct the selection function of our pipeline. We showed that simple methods cannot capture the complexity of our data given the high sensitivity that we will have in LSST and concluded that more complex methods should be studied in order to create better models.
+Finally, we estimated the depth of our simulated catalogs and selected a high-completeness sample to perform clustering analysis in both real and harmonic space. The results of this analysis, indicate that the simulated foregrounds have a low impact at the scales considered for our study, i.e.\ lower than $5\%$ for $\theta < 0.03^{\circ}$ (or for $100 < \ell < 6000$), especially in the \textit{dithered} dataset. This indicates the success of the dither strategy considered in this study. We also conducted a pilot study to try to reconstruct the selection function of our pipeline. We showed that simple methods cannot capture the complexity of our data given the high sensitivity that we will have in LSST and concluded that more complex methods should be studied in order to create better models.
 
 The methodology presented in this work will serve as basis for future DESC data challenges, where we aim to perform multi-band studies in a larger area, analyze complementary image generation strategies (\texttt{PhoSim}), and increase the complexity of the foregrounds included.
 
@@ -656,9 +658,12 @@ The methodology presented in this work will serve as basis for future DESC data 
 
 This research used resources of the National Energy Research Scientific Computing Center, a DOE Office of Science User Facility supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC02-05CH11231. We acknowledge the use of \texttt{Pandas, Dask, SciPy, Matplotlib, Jupyter, CCL, NaMaster, Healpy, and scikit-learn} as well as the LSST software stack.
 
-The work of JC, RD, SD, TG, AJ, HK, PJM and BVK was supported by the U.S. Department of Energy under contract number DE-AC02-76SF00515.
+The work of JC, RD, SD, TG, AJ, HK, PJM and BVK was supported by the U.S. Department of Energy under contract number DE-AC02-76SF00515. 
+The work of RM was supported by the US Department of Energy Cosmic Frontier program, grant DE-SC0010118.
 
 \input{acknowledgments}
+
+\rachel{Should update references to published versions at some point, and fix some that are broken (e.g., CCL paper can now be referred to on arxiv, and there's one ``Mckinney, W. 2011'' that has no info about the actual reference).}
 
 %{\it Facilities:} \facility{LSST}
 
