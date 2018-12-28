@@ -451,16 +451,16 @@ The problem with these matching techniques is the lack of details about blended 
 \subsection{Generating depth maps}
 \label{sec:masking}
 
-In order to estimate the depth in the coadd catalogs, we select stars using the extendedness-based classifier: \texttt{base\_ClassificationExtendedness\_value==0}. This ensures selecting
-PSF-like objects. After this, we use two different approaches:
+In order to estimate the depth in the coadd catalogs, we select stars using the extendedness-based classifier: \texttt{base\_ClassificationExtendedness\_value==0}. This ensures that we are selecting
+PSF-like objects. \rachel{You should  refer to Bosch+18 and use the results there to impose a magnitude cut, since for faint objects such a sample will be heavily contaminated by galaxies.} After this, we use two different approaches:
 
 \begin{enumerate}
 \item In the first approach we generate a HEALPix\footnote{\url{http://healpix.sf.net}}~\citep{2005ApJ...622..759G} map containing the PSF-like objects detected with a signal-to-noise ratio (SNR) $\geq 5$ (\texttt{base\_PsfFlux\_flux/base\_PsfFlux\_fluxSigma>=5}), and we assign to each HEALPix pixel the value of the
 dimmest object contained in it. We will refer to this method as method \#1.
-\item The second procedure also generates a HEALPix map containing the PSF-like objects. Here, for each HEALPix pixel, we compute the median SNR as a function of the magnitude and use the magnitude at which SNR is closest to 5. We will refere to this method as method \#2.
+\item The second procedure also generates a HEALPix map containing the PSF-like objects. Here, for each HEALPix pixel, we compute the median SNR as a function of the magnitude and use the magnitude at which SNR is closest to 5. We will refer to this method as method \#2.
 \end{enumerate}
 
-These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_maps}. We also check that the maps built selecting galaxies instead of stars are compatible as well. We will select our footprint according to the depth map using the second methodology. These maps are also shown in \figref{depth_maps}.
+These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_maps}. We also check that the maps built selecting galaxies instead of stars are compatible as well. \rachel{For galaxies, did you still use PSF flux?} We will select our footprint according to the depth map using the second methodology \rachel{as applied to stars?}. These maps are also shown in \figref{depth_maps}.
 
 \begin{figure*}
 \centering
