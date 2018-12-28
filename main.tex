@@ -168,10 +168,12 @@ An example coadd cutout is shown in \figref{coadd_example}.
 \label{sec:catalogs}
 
 After being processed, the catalogs are stored at the National Energy Research Scientific Computing Center (NERSC)\footnote{\url{http://www.nersc.gov}} and accessible to DESC collaborators. We generate \texttt{pandas
-dataframes}~\citep{mckinneypandas} and databases for each one of the coadds and input catalogs providing collaborators some flexibility in data access for their own analyses. As mentioned earlier, the output catalogs contain 10.6 million objects covering an area
-of $\sim$ 43 deg$^{2}$. The catalogs include information about position, size, shape and magnitude for every object. They include several flags that give information about the presence of interpolated/saturated pixels in the objects and whether or not these objects are close to the edge of a CCD.
+dataframes}~\citep{mckinneypandas} and databases for each one of the coadds and input catalogs, providing collaborators some flexibility in data access for their own analyses. As mentioned earlier, the output catalogs contain 10.6 million objects covering an area
+of $\sim$43 deg$^{2}$. The catalogs include information about position, size, shape and magnitude for every object. They include several flags that give information about the presence of interpolated/saturated pixels in the objects and whether or not these objects are close to the edge of a CCD.
 
 In order to check the level of realism and the accuracy of the processed catalogs we perform several quality assurance tests.
+
+\rachel{Big picture comment: you said earlier that both dithered and undithered simulations are generated and processed, but in the paragraph above and many other places you just quote a single number of objecst in the catalogs.  So is it that most places refer to dithered, and undithered ones are only used in specific subsections?  If that's true, this should be explained somewhere prominent.}
 
 \subsection{Astrometry checks}
 \label{sec:astrometry_checks}
@@ -181,22 +183,22 @@ Biases in astrometry can potentially affect both clustering and weak lensing mea
 \subsubsection{External checks}
 \label{sec:external_astrometry}
 
-As we have already mentioned, one of the big advantages of using simulations is that we have access to the \textit{true} underlying information. We use this information to check the precision of the astrometric measurements in single exposures and coadds. We select stellar objects using the classifier included in the LSST software stack\footnote{To see more details about the classifier, refer to section 4.9.10 at ~\citet{2017arXiv170506766B}} and choose objects with \texttt{base\_ClassificationExtendedness\_value==0}.
-We also require that \texttt{deblend\_nChild==0} to ensure that the objects are completely deblended, i.e., they are primary sources. We match these objects to the stellar sources in the input catalog. In both cases we use a \texttt{KDTree}~\citep{scikit-learn} to retrieve those objects in the input catalog that are within a 0.2 arc-seconds (one pixel) radius of those detected in the output catalog. We select the matched object that is closest in magnitude, only considering sources which have a magnitude difference smaller than 0.02 magnitudes. We discuss matching strategies in more detail at \secref{matching}.
+As we have already mentioned, one of the advantages of using simulations is that we have access to the \textit{true} underlying information. We use this information to check the precision of the astrometric measurements in single exposures and coadds. We select stellar objects using the classifier included in the LSST software stack\footnote{To see more details about the classifier, refer to section 4.9.10 in~\citet{2017arXiv170506766B}} and choose objects with \texttt{base\_ClassificationExtendedness\_value==0}.
+We also require that \texttt{deblend\_nChild==0} to ensure that the objects are completely deblended, i.e., they are primary sources. \rachel{I thought that ``primary'' comes with other conditions, like at the edges of patches some reconciliation is done to figure out which detection is primary?} We match these objects to the stellar sources in the input catalog. In both cases we use a \texttt{KDTree}~\citep{scikit-learn} to retrieve those objects \rachel{for this matching did you use only stars rather than all objects?} in the input catalog with centroids that are within a 0.2\arcsec\ (one pixel) radius of those detected in the output catalog. We select the matched object \rachel{star?} that is closest in magnitude, only considering sources that have a magnitude difference smaller than 0.02 magnitudes. \rachel{That is a very very tight tolerance!  The magnitude errors are larger than that for many objects, so I would expect we miss many objects with this tolerance.} We discuss matching strategies in more detail in \secref{matching}. \rachel{For astrometry tests, have you considered limiting to a bright subsample of stars?  Right now the plots/calculations have a large contributions from noise due to faint objects, I would assume, and it might actually be easier to see the real structure/offsets if you only used bright stars for this plot?}
 
-We select a representative single visit (visit number $270675$ for the imSim dithered run) and calculate the difference between the measured and the input positions. These are represented in \figref{astrometry_a}. We see that both RA and Dec distributions are compatible with each other, indicating that there are no anisotropies in the detection.
-However, we find that the distributions are asymmetric and that the median is not zero. This effect is even more noticeable in \figref{astrometry_b}, where we accumulated the results for 50 randomly selected visits of the imSim dithered simulation. This effect is also present in the undithered imSim run. This bias arises from the fact that the objects in the images include proper motion, which is unaccounted for in our \textit{truth tables}. However, this bias is below 15 mas, which is a much smaller scale than the resolution of the input N-body simulation. As a consequence we do not expect that the two point clustering statistics will be affected by this bias. We also checked the mean astrometric residual as a function of magnitude in \figref{astrometry_b}. We notice the same bias for the brightest objects (which are dominated by nearby sources), and so are the most affected by the effects of proper motion.
+We select a representative single visit (visit number $270675$ for the imSim dithered run) and calculate the difference between the measured and the input positions. These are represented in \figref{astrometry_a}. We see that both RA and Dec distributions are compatible with each other, indicating that there are no anisotropies in the detection. \rachel{Why is this $\Delta$RA and not $\Delta$RA~$\cos{(\text{Dec})}$?  I don't think it really makes sense to compare $\Delta$RA and $\Delta$Dec in general.}
+However, we find that the distributions are asymmetric and that the median is not zero. This effect is even more noticeable in \figref{astrometry_b}, where we accumulated the results for 50 randomly selected visits of the imSim dithered simulation. \rachel{Is there any reason to show a single visit and then 50 randomly selected ones, with the effects of interest are present at similar levels in both?  Why not just jump to the 50 randomly selected ones, and mention that if you pick a single visit the effect is still evident?} This effect is also present in the undithered imSim run. This bias arises from the fact that the objects in the images include proper motion, which is unaccounted for in our \textit{truth tables}. However, this bias is below 15 mas, which is a much smaller scale than the resolution of the input N-body simulation. \rachel{I don't think the input N-body simulation resolution is relevant; it should be sufficient to say that we don't care about galaxy clustering statistics on tiny scales and so astrometric biases on these scales are not an issue.} As a consequence we do not expect that the two point clustering statistics will be affected by this bias. We also checked the mean astrometric residual as a function of magnitude in \figref{astrometry_b}. We notice the same bias for the brightest objects (which are dominated by nearby sources), and so are the most affected by the effects of proper motion.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.45\textwidth]{astrometry_single_visit_imsim_dithered_hist}
   \includegraphics[width=0.45\textwidth]{astrometry_single_visit_imsim_dithered_hist2d}
-  \caption{Top: Distribution of the difference $\Delta=X_{measured}-X_{input}$ in RA (blue) and Dec
+  \caption{Top: Distribution of the difference $\Delta=X_{\rm measured}-X_{\rm input}$ in RA (blue) and Dec
     (green) coordinates for a randomly selected visit ($270675$ for the dithered run). We cannot see
     any differences between these. The histograms are normalized such that the total sum of the
-    counts is equal to one. We measure a non-zero median, $\Delta_{median} \approx -2$ mas. Bottom:
+    counts is equal to one. We measure a non-zero median, $\Delta_{\rm median} \approx -2$ mas. Bottom:
     2D histogram showing the bivariate distribution of the difference in RA (horizontal axis) and
-    Dec (vertical axis). The effect is similar for the undithered simulation. }
+    Dec (vertical axis). The effect is similar for the undithered simulation. \rachel{Perhaps indicate the median values on the top and bottom, with lines of some sort?  Same comment applies to next figure.}}
   \label{fig:astrometry_a}
 \end{figure}
 
@@ -205,7 +207,7 @@ However, we find that the distributions are asymmetric and that the median is no
   \includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_50visits}
   \includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_50visits_hist2d}
   \includegraphics[width=0.45\textwidth]{astrometry_vs_mag_imsim_50_visits}
-  \caption{Top: Distribution of the difference $\Delta=X_{measured}-X_{input}$ in RA (blue) and Dec (green) coordinates as in
+  \caption{Top: Distribution of the difference $\Delta=X_{\rm measured}-X_{\rm input}$ in RA (blue) and Dec (green) coordinates as in
   \figref{astrometry_a} but, accumulating the results for 50 randomly selected visits from the dithered run. Middle: 2D histogram
   showing the bivariate distribution of the difference in RA (horizontal axis) and Dec (vertical axis). Bottom: Mean astrometric residual
   as a function of magnitude for RA (blue) and Dec (green). These distributions are similar for the undithered run.}
@@ -218,7 +220,7 @@ In addition, we wanted to check if there is a preferred orientation for the diff
   \centering
   \includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_interp}
   \caption{Astrometic residuals measured in visit $270675$ from the imSim dithered run. The light blue squares represent the CCD chips in
-  the LSST focal plane. The base of the arrow is on the input matched object. The arrows have been augmented by a factor 3600 for visualization purposes.}
+  the LSST focal plane. The base of the arrow is on the input matched object. The arrows have been augmented by a factor 3600 for visualization purposes. \rachel{I found this last sentence confusing.  Is it necessary, given that you have an arrow on the plot indicating how large is 200 mas?  I think  you could simply say ``The arrow sizes were set to make the largest ones visually evident; see upper right part of the figure for a guide to the interpretation of arrow sizes.''}}
   \label{fig:astrometry_c}
 \end{figure}
 
@@ -227,7 +229,7 @@ In addition, we wanted to check if there is a preferred orientation for the diff
 \label{sec:internal_astrometry}
 
 Another important test is to ensure the internal consistency of the astrometric solutions between different exposures. We select
-a small region of the coadded area, which we will refer to as a \textit{patch}, and compare the positions of the objects detected in the coadd
+a small region of the coadded area, which we will refer to as a \textit{patch} \rachel{This isn't just us - this is LSST pipeline jargon, right?}, and compare the positions of the objects detected in the coadd
 image with the positions of objects detected in individual exposures that overlap with that patch.
 
 In particular, we randomly choose 10 individual exposures and look for objects that fulfill the following criteria:
@@ -241,14 +243,14 @@ Note that, in this case, we are not requiring the objects to be classified as st
 \texttt{base\_ClassificationExtendedness\_value}, but we are adding some cuts to ensure that the objects were properly measured. Once
 we perform our selection, the next step is to match the objects in the different exposures. To do so, we use the matching algorithm
 included in the LSST software stack. We calculate the mean of the difference between the position of each source
-in the coadd, $X_{coadd,i}$ and the position of the matched object in each of the exposures where it has been detected, $X_{visit_{j},i}$
+in the coadd, $X_{{\rm coadd},i}$ and the position of the matched object in each of the exposures where it has been detected, $X_{{\rm visit_{j}},i}$
 for $j \in [1,10]$, i.e.,
 
 \begin{equation}
-  \Delta = \langle X_{coadd,i} - X_{visit_{j},i} \rangle
+  \Delta = \langle X_{{\rm coadd},i} - X_{{\rm visit_{j}},i} \rangle
 \end{equation}
 
-We only consider matched objects detected in at least 5 exposures. The resulting distribution is shown in \figref{astrometry_internal}. We see that this distribution is noticeably narrower than those shown in \figref{astrometry_a} and \figref{astrometry_b} and no apparent bias is found, indicating that the processing is consistent among different epochs.
+We only consider matched objects detected in at least 5 exposures. The resulting distribution is shown in \figref{astrometry_internal}. We see that this distribution is noticeably narrower than those shown in \figref{astrometry_a} and \figref{astrometry_b} and no apparent bias is found, indicating that the processing is consistent among different epochs. \rachel{Given that the object selection differs, I'm not sure we can ascribe any significance to the distribution being narrower, right?  Any noise contribution to the centroid determination should differ, so I don't think they can really be compared in this way.}
 
 \begin{figure}
   \centering
