@@ -263,7 +263,7 @@ We only consider matched objects detected in at least 5 exposures. The resulting
 \subsection{Photometry checks}
 \label{sec:photometry_checks}
 
-As we did in previous sections, we perform two different tests to assess the quality of our simulations: first, we compare our output catalogs to the inputs, and second, we check the consistency between different visits for the same objects.
+As we did in the previous subsection, we perform two different tests to assess the quality of our simulations: first, we compare our output catalogs to the inputs, and second, we check the consistency between different visits for the same objects. \rachel{I'm not sure we can fully frame this as a test of the simulation quality.  It's also a test of the DM processing.  Errors in either stage could affect the photometry and in fact it can be difficult to identify the origin of errors that are found.}
 
 \subsubsection{External checks}
 \label{sec:external_photometry}
@@ -273,8 +273,8 @@ the accuracy of the measurement pipeline, but it also tests the quality and leve
 For these external checks, we use the same 50 randomly selected visits from the previous section.
 To study the photometric residuals, we use a different matching strategy compared to previous sections. In this case, we eliminate the threshold
 in magnitude difference, looking for the input source that is closest in magnitude within a 0.2 arcseconds radius around each detected
-source. In \figref{photometry_a} we can see the distribution of the photometric residuals. This distribution gets wider as we go
-fainter (as expected). Furthermore, we see that the 0.02 magnitude selection cut is a good proxy to ensure that we account for most sources properly matched.
+source. \rachel{Source of any kind?  Or star?  The figure 8 label suggests it's stars, but the text here is ambiguous.} In \figref{photometry_a} we can see the distribution of the photometric residuals. This distribution gets wider as we go
+fainter (as expected). Furthermore, we see that the 0.02 magnitude selection cut is a good proxy to ensure that we account for most sources properly matched. \rachel{Only down to 20th magnitude, not beyond.}
 
 \begin{figure}
   \centering
@@ -282,7 +282,7 @@ fainter (as expected). Furthermore, we see that the 0.02 magnitude selection cut
   \includegraphics[width=0.45\textwidth]{photometry_imsim_dithered_50visits}
   \caption{Top: Distribution of magnitude difference between the input and output catalogs.
   Bottom: Difference magnitude between input and output catalogs as a function of the measured magnitude. We considered 50 visits
-  randomly selected from the imSim dithered run. We find similar results for the imSim undithered run and for the PhoSim run.}
+  randomly selected from the imSim dithered run. We find similar results for the imSim undithered run and for the PhoSim run. \rachel{I think this caption may be old - we aren't going to talk about the PhoSim results here, are we?}}
   \label{fig:photometry_a}
 \end{figure}
 
@@ -304,15 +304,15 @@ statistical fluctuations and different observing conditions. The results from th
 \end{figure}
 
 In this figure, we see that the mean of the distribution is compatible with zero and that most sources have a magnitude difference lower
-than 25 mmag given the narrow peak. The presence of long tails are likely due to blends and mismatching or artifacts.
+than 25 mmag given the narrow peak. The presence of long tails is likely due to blends and mismatching or artifacts.
 
 \subsection{PSF checks}
 \label{sec:psf_checks}
 
-In order to ensure the accuracy of shape measurements a robust and accurate estimation of the PSF is required. In the case of imSim, we have
+In order to ensure the accuracy of shape measurements, a robust and accurate estimation of the PSF is required. In the case of imSim, we have
 an analytical input PSF that only depends on the airmass at the time of observation. We can check if the measurement pipeline can reconstruct
 the input PSF. To do so, we select 200 visits randomly, retrieve the measured PSF using the pipeline, and compare this
-to the input model given the observing conditions. We obtain the residual depicted in \figref{psf_residual}, where we see that the PSF model residuals are very small in the center of the image and that the tails are dominated by noise.
+to the input model given the observing conditions. We obtain the residual depicted in \figref{psf_residual}, where we see that the PSF model residuals are very small in the center of the image and that the tails are dominated by noise. \rachel{Are you going to use any of the standard PSF model diagnostics, like fractional size residuals, shape residual distributions, $\rho$ statistics?  It would be useful to have a quantitative rather than qualitative statement here.}
 
 \begin{figure}
 \centering
