@@ -60,17 +60,69 @@ The increase in statistical power from recent cosmological experiments makes the
 model systematics and streamline processing and analysis pipelines given out complete understanding of the inputs and outputs. With the increasing availability of computational resources, this approach has also been extended to photometric redshift galaxy surveys~\citep{2016MNRAS.457..786S,2016ApJ...817...25B} \rachel{We should rethink how we frame this.  First, DES is not just a photometric redshift survey -- let's call it an imaging survey.  Second, Balrog is not actually an end-to-end {\em ab initio} simulation tool as is implied here.  So we need to either make the text a little more nuanced and refer to the concept of injection simulations, or remove the Suchyta ref.}, and similar efforts are seen in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}.
 
 For surveys like the LSST~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
-kind of end-to-end simulations enables successful validation and verification of the processing and analysis pipelines. With $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} the data handling by itself becomes challenging. \rachel{Those numbers are a bit deceptive, because they are for the entire LSST survey, right?  Whereas I think the point that's more relevant is that even simulations of a small subset of the LSST area, as we are doing here, comes with challenges.} There are many approaches to generate these end-to-end simulations. Usually, one would start from a source catalog where the objects are modeled according to certain parameters (sizes, shapes, fluxes), then render images from these sources, add some observational effects and, finally, use a software of choice to detect and measure the different properties of these images. Depending on the approach used to generate these images, some difficulties may arise when trying to relate inputs and outputs, especially in a very deep survey like LSST.
+kind of end-to-end simulations enables successful validation and verification of the processing and
+analysis pipelines. With $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} the
+data handling by itself becomes challenging. \rachel{Those numbers are a bit deceptive, because they
+  are for the entire LSST survey, right?  Whereas I think the point we should emphasize that
+  even the first year of LSST data, or simulations of a small subset of the LSST area, as we are doing here, comes with challenges.} There are many approaches to generate these end-to-end simulations. Usually, one would start from a source catalog where the objects are modeled according to certain parameters (sizes, shapes, fluxes), then render images from these sources, add some observational effects and, finally, use a software of choice to detect and measure the different properties of these images. Depending on the approach used to generate these images, some difficulties may arise when trying to relate inputs and outputs, especially in a very deep survey like LSST.
 
-In this paper, we present and use simulated images that resemble the data that will be produced by
+The LSST Dark Energy Science Collaboration (DESC\footnote{\url{http://lsstdesc.org/}}) has planned a
+series of Data Challenges (DCs) carried out over a period of years, aimed at successively
+more stringent and comprehensive tests of analysis pipelines, to ensure adequate control of
+systematic uncertainties for analysis of the LSST data.  An additional goal of these DCs is
+development of the infrastructure for analyzing, storing, and serving substantial data volumes; even
+while using the outputs of the LSST Data Management (DM) stack as inputs into analysis pipelines,
+the analysis pipelines will need to handle quantities of data beyond those seen by ongoing surveys,
+even after just a single year of LSST data is available.  Moreover, it is anticipated that
+non-negligible subsets of the data may need to be reprocessed to generate systematic error budgets
+(e.g., assessing sensitivity of the results to certain stages of the analysis process by changing
+some parameters in the analysis).  While these DCs may in principle use real
+data from precursor datasets, at least a portion of each one will involve the production of
+simulated LSST data.  Both goals of the DCs dictate a gradual increase in the sophistication and
+volume of the simulated data from the first of these data challenges (DC1) to DC3.
+
+In this paper, we present and analyze simulated images from DC1; these resemble the data that will be produced by
 LSST~\citep{Overview} after 10 years of operation in $r$-band using state of the art tools produced by DESC and LSST. \rachel{Mention area difference?} We characterize the products of this process, measuring photometric, astrometric and clustering properties of the sample. These products encompass single-visit and coadded calibrated exposures (i.e., flattened, background subtracted, etc.) and source catalogs that take up to $\sim 225$ TB of disk space. We perform the 2-point clustering analysis in real and harmonic space for these simulations and assess the impact of potential systematics.
 
-\textcolor{red}{MORE INTRODUCTION!!!}
-\rachel{Big picture suggestion: It might make sense to slightly reframe this in a way that introduces the entire series of DESC data challenges DC1--DC3 as a way of ramping up in scope and complexity to LSST data, both to make increasingly sophisticated tests of analysis pipelines and to build up in the challenge for data processing/storage/serving.  This might involve some additional text plus changes in the narrative.  If you think this is worthwhile, I'm happy to take a stab at it, just let me know.}
+\textcolor{red}{MORE INTRODUCTION!!!} \rachel{Unclear how much more is necessary given the additions
+above.}
 
-This paper is structured as follows: In \secref{inputs}, we describe the inputs for our simulated images. In \secref{dithering}, we discuss the dither strategies used for this study. In \secref{image_generation_pipeline}, we describe the process used to generate LSST-like artificial images. In \secref{catalogs}, we describe the processed data products generated and perform several validation tests. In \secref{analysis}, we present the clustering analyses on the simulated data products. Finally, in \secref{conclusions}, we present some concluding remarks.
+This paper is structured as follows: \secref{design} includes a summary of the factors that informed
+the design of this data challenge.  In \secref{inputs}, we describe the inputs for our simulated images. In \secref{dithering}, we discuss the dither strategies used for this study. In \secref{image_generation_pipeline}, we describe the process used to generate LSST-like artificial images. In \secref{catalogs}, we describe the processed data products generated and perform several validation tests. In \secref{analysis}, we present the clustering analyses on the simulated data products. Finally, in \secref{conclusions}, we present some concluding remarks.
 
-\rachel{Big picture suggestion: The paper structure might be easier for people to follow if we have some kind of high-level flowchart showing what are the steps in producing and analyzing the simulations, and how they map onto paper sections.  I also feel that we are missing an entire section on the factors that drove the simulation design: why did we design it this way?  Currently the design is described in an almost offhand way in the end of section 2 (and a bit in the end of section 3), where it doesn't fit thematically, and no rationale is given.  A bit of the design philosophy is also given in section 4.1, but even there it's incomplete.  So perhaps we could insert a section at this point on the simulation design and workflow, which would explain the factors underlying the DC1 design and provide the flowchart for the various steps in the process?  This might follow nicely from the text that I proposed we add in the intro regarding DC1 in the context of the entire series of data challenges.}
+\section{Data Challenge Design}
+\label{sec:design}
+
+As mentioned in \secref{intro}, the design of this first data challenge (DC1) is driven by a
+combination of several factors: the need to test analysis pipelines for control of systematic
+uncertainty, and to develop infrastructure for processing and serving data in a way that is useful
+to DESC.  While DC2 and DC3 are intended to be full-collaboration activities, DC1 is more limited in
+scope and focus, with a goal of enabling tests of the large-scale structure (LSS) working group
+pipelines for analysis and systematics mitigation of two-point clustering statistics.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{footprint.png}
+\caption{Footprint of the DC1 dataset. We simulate 4 LSST full focal plane pointings which roughly corresponds to 40 deg$^{2}$.}
+\label{fig:footprint}
+\end{figure}
+
+As a stepping stone to eventually producing images covering hundreds to thousands of square degreees
+in DC2 and DC3, DC1 covers a $40$ deg$^2$ footprint.  This is sufficient to enable tests of
+two-point clustering statistics up to $\sim 1$ degree scales.  To ensure the simulated image volume is
+tractable, DC1 only includes images in a single band ($r$-band), but goes to full LSST 10-year
+depth. The final footprint can be seen in \figref{footprint}.  We simulate observations within this
+footprint using the
+\texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}}
+simulated observing cadence generated with the LSST Operations Simulator
+\citep[OpSim;][]{2014SPIE.9150E..15D}.  While translational and rotational dithering will be employed,
+we enable tests of the impact of dithering by generating two sets of images, both without and with
+the dithering strategy described in more detail in \secref{dithering}.
+
+\rachel{It would be valuable to have a list of steps here in the DC1 simulation generation and
+  processing, explaining how these map in more detail onto paper sections.  A flowchart might be
+  even more useful.}
+
 
 %One of the most critical aspects in Stage IV experiments is the characterization of their instrumentation and systematic effects~\citep{2006astro.ph..9591A}. In the case of  LSST~\citep{2008arXiv0805.2366I,ScienceBook,WhitePaper} this becomes especially difficult given its wide variety of cosmological probes. In this paper we present a methodology to characterize the LSST large-scale structure (LSS) transfer function and an analysis of potential systematic effects present in LSS analyses. \CHECK{rewrite}
 % ---------------------------------------------------------------------
@@ -90,17 +142,10 @@ After tiling, the input catalog contains approximately $63.1$ million sources of
 \label{fig:catalog_plots}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{footprint.png}
-\caption{Footprint of the DC1 dataset. We simulate 4 LSST full focal plane pointings which roughly corresponds to 40 deg$^{2}$.}
-\label{fig:footprint}
-\end{figure}
-
 \section{Dither strategy}
 \label{sec:dithering}
 
-As mentioned earlier, we use OpSim's output, which contains a realization of the LSST observing cadence and the survey footprint. Since OpSim divides the sky with hexagonal tiles, the nominal telescope pointings lead to overlapping regions across adjacent tiles that are observed more often than the non-overlapping part of the field-of-view (FOV), resulting in depth non-uniformity on the scale of $\sim$1 degree and consequent systematic uncertainties \citep{2016ApJ...829...50A}. In an effort to mitigate these effects, we implement \textit{dithers} -- offsets in the nominal telescope pointings. Specifically, here we use \textit{large}, i.e., as large as the FOV, random translational dithers, implemented after every visit, and random rotational dithers implemented after every filter change. The specific translational dither strategy is chosen based on a more extensive study of the various (translational) dither strategies in \citet{2016ApJ...829...50A}, where random dithers after every visit are found to be amongst the most effective.
+As mentioned in \secref{design}, we use OpSim's output, which contains a realization of the LSST observing cadence and the survey footprint. Since OpSim divides the sky with hexagonal tiles, the nominal telescope pointings lead to overlapping regions across adjacent tiles that are observed more often than the non-overlapping part of the field-of-view (FOV), resulting in depth non-uniformity on the scale of $\sim$1 degree and consequent systematic uncertainties \citep{2016ApJ...829...50A}. In an effort to mitigate these effects, we implement \textit{dithers} -- offsets in the nominal telescope pointings. Specifically, here we use \textit{large}, i.e., as large as the FOV, random translational dithers, implemented after every visit, and random rotational dithers implemented after every filter change. The specific translational dither strategy is chosen based on a more extensive study of the various (translational) dither strategies in \citet{2016ApJ...829...50A}, where random dithers after every visit are found to be amongst the most effective.
 
 For our purposes, we consider both the undithered and the dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall out of the DC1 region; these sensors were not simulated in order to save computational resources.
 
