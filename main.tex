@@ -181,7 +181,7 @@ The final products of this pipeline are FITS images with information about the o
 \subsection{Image processing}
 \label{sec:image_processing_pipeline}
 
-The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper,2017arXiv170506766B,2015arXiv151207914J} using version 13.0\footnote{\url{https://pipelines.lsst.io/releases/v13_0.html}}. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits. It then combines the single-visit images to produce the so-called coadds. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ (9.7 for the undithered simulation) million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2017arXiv170506766B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
+The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper,2018PASJ...70S...5B,2015arXiv151207914J} using version 13.0\footnote{\url{https://pipelines.lsst.io/releases/v13_0.html}}. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits. It then combines the single-visit images to produce the so-called coadds. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ (9.7 for the undithered simulation) million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2018PASJ...70S...5B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
 \textcolor{red}{Ping Jim Chiang/Chris Walter to write something about the processing workflows for DC1.}
 An example coadd cutout is shown in \figref{coadd_example}.
 
@@ -200,7 +200,7 @@ After being processed, the catalogs are stored at the National Energy Research S
 dataframes}~\citep{mckinney-proc-scipy-2010} and databases for each one of the coadds and input catalogs, providing collaborators some flexibility in data access for their own analyses. As mentioned earlier, the output catalogs contain 10.6 (9,7) million objects covering an area
 of $\sim$43 deg$^{2}$. The catalogs include information about position, size, shape and magnitude for every object. They include several flags that give information about the presence of interpolated/saturated pixels in the objects and whether or not these objects are close to the edge of a CCD.
 
-In order to check the level of realism and the accuracy of the processed catalogs we perform several quality assurance tests.
+In order to check the level of realism and the accuracy of the processed catalogs we perform several quality assurance tests. These tests will be performed in the dithered simulation, however, unless stated, the procedures and results are totally equivalent for the undithered simulation.
 
 \rachel{Big picture comment: you said earlier that both dithered and undithered simulations are generated and processed, but in the paragraph above and many other places you just quote a single number of objecst in the catalogs.  So is it that most places refer to dithered, and undithered ones are only used in specific subsections?  If that's true, this should be explained somewhere prominent.}
 
@@ -468,7 +468,7 @@ for exposures with PSF-FWHM $\approx 0.69\arcsec$ and no more than 10 degrees ap
 |e| = \frac{a^{2} - b^{2}}{a^{2}+b^{2}}
 \end{equation}
 were $a, b$ are the semi-major and semi-minor axes of the 
-in particular, it requires that the median is no larger than 0.05 (SE1) and that no more than 10\% (EF1) of the images exceed 0.1 (SE2). Our analytic (and circularly-symmetric) PSF models should, by design, fulfill these criteria. However, we have to test if the reconstructed PSF also fulfills them. We tested this in the processed data by using the same 520 sensor-visits used to check the DB1 and DF1 criteria. We checked the modulus of the PSF ellipticity in the position of the detected objects in these visits accumulating them in the histogram shown in \figref{SE1_DC1}. We obtained that SE1=0.001 and SE2=0.002, way below the maximum values allowed by the LSST-SRD. In future data challenges, we plan to increase the complexity and realism of the PSF to be closer to the maximum values set by these requirements.
+in particular, it requires that the median is no larger than 0.05 (SE1) and that no more than 10\% (EF1) of the images exceed 0.1 (SE2). Our analytic (and circularly-symmetric) PSF models should, by design, fulfill these criteria. However, we have to test if the reconstructed PSF also fulfills them. The PSF was reconstructed using the PSFEx~\citep{2011ASPC..442..435B} implementation in the LSST software stack. We tested this in the processed data by using the same 520 sensor-visits used to check the DB1 and DF1 criteria. We checked the modulus of the PSF ellipticity in the position of the detected objects in these visits accumulating them in the histogram shown in \figref{SE1_DC1}. We obtained that SE1=0.001 and SE2=0.002, way below the maximum values allowed by the LSST-SRD. In future data challenges, we plan to increase the complexity and realism of the PSF to be closer to the maximum values set by these requirements.
 
 \begin{figure}
 \centering
@@ -499,12 +499,11 @@ In practice, we compute the PSF-corrected moments of stars across the field of v
 \label{fig:TEx}
 \end{figure}
 
-\textcolor{red}{Check with Rachel: Finally, the DESC-SRD requires (WL4-Y10) that the systematic uncertainty in the PSF model defined using the trace of the second moment matrix should not exceed 0.1\% for full-depth (Y10) DESC weak lensing analysis. We randomly select 100 visits, obtain the input and measured PSF, and measure the trace of the second order moments, $T$ with \texttt{GalSim}. We then compute the relative difference, $\Delta T/T$, obtaining the results depicted in \figref{WL4-Y10}. Note: The criterion is for full depth/coadds, I used the median deviation in the individual visits as a proxy but I don't know how well this works...}
-
+Finally, the DESC-SRD requires (WL4-Y10) that the systematic uncertainty in the PSF model defined using the trace of the second moment matrix should not exceed 0.1\% for full-depth (Y10) DESC weak lensing analysis. We randomly select 3000 visits, obtain the input and measured PSF, and measure the trace of the second order moments, $T$ with \texttt{GalSim}. We then compute the relative difference, $\Delta T/T$, obtaining the results depicted in \figref{WL4-Y10}. We find that our dataset shows that the standard deviation of the distribution is 0.05\% lower than the requirement.
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{WL4-Y10}
-\caption{Normalized distribution of the relative difference in the trace of the second order moments, $\Delta T/T$ between input and output PSF. We see that the median of the distribution (WL4-Y10) is 14\%, much larger than the requirement (0.1\%).}
+\caption{Normalized distribution of the relative difference in the trace of the second order moments, $\Delta T/T$ between input and output PSF. We see that the standard deviation of the distribution (WL4-Y10) is 0.05\%, much complying with the requirement (0.1\%).}
 \label{fig:WL4-Y10}
 \end{figure}
 
@@ -570,11 +569,12 @@ TE4 & $5 \times 10^{-7}$ & - & N\\
 \end{table}
 
 \begin{table}[h!]
+\centering
 \begin{tabular}{|c|c|c|c|}
 \hline
 Quantity (DESC-SRD) & Maximum & DC1 & Passed \\
 \hline
-WL4-Y10 (\%) & 0.1 & 14 & N\\
+WL4-Y10 (\%) & 0.1 & 0.05 & Y\\
 %WL5-Y10 (\%) & 0.1 & N/A & N/A\\
 \hline
 \end{tabular}
@@ -585,104 +585,136 @@ WL4-Y10 (\%) & 0.1 & 14 & N\\
 %\rachel{Is this all the KPMs?  I thought some have to do with PSF model quality, etc.}
 %\rachel{Note that there are many figures associated with this subsection, but the text doesn't actually refer to or discuss any of them.}
 
-\section{Analysis of the simulated dataset}
-\label{sec:analysis}
-In this section, we analyze the clustering properties of our output catalog from the end-to-end pipeline and compare with the input catalog.
+\section{Data selection and masking}
+\label{sec:data_selection}
+In this section, we describe how we take advantage of the fact that we have full knowledge about the simulated sources in order to get a ``clean" data sample, we also describe the catalog mask and the maps generated for the different observational effects present in the simulation. Unless explicitly stated, the procedures and selections made in this section will be performed in both the dithered and undithered simulations.
 
 \rachel{One persistent source of confusion in this section (and to some extent the previous one) is the question of what sample is being used.  This confusion shows up in two ways: first, a failure to state what selection criteria were imposed (flags, bright star masks, etc.) or magnitude cuts or \dots so as to avoid bad detections (which affects the interpretation).  Second, a lack of clarity - there are places where it says ``objects'' or ``sources'' and then later in the same section it is implied that a sample of galaxies or stars were used.  I would recommend that somewhere before you start showing results, you have a subsection that clearly defines what samples there are, how exactly they are defined, give them unique names, and use them consistently throughout the text.  Finally, I would note that in some of the places where you mention what selection criteria are used, some flags that I normally think of as important to avoid junk detections are not mentioned, so I would encourage a reconsideration of the flags (and a careful interpretation in light of whatever flag cuts we do use in the end).}
 
-\subsection{Sample selection}
-\label{sec:sample_selection}
-
-One of the advantages of using end-to-end simulations is that, since we have complete knowledge of the input sources, we can quickly identify those detected objects that do not correspond to any input source (artifacts, fake detections, etc.) and study a set of quality cuts that ensures a clean galaxy sample. In this section we are going to study the different variables in the output catalogs to get a clean sample for 2-point clustering analyses.
-
-\subsection{Matching input and output catalogs}
+\subsection{Matching inputs and outputs}
 \label{sec:matching}
 
-End-to-end simulations can potentially allow us to trace each measured photon to its corresponding source in order to characterize the measurement process, however this requires large overhead storage. 
+Using end-to-end simulations, one can potentially trace each measured photon to its corresponding source and fully characterize the image generation and measurement processes. In practice, this is very difficult to do because of the large data overhead (either each photon would have to be tagged somehow in the final image or each pixel would have to contain information about the sources that contributed to it). 
 
-The simplest way to connect two catalogs is by using the positions of the objects in the sky. This approach has been extensively used in the literature~\citep{1977A&AS...28..211D,1983Obs...103..150B,1986MNRAS.223..279W} and performs reasonably well when blending is low, since the probability of confusing two objects is small. However, when blending is high, this approach might be not be sufficient. Then, matching other quantities like flux or shape can become useful~\citep{2008ApJ...679..301B}.
+The simplest way to connect two catalogs is by using the positions of the objects in the sky. This approach has been extensively used in the literature~\citep{1977A&AS...28..211D,1983Obs...103..150B,1986MNRAS.223..279W} and performs reasonably well when blending is low (i.e, when the amount of overlapping sources in the image is low). However, when blending is high, this approach might be not be sufficient. Then, matching other quantities like flux or shape can become useful~\citep{2008ApJ...679..301B}.
 
-We compare two different matching strategies: positional matching, where we find the objects in the truth catalog closest to the detected objects, which we will refer to as \textit{pure spatial matching}; and positional matching with magnitude matching, which we will refer to as \textit{spatial+magnitude matching}, where for each detected object we find objects from the input catalog that lie within one pixel radius ($0.2 \arcsec$). After this, we select the object that is closest in magnitude as long as the difference in magnitude is less than a certain threshold. In our case, we arbitrarily chose $0.5$. If any of these conditions are not fulfilled, then the object is considered not matched.
+We compare two different matching strategies: positional matching, where we find the objects in the truth catalog closest to the detected objects, which we will refer to as \textit{pure spatial matching} and will denote as \textsf{S}; and positional matching with magnitude matching, which we will refer to as \textit{spatial+magnitude matching} and denote as \textsf{S+M}, where for each detected object we find objects from the input catalog that lie within a three pixel radius ($0.6 \arcsec$). After this, we select the object that is closest in magnitude as long as the difference in magnitude is less than a certain threshold. In our case, we conservatively choose $1.0$. Using this approach, if none of the neighbors fulfill these conditions, the detected source is considered unmatched. Note that in the case of pure spatial matching all sources are matched to an object in the true catalog.
 
-In the first approach, all detected objects \rachel{You should comment on whether any flag cuts etc.\ are imposed or it's really everything detected in the DM output catalogs.} are matched to an object in the input catalog where, in principle, the two point statistics should be preserved between the catalogs. \rachel{The overall two-point statistics will be preserved but the two-point statistics for any reasonable color/magnitude-selected subsamples are unlikely to be preserved.} In the second approach, we can potentially bias the results since we omit sources where the accuracy in the magnitude measurement is low. \rachel{However, there are likely to be color/magnitude subsamples where this approach is better.  Also, should clarify ``bias the results'' - what results?  The magnitudes?  The two-point statistics?} To compare both approaches, we check the possible biases in the measured magnitude $\Delta$mag = mag$_{\rm meas} - $mag$_{\rm true}$. In \figref{matching_comparison}, we see that spatial matching is sufficient to ensure a good match in magnitude as evidenced by the median value of $\Delta$mag compared with the spatial+magnitude matching. This figure also shows that spatial matching is more affected by the presence of outliers than the spatial+magnitude matching, as expected by the clipping performed on the latter. The evolution of the mean and median $\Delta$mag with the magnitude shows that objects with magnitudes $\sim 18-21$ usually are measured as having a brighter flux, while objects with magnitudes $\sim 23-25$ appear dimmer than the inputs. This is likely a consequence of the deblender assigning a larger flux to the brightest members of the blend, while the fainter members seem to lose flux. Finally, at the faint end (mag $\sim 26$) we can only detect those that appear brighter than they actually are due to statistical fluctuations. This results in a negative value for the mean and median $\Delta$mag.
+In both cases, we build a \texttt{KDTree}~\citep{scikit-learn} using the positions of detected objects with \texttt{detect\_isPrimary=True} which ensures that the source has been fully deblended and was detected in the inner part of the coadd regions (see~\citet{2018PASJ...70S...5B} and ~\citet{2018PASJ...70S..25M} for more details). In order to speed up the processing and to reduce the usage of computational resources we build the \texttt{KDTree} using output sources from 30 randomly selected coadd regions (patches) in the dithered simulation\footnote{The undithered simulation yields the same results and conclusions.} containing 975,605 detected sources fulfilling the aforementioned condition (we will refer to these as primary outputs or primary detected sources). Using this sample, we find that 95\% of these sources are matched using the spatial+magnitude matching (by construction all of them are matched using the pure spatial matching approach). An interesting metric is to check the fraction of primary detected sources that have been matched to the same exact object in the input catalog, which we will denote as $f_{\mathrm{multi}}$. This is an unusual occurrence, however, imagine the case where an spurious fluctuation has been marked as a source, this fluctuation is primary detected source but has no counterpart in the input catalog, another example are bright objects that have been shredded and are detected as several fainter sources. We find that these kind of matches is 100 times more likely to happen using the pure spatial matching ($f_{\mathrm{multi}} = 3 \times 10^{-3}$) than in the spatial+magnitude matching ($ f_{\mathrm{multi}} = 2 \times 10^{-5}$). This is expected because, in the cases where the primary detected source is a random fluctuation or a shredded source, it is unlikely that the measured flux is close to the flux of a neighboring source thus producing an unmatched source in the case of using spatial+magnitude matching. We also find that both approaches select the same best matching source in the input catalog for only 68\% of the primary detected sources for which we found a suitable match. These differences can be due to several reasons, e.g. objects with a poorly determined centroid positions that are close to other objects in the input catalog (remember that the input catalog contains objects up to $r=28$), objects with poorly determined fluxes (low SNR), etc. 
+
+We compare as well the astrometric and photometric residuals using both approaches in~\figref{matching_comparison}. We can see that the median astrometric residuals are similar in both cases and that the search radius (3 pixels=600 mas) for the spatial+magnitude matching is large enough to map the overall distribution. On the other hand, the resulting median photometric residual seems strongly biased in the case of using just pure spatial matching, and the scatter is very large as shown by the error-bars. However, in the case of spatial+magnitude matching, the median residuals and their error-bars are smaller, as expected given the maximum magnitude threshold. We can see that in this case the biases are still significant. This can be mitigated using a smaller tolerance in magnitude (for example using 0.5 mag instead of 1 mag) but that implies an overall reduction of the number of matched primary detected sources. Finally, taking a look at the magnitude difference between inputs and outputs of individual matched sources using the spatial+magnitude technique, we can see that this distribution is centered around zero, except for very bright sources ($r < 17$), where saturation prevents us from having an accurate determination of the fluxes. 
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{matching_comparison_galaxies.pdf}
-\includegraphics[width=0.9\columnwidth]{mag_hist_total.pdf}
-\caption{Mean (top), and median (middle) of $\Delta$mag as a function of the true magnitude, with pure spatial matching (blue) and spatial+magnitude matching (orange). Bottom: Histogram of $\Delta$ mag.}
+\includegraphics[width=0.9\columnwidth]{astrometry_residual_comparison}
+\includegraphics[width=0.9\columnwidth]{photometry_residual_comparison}
+\caption{Top: Normalized distribution of measured astrometric residuals (in the RA axis but similar results are found for the Dec. axis) for pure spatial matching (blue) and spatial+magnitude matching (orange), the median values of each distribution are marked by dashed lines and dashed-dotted lines respectively. Bottom: Median per-bin photometric residual as a function of measured magnitude for pure spatial matching (green), and spatial+magnitude matching (orange) using 30 magnitude bins between $r$-band magnitude 10 and 30. We also show the individual residuals for the matched objects using spatial+magnitude matching (blue dots).}
 \label{fig:matching_comparison}
 \end{figure}
 
-We also compared the angular power spectra \rachel{computed how?  What software?} of the detected objects and the matched input objects in \figref{matching_cls}. We see that the spatial matching recovers the power spectrum well, with some wiggling at very low scales due to mismatches and small differences in position between the detected and the input catalogs. \rachel{Is that really the case?  If you're referring to the wiggles in the blue curve around ell of 2000-5000, then I thought that corresponds to scales of around 0.05 degrees or 2 arcmin, which is much larger than the scales of mismatching or centroid offsets for matches.} In the case of spatial+magnitude matching, we see that the power for the matched catalog is consistently lower. This is due to objects that are detected but not matched to any object in the true catalog, since this effect disappears when we just consider the objects that have been matched. \rachel{What is the interpretation though?  If they are detected but not matched, then are they junk?  I am not sure how to interpret this.  I think this goes back to my question of what selection criteria are being imposed - is this a mix of all stars and galaxies down to very faint magnitudes with no junk detection etc.?}
+At the end of the day, different matching techniques have different potential applications and strengths. In our case, we are going to use these matching techniques to provide a clean (flux-limited) sample to perform two-point clustering analyses. Given that magnitude precision and accuracy will be important for our sample selection, we will use the spatial+magnitude matching technique to clean the sample from artifacts and poorly measured sources.
+
+\subsection{Sample selection}
+\label{ssec:sample_selection}
+
+In this subsection we are going to use the spatial+magnitude technique to identify flags or thresholds in variables that may allow us to get a clean sample for clustering. In principle, given that the LSST DM software stack is essentially the same as the reduction pipeline used in~\citet{2018PASJ...70S..25M}, we could potentially use similar cuts. However, note that we are working in $r$-band only so some of the required cuts cannot be performed. In addition to this, some variables, like the so-called blendedness parameter, are not available in the version of the LSST DM software stack that we used to process the data. As a consequence, we propose our own selection cuts, although we use the criteria in~\citet{2018PASJ...70S..25M} as guidance.
+
+The methodology to perform the selections is simple: we check the primary detected sources that have no match using the spatial+magnitude technique and we compute the fraction of objects that are flagged, $f_{u,i} = N_{flag_{i}, unmatched}/N_{total, unmatched}$, and compare it to the corresponding fraction of flagged matched primary detected sources, $f_{m,i} = N_{flag_{i}, matched}/N_{total, matched}$, for each one of the flags, $flag_{i}$, in the catalog. If the ratio $f_{u,i}/f_{m,i}$ is larger than 50 for a particular flag and $f_{m,i} < 0.01$, i.e., less than 1\% of the matched primary sources have that flag, it means that the presence of that flag is a good indicator of problematic sources and get rid of the sources with those flags. We also repeat the same procedure looking for the absence of a certain flag or whether a quantity is frequently measured as \texttt{NaN} and check for redundant cuts.
+
+As a result, we are going to eliminate from our selection all the sources that fulfill one of the following conditions:
+\begin{itemize}
+\item \texttt{detect\_isPrimary = False}. As discussed earlier, this means that the source has not been fully deblended or is outside of the inner region in a coadd.
+\item \texttt{base\_NaiveCentroid\_flag = True}. This means that there is a general failure during the source measurement.
+\item \texttt{base\_SdssShape\_flag\_psf = True}. This means that there is a failure in measuring the PSF model shape in that position.
+\item \texttt{ext\_shapeHSM\_HsmSourceMoments\_flag\_not\_contained = True}. This means that the center of the source is not contained in its footprint bounding box.
+\item \texttt{modelfit\_DoubleShapeletPsfApprox\_flag = True}. This means that there is a general failure while performing the double-shapelet approximation to the PSF model in the position of this source (see Appendix 2 in~\citet{2018PASJ...70S...5B} for more details).
+\item \texttt{base\_PixelFlags\_flag\_interpolated = True}. This means that there are interpolated pixels in the source's footprint.
+\item \texttt{base\_PixelFlags\_flag\_interpolatedCenter = True}. This means that the center of a source is interpolated.
+\item \texttt{base\_PixelFlags\_flag\_saturatedCenter = True}. This means that the center of a source is saturated.
+\item \texttt{base\_ClassificationExtendedness\_flag = True}. This means that there is a general failure when using the extendedness classifier.
+\item \texttt{modelfit\_CModel\_flags\_region\_usedInitialEllipseMin = True}. This means that the pixel region for the final model fit is set to the minimum bound used in the initial fit.
+\item \texttt{base\_SdssShape\_x/y = NaN}. This means that the centroid position (either in the x or y axes) is measured as NaN.
+\item \texttt{base\_SdssCentroid\_x/yErr = NaN}. This means that the error in the centroid position (either in the x or y axis) is measured as NaN.
+\end{itemize}
+
+After these cuts we keep 8.25 million objects in the dithered catalog and 7.51 million objects in the undithered catalog. We will refer to this sample as the \textit{clean sample}. 
+
+We now focus on how many of these objects are matched as a function of magnitude and signal-to-noise ratio. In \figref{snr_mag_selection}, we can see that the fraction of unmatched objects for $r < 26$ is very low and that after this, it greatly increases. We also see that for objects with SNR$>6$ the fraction of unmatched objects starts to be negligible. These two thresholds ($r < 26$ and/or SNR$>6$) look like natural selection cuts to ensure good quality data. However, we will analyze further these magnitude and SNR thresholds before imposing any cuts to the sample in subsequent sections.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{cl_comparison_matching.pdf}
-\caption{Relative difference between the angular power spectrum measured for the detected objects and the matched objects in the input catalog with spatial matching compared to all detected objects (blue, solid line), spatial+magnitude matching compared to all detected objects (orange, dash dotted line), and spatial+magnitude matching compared to matched objects using this schema (green dashed line).}
-\label{fig:matching_cls}
+\includegraphics[width=0.9\columnwidth]{unmatched_fraction_magnitude.pdf}
+\includegraphics[width=0.9\columnwidth]{unmatched_fraction_SNR.pdf}
+\caption{Top: Ratio of unmatched to matched primary detected sources after selection cuts as a function of magnitude. The dashed vertical lines show the median depth for the dithered (orange) and undithered (green) fields. Bottom: Ratio of unmatched to matched primary detected sources after selection cuts as a function of SNR.}
+\label{fig:snr_mag_selection}
 \end{figure}
 
-The problem with these matching techniques is the lack of details about blended objects. For analyses involving blending and/or very small scale information, different approaches should be considered.
-
-% ----------------------------------------------------------------------
-
-\subsection{Generating depth maps}
+\subsection{Depth maps and footprint masking}
 \label{sec:masking}
 
-In order to estimate the depth in the coadd catalogs, we select stars using the extendedness-based classifier: \texttt{base\_ClassificationExtendedness\_value==0}. This ensures that we are selecting
-PSF-like objects. \rachel{You should  refer to Bosch+18 and use the results there to impose a magnitude cut, since for faint objects such a sample will be heavily contaminated by galaxies.} After this, we use two different approaches:
+In order to estimate the depth in the coadd catalogs we generate a HEALPix\footnote{\url{http://healpix.sf.net}}~\citep{2005ApJ...622..759G} map containing the detected primary sources in the \textit{clean sample} from the previous subsection. Then, for each HEALPix pixel, we compute the median SNR of the objects in that pixel as a function of the magnitude and use the magnitude at which SNR is closest to 5.
 
-\begin{enumerate}
-\item In the first approach we generate a HEALPix\footnote{\url{http://healpix.sf.net}}~\citep{2005ApJ...622..759G} map containing the PSF-like objects detected with a signal-to-noise ratio (SNR) $\geq 5$ (\texttt{base\_PsfFlux\_flux/base\_PsfFlux\_fluxSigma>=5}), and we assign to each HEALPix pixel the value of the
-dimmest object contained in it. We will refer to this method as method \#1.
-\item The second procedure also generates a HEALPix map containing the PSF-like objects. Here, for each HEALPix pixel, we compute the median SNR as a function of the magnitude and use the magnitude at which SNR is closest to 5. We will refer to this method as method \#2.
-\end{enumerate}
-
-These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_maps}. We also check that the maps built selecting galaxies instead of stars are compatible as well. \rachel{For galaxies, did you still use PSF flux?} We will select our footprint according to the depth map using the second methodology \rachel{as applied to stars?}. These maps are also shown in \figref{depth_maps}.
-
-\begin{figure*}
+These maps are shown in \figref{depth_maps}. We can see that the dithered simulation is indeed very uniform ($> 50\%$ of its footprint lie in the same exact depth bin) showing the success of the dither strategy. However, we can see that in the undithered simulation, as expected, there are zones with a higher depth (the overlap of the pointing positions) and a reduced median depth.
+\begin{figure}
 \centering
-\includegraphics[width=0.45\textwidth]{dithered_depth.png}
-\includegraphics[width=0.45\textwidth]{dithered_difference.png}
-\includegraphics[width=0.45\textwidth]{undithered_depth.png}
-\includegraphics[width=0.45\textwidth]{undithered_difference.png}
-\caption{Left column: 5-$\sigma$ depth for the dithered (top) and undithered (bottom) fields using the method \#2 in the text. Right column: Relative difference between the depth estimated using the methods presented in the text for the dithered (top) and undithered (bottom) fields.}
+\includegraphics[width=0.9\columnwidth]{dithered_depth.png}
+%\includegraphics[width=0.45\textwidth]{dithered_difference.png}
+\includegraphics[width=0.9\columnwidth]{undithered_depth.png}
+%\includegraphics[width=0.45\textwidth]{undithered_difference.png}
+\includegraphics[width=0.9\columnwidth]{depth_comparison_1d.pdf}
+\caption{5-$\sigma$ depth for the dithered (top) and undithered (middle) fields. There is an increased depth in the overlapping parts of the pointings in the undithered field but the median depth is lower. We also show the 1D distribution of depth (bottom) for both fields for easier comparison.}
 \label{fig:depth_maps}
-\end{figure*}
-
-\subsection{Bright objects masking and data selection}
-
-Bright objects produce significant effects in the image that affect the detection and measurement of neighboring objects. Some examples of these effects include saturation, large diffraction spikes, obscuration of neighboring sources, etc. Thus, masking a region around these sources creates a more complicated footprint but greatly simplifies the analysis of systematic effects. In order to evaluate the effects from these sources, we take the stars from the input catalog, bin them according to their magnitude, and count the number of sources detected in a given radius around the stars. One caveat is that the number of stars in an aperture of radius $\theta_{1} > \theta_{0}$, depends on the number of stars on the aperture with radius $\theta_{0}$. \rachel{The previous sentences have some confusion: one says you count ``sources'' which sounds like stars/galaxies with some selection criteria, but the next says you count ``stars''.  The figure actually implies in the vertical axis label that you are counting galaxies.  Should clarify.  Besides the ``sources'' versus ``stars'' question, selection criteria are relevant. (Are you using flags to eliminate spurious detection or not, which affects the interpretation of  the results?)} Therefore, it is better to use a differential measurement. Results of this are shown in \figref{galdens_derivative}. We see that there is an excess of sources at distances less than 10$\arcsec$ for the brightest stars. This is mainly due to the shredding of these bright sources around their outskirts. Bright noisy pixels are detected as individual (point-like) sources resulting in fake source detections. On the other hand, we do not see any obscuration present on scales that we are interested in (1 arcmin and higher). We conclude that no additional masking is required but a careful object selection becomes important for clustering analyses. \rachel{I don't see how you can conclude there is no obscuration from this plot; can you clarify?}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{dngal_dtheta.png}
-\caption{Mean increment in the number of detected objects around stars in the 95th flux percentile (magenta), the 75th percentile (cyan), the 55th percentile (red), the 35th percentile (green) and the 15th percentile (blue). We see that for the brightest percentiles there is no obscuration present but a overdensity of targets. These are mainly noise peaks identified as point sources. \rachel{Why would that be happening with equal frequency at all separations on this plot?  At some point the effect has to stop, and until that's been confirmed, I don't think we can definitively say this is the explanation as opposed to other explanations.} \rachel{Big picture question about this plot: why is the area factor not normalized out?  I mean, why are you not showing increment in {\em number density} rather than counts, so that a perfectly flat background of sources would give a flat result?  I think it's far easier to interpret such a plot than a plot of differential counts, which has geometric factors included.}}
-\label{fig:galdens_derivative}
 \end{figure}
 
-We also check the detection efficiency of galaxies in our sample. We selected galaxies in the catalog using the variable \texttt{base\_ClassificationExtendedness\_value} as a star/galaxy separator (as in \citealt{2017arXiv170506766B}). Objects where this variable is equal to 1 are more likely to be galaxies, whereas the objects where it is 0 are more likely to be stars. We also make some quality cuts by selecting the objects with \texttt{detect\_isPrimary==True}. The selection in this variable ensures that the object has been fully deblended and that the detection was not close to the edge of a coadded image. The results are in \figref{completeness}, where we compute the ratio of detected objects classified as galaxies and the input number of galaxies, $\varepsilon$, as a function of magnitude. We check this ratio for both the dithered and undithered catalogs and in pixels where the depths were higher than 25.7 and 26.25. We used \texttt{CMODEL\_MAG} as the reference magnitude for the detected objects and the true magnitude for the input galaxies. 
-
+We also check the depth by checking the detection efficiency of stars as a function of magnitude. To do so, we use the stars in the input catalog and select those that lie within the simulated footprint, after this, we match them using the spatial+magnitude technique described in previous sections. Finally, we compute the number of detected objects in the \textit{clean sample} matched to stars divided by the number of stars in the input catalog as a function of the magnitude of the matched object in the input catalog. The results can be seen in \figref{stellar_detection_efficiency}. We see that there is a high efficiency $> 80\%$ up to $r \approx 26$. 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{completeness.png}
-\caption{Number of detected objects classified as galaxies divided by the number input galaxies as a function of magnitude. We see that the detection efficiency is larger than 80\% for the most part and a considerable fraction of objects with magnitude lower than 20 are being misclassified. \rachel{Caption should say what the numbers in the legend mean.}}
-\label{fig:completeness}
+\includegraphics[width=0.9\columnwidth]{stellar_detection_efficiency.pdf}
+\caption{Ratio of number of detected objects matched to stars in the \textit{clean sample} and number of stars in the input catalog as a function of magnitude for the dithered (blue) and undithered (orange).}
+\label{fig:stellar_detection_efficiency}
 \end{figure}
 
-\figref{completeness} shows that selecting galaxies with \texttt{base\_ClassificationExtendedness\_value==1}, \texttt{detect\_isPrimary==True} and \texttt{CMODEL\_MAG $>$ 21} is enough to get rid of most potential problems with fake source detections. We confirmed this by performing visual inspection on the images. We noticed that fake sources happen close to very bright objects. In addition, it seems that selecting \texttt{CMODEL\_MAG $<$ 25.3} ensures high completeness ($\sim 80\%$). Uniformity is ensured by selecting the galaxies that lie within HEALPixels where the depth is $\geq 25.3$. After these selection cuts, we obtain 4.4 million galaxies for the dithered field and 4.3 for the undithered field. \rachel{It would be useful to compare the results in this plot with the Bosch+ results for star/galaxy sample completeness and purities, to see if our findings are consistent.  Also, I think we need to discuss this result in light of effects that could be present in the data: e.g., the impact of masking around bright stars, the impact of blending, \dots}
-% ----------------------------------------------------------------------
+Given the results in the previous subsection and this section, we decide to use only the galaxies that lie in pixels with limiting magnitude $r \geq 26$ and select those objects with magnitude $r \leq 26$. This cut is roughly equivalent to selecting $SNR > 6$ and thus, we eliminate most of the artifacts in the sample. After these cuts we obtain 7.16 and 6.17 million objects for the dithered and undithered fields respectively.
 
-\subsection{Clustering results}
+\subsection{Bright object masking}
+
+Bright objects produce significant effects in the image that affect the detection and measurement of neighboring objects. Some examples of these effects include saturation, large diffraction spikes, obscuration of neighboring sources, etc. Thus, masking a region around these sources creates a more complicated footprint but greatly simplifies the analysis of systematic effects. 
+
+In order to evaluate the effects, we follow an analogous process to those described in \citet{2018PASJ...70S...7C} and \citet{2018PASJ...70S..25M}. Using the position of stars in the input catalog, that lie within the considered footprint, and with input magnitudes in the range $m_{1} < r < m_{2}$ we count all primary detected objects (avoiding any other selection cuts) in a given radius $\theta$, and compute the median of the set, $N_{neighbors}$. We repeat this for different radii and magnitude ranges. Finally, we repeat this process for all stars in the input catalog in the footprint and compute $N_{neighbors, tot}$ and compute the ratio $y = N_{neighbors}/N_{neighbors, tot}$. We fit this ratio to an error function:
+\begin{equation}
+y_{model} = \mathrm{Erf}\left({\theta/\theta_{mask}}\right)
+\end{equation}
+This fit is performed for the first three bins in stellar magnitude that we consider, $r < 14$, $14 < r < 16$, and $16 < r < 18$. We ignore the points with $\theta < 10$ arcsec for the fit. Following \citet{2018PASJ...70S...7C} we use the point where the density reaches 95\% as masking radius, i.e., $r_{mask,fit} = \mathrm{Erf}^{-1}(0.95) \theta_{mask}$. After this, we compare to equation (1) in \citet{2018PASJ...70S..25M}:
+\begin{equation}
+r_{mask,HSC} = 200\times 10^{0.25(7-m_{BS})} + 12 \times 10^{0.05(16-m_{BS})} 
+\end{equation}
+Where $m_{BS}$ is the magnitude of the bright star to mask. Note that this prescription is specific for HSC. However, the LSST instrument and observing conditions are different. This is why we decided to rescale $r_{mask,HSC}$ by the ratio of mean seeing in LSST and HSC.
+\begin{equation}
+r_{mask,LSST} = r_{mask,HSC} \frac{1.04\arcsec}{0.58\arcsec}
+\end{equation}
+Where 1.04\arcsec is the mean seeing in DC1, and 0.58\arcsec is the mean seeing reported in~\citet{2018PASJ...70S..25M}. We obtain the results depicted in \figref{bright_object_masking}. We see that the error function describes well the behavior for $N_{neighbors}/N_{neighbors,tot}$. We also see that the masking radius, $r_{mask,LSST}$, using the rescaled prescription set by \citet{2018PASJ...70S..25M} is a pretty good approximation for our data. In particular, we find that the ratio $r_{mask,fit}/r_{mask,LSST} \approx 1.14$. This 14\% disagreement can be related to the fact that we chose a very simple rescaling based on the mean seeing rather than the delivered PSF size. As a result, we decide to use $r_{mask, DC1} = 1.14 r_{mask, LSST}$ around stars in the input catalog with $r < 16$, since this is the saturation limit for LSST. We generate a high-resolution mask using \texttt{HEALPix} with $N_{side}=16384$, i.e. $\approx 12.9 \arcsec$, then we downsample this map to $N_{side}=2048$ and get rid of the objects that lie within pixels that have more than 50\% of their area masked. This results into a total area loss of $\approx 27.5\%$ of our footprint, which can be seen in \figref{bo_mask}. After these cuts we keep 5.27 million in the dithered field and 4.52 million in the undithered field.
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{bright_object_masking}
+\caption{Ratio of the median number of primary detected objects neighboring a star in a certain magnitude range in the input catalog to the median number of objects detected any star in the input catalog, as a function of the distance to the star $\theta$. Different symbols and colors represent different magnitude ranges for the stars in the input catalog considered. The shadowed regions represent the best fit masking radius, $r_{mask,fit}$ with their uncertainties and the vertical lines correspond to $r_{mask,LSST}$ evaluated at the mean magnitude in each bin.}
+\label{fig:bright_object_masking}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{bo_mask}
+\caption{Bright object mask. This map shows with 1 (yellow) the pixels that we will consider for our analysis, and with 0 (blue) the regions of the sky that will not be considered in our analysis using this mask. We use a high-resolution ($\approx 12.9 \arcsec$) map to mask around bright stars ($r < 16$) and then, we downsample the map to a lower resolution ($\approx 1.7 \arcmin$) and get rid of the pixels where the masked area by bright stars is higher than 50\% of the pixel.}
+\label{fig:bo_mask}
+\end{figure} 
+\subsection{Blending}
+As previously mentioned, our output catalogs do not include any estimation of overlap between sources, or \textit{blendedness}~\citep{2018PASJ...70S...5B}. Highly-blended objects are more likely to have biased estimations of the centroid position, shape, and fluxes. This can lead to overall biases in the estimated photometric redshifts and cosmological parameters. Given that the mean seeing in DC1 is larger than in HSC, the impact of blended objects is likely to be larger. In the case of \citet{2018PASJ...70S..25M}, the cut in the blendedness parameter affects only 1\% of the objects; we expect this number to be larger in our case. Using specialized image simulations from~\citet{Sanchez19} with the LSST nominal seeing in $r$-band, we find that if we select objects with $r < 26$ and SNR $>1$, the fraction of objects with blendedness $ < 10^{-0.375}$ is $\approx 6.3\%$. If we raise the minimum SNR to 6, this fraction is lowered to $\approx 2.4\%$. We do not expect that the inclusion of these objects in our two point measurements will affect the range of scales that we are going to consider in this work. In order to quantify this, a careful study of the impact of blending in clustering measurements is necessary but this is out of the scope of this work.
+
+\section{Two-point clustering results}
 \label{sec:results}
 
 \rachel{Big picture question: This subsection starts out ``In this section, we analyze the two point clustering statistics\dots'' - but you don't.  This is a subsection.  It's only in the next subsection that you define and show plots of the two-point statistics.  So I think either this subsection should be combined with the next one, {\em or} the two subsections should be promoted to a section together, perhaps with 6.6 as well.  Perhaps combining the subsections would be better, keeping them within this ``Analysis'' section.}
 
 In this section, we analyze the two point clustering statistics for both the dithered and undithered catalogs in real and harmonic space and check the consistency between the input and measured observables. When comparing the input and output catalogs, some subtleties arise. For example, selecting a galaxy sample in the input catalog with $m_{\rm low} < m_{\rm true} < m_{\rm high}$, where $m_{\rm low}$ is the lower $r$-band magnitude threshold, $m_{\rm true}$ is the true $r$-band magnitude of the object and $m_{\rm high}$ is the upper $r$-band magnitude threshold, and a second galaxy sample in the output catalog with $m_{\rm low} < m_{\rm measured} < m_{\rm high}$, with $m_{\rm measured}$ being the $r$-band measured magnitude, results in a different power-spectra. The power spectrum in the first (selected according to true magnitude) sample will have a larger overall power than the second (selected according to measured magnitude) sample. This is due to the fact that the second sample includes galaxies that are fainter, resulting in a wider window function. \rachel{This sentence is pretty mystifying.  You haven't said how/why does the output catalog are fainter, given the same magnitude cuts.  Presumably, you are referring to the impact of noise, which will preferentially scatter in more faint galaxies than it will cause galaxies to be lost on the bright end.  But what about blends, can we reason about what that should do?  Also, the connection between ``include fainter galaxies'' and ``wider window function'' isn't really made.  I presume you are connecting fainter galaxies with higher redshift, but again, it's better to be explicit.}
 
-\subsection{2-point correlation function}
 Using the samples presented in previous sections \rachel{You've defined several different samples in previous sections, so this statement is not entirely clear.}, we measure the 2-point correlation function using \texttt{TreeCorr}~\citep{2004MNRAS.352..338J}, selecting the Landy \& Szalay estimator~\citep{1993ApJ...412...64L},
 \begin{equation}
 w(\theta) = \frac{DD - 2 DR + RR}{RR}
