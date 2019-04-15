@@ -1,29 +1,19 @@
-%
-% ======================================================================
 \RequirePackage{docswitch}
-% \flag is set by the user, through the makefile:
-%    make note
-%    make apj
-% etc.
 \setjournal{\flag}
 
-%\documentclass[\docopts]{\docclass}
-
-% You could also define the document class directly
 \documentclass[twocolumn]{aastex62}
 % Custom commands from LSST DESC, see texmf/styles/lsstdesc_macros.sty
 \usepackage{lsstdesc_macros}
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usepackage{mwe}
+\usepackage[htt]{hyphenat}
 \usepackage{graphicx}
 \graphicspath{{./}{./figures/}}
 \bibliographystyle{aj}
 \extrafloats{100}
 \usepackage{hyperref}
 % Add your own macros here:
-%\newcommand{\arcmin}{\unit{arcmin}}
-%\newcommand{\arcsec}{\unit{arcsec}}
 \newcommand{\rachel}[1]{{\textcolor{cyan}{{\textbf (RM: #1)}}}}
 
 
@@ -38,33 +28,22 @@
 
 \begin{abstract}
 
-The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the current version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also show that dithering reduces the impact of potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
+The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the current version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also analyze different dithering strategies and check their impact mitigating potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
 \end{abstract}
 
 % Keywords are ignored in the LSST DESC Note style:
 \dockeys{large-scale structure of the universe}
 
-%\maketitlepost
-
-%\maketitle
-% ----------------------------------------------------------------------
-%
-
 \section{Introduction}
 \label{sec:intro}
-\rachel{Should enlarge font in tick and axis labels to be comparable to font size in the paper
-  text in all of the following figures: 4, 5, 6, 7, 8, 9, 11, 12, 13, 18, 19, 20.}
-\rachel{For plots with many colored lines, I strongly recommend using a color blind-friendly color palette.  See section 17.1 of the DESC style guide https://github.com/LSSTDESC/Style\_Guide/raw/compiled/Style\_Guide.pdf, which has some clear and easy-to-adopt recommendations complete with code snippets, so it should be an easy change.}
 
 The increase in statistical power from recent cosmological experiments makes the modeling and mitigation of systematic uncertainties key to extracting the maximum amount of information from these surveys. More traditional in high energy particle physics~\citep{Brun:118715, 2006JHEP...05..026S}, end-to-end simulations provide a unique framework to
-model systematics and streamline processing and analysis pipelines given out complete understanding of the inputs and outputs. With the increasing availability of computational resources, this approach has also been extended to photometric redshift galaxy surveys~\citep{2016MNRAS.457..786S,2016ApJ...817...25B} \rachel{We should rethink how we frame this.  First, DES is not just a photometric redshift survey -- let's call it an imaging survey.  Second, Balrog is not actually an end-to-end {\em ab initio} simulation tool as is implied here.  So we need to either make the text a little more nuanced and refer to the concept of injection simulations, or remove the Suchyta ref.}, and similar efforts are seen in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}.
+model systematics and streamline processing and analysis pipelines given out complete understanding of the inputs and outputs. With the increasing availability of computational resources, this approach has also been extended to imaging surveys~\citep{2016ApJ...817...25B}, and similar efforts are being undertaken in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}.
 
 For surveys like the LSST~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
 kind of end-to-end simulations enables successful validation and verification of the processing and
-analysis pipelines. With $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} the
-data handling by itself becomes challenging. \rachel{Those numbers are a bit deceptive, because they
-  are for the entire LSST survey, right?  Whereas I think the point we should emphasize that
-  even the first year of LSST data, or simulations of a small subset of the LSST area, as we are doing here, comes with challenges.} There are many approaches to generate these end-to-end simulations. Usually, one would start from a source catalog where the objects are modeled according to certain parameters (sizes, shapes, fluxes), then render images from these sources, add some observational effects and, finally, use a software of choice to detect and measure the different properties of these images. Depending on the approach used to generate these images, some difficulties may arise when trying to relate inputs and outputs, especially in a very deep survey like LSST.
+analysis pipelines. With a total of $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} after 10 years, the
+data handling by itself becomes challenging even when considering a small subset of the LSST area.  
 
 The LSST Dark Energy Science Collaboration (DESC\footnote{\url{http://lsstdesc.org/}}) has planned a
 series of Data Challenges (DCs) carried out over a period of years, aimed at successively
@@ -73,7 +52,7 @@ systematic uncertainties for analysis of the LSST data.  An additional goal of t
 development of the infrastructure for analyzing, storing, and serving substantial data volumes; even
 while using the outputs of the LSST Data Management (DM) stack as inputs into analysis pipelines,
 the analysis pipelines will need to handle quantities of data beyond those seen by ongoing surveys,
-even after just a single year of LSST data is available.  Moreover, it is anticipated that
+even after just a single year of LSST data is available. Moreover, it is anticipated that
 non-negligible subsets of the data may need to be reprocessed to generate systematic error budgets
 (e.g., assessing sensitivity of the results to certain stages of the analysis process by changing
 some parameters in the analysis).  While these DCs may in principle use real
@@ -82,13 +61,10 @@ simulated LSST data.  Both goals of the DCs dictate a gradual increase in the so
 volume of the simulated data from the first of these data challenges (DC1) to DC3.
 
 In this paper, we present and analyze simulated images from DC1; these resemble the data that will be produced by
-LSST~\citep{Overview} after 10 years of operation in $r$-band using state of the art tools produced by DESC and LSST. \rachel{Mention area difference?} We characterize the products of this process, measuring photometric, astrometric and clustering properties of the sample. These products encompass single-visit and coadded calibrated exposures (i.e., flattened, background subtracted, etc.) and source catalogs that take up to $\sim 225$ TB of disk space. We perform the 2-point clustering analysis in real and harmonic space for these simulations and assess the impact of potential systematics.
-
-\textcolor{red}{MORE INTRODUCTION!!!} \rachel{Unclear how much more is necessary given the additions
-above.}
+LSST~\citep{Overview} after 10 years of operation in $r$-band using state of the art tools produced by DESC and LSST. However, these data cover a small fraction ($\approx$ 40 deg$^{2}$) of the total LSST area. We characterize the products of this process, validating them, and checking their performance against the requirements set by LSST and DESC in their respective Science Requirements Documents~\citep{LPM-17, 2018arXiv180901669T}. These data products encompass single-visit and coadded calibrated exposures (i.e., flattened, background subtracted, etc.) and source catalogs that take up to $\sim 225$ TB of disk space. We perform the two-point clustering analysis in harmonic space for these simulations and assess the impact of different observing conditions/foregrounds as potential sources of systematic effects and how dithering can mitigate them. 
 
 This paper is structured as follows: \secref{design} includes a summary of the factors that informed
-the design of this data challenge.  In \secref{inputs}, we describe the inputs for our simulated images. In \secref{dithering}, we discuss the dither strategies used for this study. In \secref{image_generation_pipeline}, we describe the process used to generate LSST-like artificial images. In \secref{catalogs}, we describe the processed data products generated and perform several validation tests. In \secref{analysis}, we present the clustering analyses on the simulated data products. Finally, in \secref{conclusions}, we present some concluding remarks.
+the design of this data challenge.  In \secref{inputs}, we describe the inputs for our simulated images. In \secref{dithering}, we discuss the dither strategies used for this study. In \secref{image_generation_pipeline}, we describe the process used to generate, process and reduce LSST-like artificial images. In \secref{catalogs}, we describe the processed data products generated and perform several validation tests. In \secref{data_selection} we describe the procedure to obtain a clean data sample suitable for clustering analyses. In \secref{results}, we present the clustering analyses on the simulated data products. Finally, in \secref{conclusions}, we present some concluding remarks.
 
 \section{Data Challenge Design}
 \label{sec:design}
@@ -111,7 +87,7 @@ As a stepping stone to eventually producing images covering hundreds to thousand
 in DC2 and DC3, DC1 covers a $40$ deg$^2$ footprint.  This is sufficient to enable tests of
 two-point clustering statistics up to $\sim 1$ degree scales.  To ensure the simulated image volume is
 tractable, DC1 only includes images in a single band ($r$-band), but goes to full LSST 10-year
-depth. The final footprint can be seen in \figref{footprint}.  We simulate observations within this
+depth. The final footprint can be seen in \figref{footprint}. We simulate observations within this
 footprint using the
 \texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}}
 simulated observing cadence generated with the LSST Operations Simulator
@@ -119,13 +95,16 @@ simulated observing cadence generated with the LSST Operations Simulator
 we enable tests of the impact of dithering by generating two sets of images, both without and with
 the dithering strategy described in more detail in \secref{dithering}.
 
-\rachel{It would be valuable to have a list of steps here in the DC1 simulation generation and
-  processing, explaining how these map in more detail onto paper sections.  A flowchart might be
-  even more useful.}
+The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we use as inputs the position, shapes and fluxes from a galaxy mock catalog from \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C}, which we describe in more detail in \secref{inputs}, and the observing conditions and strategies described in \secref{dithering} using \texttt{OpSim}~\citep{2014SPIE.9150E..15D}. These are passed to our image simulation packages describe in \secref{imsim_pipeline} that produce raw e-images (i.e., full sensor images without any added instrumental effects such as cross-talk, bleeding, etc.). These e-images are then processed the LSST data management (DM) software stack~\citep{2015arXiv151207914J}. The processing is described in \secref{image_processing_pipeline}. After this, we obtain the calibrated exposures, coadds and catalogs that we use for our analysis.
+
+\begin{figure}
+\centering
+\includegraphics[trim={1cm 1cm 1.0cm 0.5cm}, clip, width=1.0\columnwidth]{dc1_workflow}
+\caption{DC1 workflow diagram \textcolor{red}{Get rid of phosim??}.}
+\label{fig:dc1_workflow}
+\end{figure}
 
 
-%One of the most critical aspects in Stage IV experiments is the characterization of their instrumentation and systematic effects~\citep{2006astro.ph..9591A}. In the case of  LSST~\citep{2008arXiv0805.2366I,ScienceBook,WhitePaper} this becomes especially difficult given its wide variety of cosmological probes. In this paper we present a methodology to characterize the LSST large-scale structure (LSS) transfer function and an analysis of potential systematic effects present in LSS analyses. \CHECK{rewrite}
-% ---------------------------------------------------------------------
 \section{Image generation: input catalog}
 \label{sec:inputs}
 Image simulations allow us to study in detail the detection and deblending properties of a given image-processing pipeline. For example, if we produce images using an object catalog with random positions uniformly distributed across the sky, as well as uniformly random shapes and fluxes, we can get information about detection efficiencies as a function of flux.  However, the information about blending will not be realistic and we will not be able to capture some correlations present in real data. On the other hand, using N-body simulations as the input to generate artificial images allows us to study all the aforementioned effects. This is why we used the \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C} catalog as our input.  \texttt{CatSim} is a set of simulations provided by the LSST Simulations Team representing a realistic distribution of both Milky Way and extra-galactic sources.In particular, the extra-galactic catalog contains galaxies covering the redshift range $0 < z < 6$ in a 4.5$\times$4.5 degree footprint. The galaxies are generated by populating the dark matter haloes from the Millennium simulation~\citep{2005Nature.435.629S} using a semi-analytic baryon model described in \citet{2006MNRAS.366..499D} including magnitudes BVRIK and bulge-to-disk ratios. For all sources, a spectral energy distribution (SED), is fit to the galaxy colors using \citet{2003MNRAS.344.1000B} spectral synthesis models. Fits are undertaken independently for the bulge and disk and include inclination dependent reddening. Morphologies are modeled using two S\'{e}rsic profiles~\citep{1963BAAA....6...41S} and a single point source (for the AGN). Half-light radii for the bulge components are derived from the absolute-magnitude vs half-light radius relation given by \citet{2011A&A...534A...3G}. Stars are represented as point sources and are drawn from the Galfast model~\citep{2008ApJ...673..864J}. More information about these catalogs can be found at the LSST Simulations webpage\footnote{\url{https://www.lsst.org/scientists/simulations/catsim}}.
@@ -154,14 +133,16 @@ For our purposes, we consider both the undithered and the dithered observing str
 % ---------------------------------------------------------------------
 
 The artificial generation of astronomical images is a complex and computationally demanding process. In the recent
-years, there have been major efforts in the community to create software that enables the generation of astronomical images, with various choices made in terms of level of complexity and fidelity, and computational efficiency, such as \texttt{BALROG}~\citep{2016MNRAS.457..786S}, \texttt{UFIG}~\citep{2016ApJ...817...25B}, and \textsc{PhoSim}~\citep{2015ApJS..218...14P}. In our case, we model the input sources using imSim\footnote{\url{https://github.com/LSSTDESC/imSim}}\textcolor{red}{Add reference Walter et al., in prep??}, which uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library for image rendering, and uses LSST-specific information (e.g., about the geometry of the CCDs and the focal plane, the system throughputs in the different bands, etc.) to generate LSST-like images.
+years, there have been major efforts in the community to create software that enables the generation of astronomical images, with various choices made in terms of level of complexity and fidelity, and computational efficiency, such as \texttt{UFIG}~\citep{2016ApJ...817...25B}, and \textsc{PhoSim}~\citep{2015ApJS..218...14P}. In our case, we model the input sources using imSim\footnote{\url{https://github.com/LSSTDESC/imSim}}\textcolor{red}{Add reference Walter et al., in prep??}, which internally uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library for image rendering, and uses LSST-specific information (e.g., about the geometry of the CCDs and the focal plane, the system throughputs in the different bands, etc.) to generate LSST-like images.
 
 \subsection{imSim}
 \label{sec:imsim_pipeline}
 
 imSim is an open-source image simulation software package that uses GalSim with a modular approach. It allows the user to change the level of realism of the simulations by changing the complexity of PSF, background and source modeling. In particular, we used a pre-release version specifically meant to perform the DC1 simulations: \texttt{imSim v.0.1.0}\footnote{\url{https://github.com/LSSTDESC/imSim/releases/tag/0.1.0}}.
 
-For DC1, we simulate each CCD of the focal plane individually, and instead of the planned two 15-seconds exposures~\citep{Overview}, we generate a single image with a 30-second exposure time to simplify the data handling. We omit instrumental effects and variability in the optical model across the focal plane. Since this is the first DESC data challenge, we want to ensure that we are able to generate and process the simplest cases, and then, build upon this base, increasing the complexity and level of realism for future data challenges. Our sky brightness model is based off the \citet{1991PASP..103.1033K} model provided by OpSim, refined by the detailed wavelength dependence of the phenomenological model from~\citet{2016SPIE.9910E..1AY}. The PSF model is a Gaussian for the system with a full-width half-maximum airmass dependence\footnote{From LSST-20160 eqn.~(4.1) \rachel{should link to this document / name it}}; this is done to mimic the degradation in the image quality due to, e.g., gravity load\footnote{See LSE-30~\url{http://ls.st/lse-30} p.80}. A Kolmogorov profile is used to model the atmosphere which is also airmass dependent\footnote{From LSST-20160 eqn.~(4.2)}. The airmass, $X$, depends on the angular distance to the zenith, $Z$, as follows~\citep{1991PASP..103.1033K}:
+
+For DC1, we simulate each CCD of the focal plane individually, and instead of the planned two 15-seconds exposures~\citep{Overview}, we generate a single image with a 30-second exposure time to simplify the data handling. We omit instrumental effects and variability in the optical model across the focal plane. Since this is the first DESC data challenge, we want to ensure that we are able to generate and process the simplest cases, and then, build upon this base, increasing the complexity and level of realism for future data challenges. Our sky brightness model is based off the \citet{1991PASP..103.1033K} model provided by OpSim, refined by the detailed wavelength dependence of the phenomenological model from~\citet{2016SPIE.9910E..1AY}. The PSF model is a Gaussian for the system with a full-width half-maximum airmass dependence\footnote{From LSST-20160 eqn.~(4.1) \rachel{should link to this document / name it}}\textcolor{red}{LSST-20160 is not public...}, this is done to mimic the degradation in the image quality due to, e.g., gravity load\footnote{See LSE-30~\url{http://ls.st/lse-30} p.80}. A Kolmogorov profile is used to model the atmosphere which is also airmass dependent\footnote{From LSST-20160 eqn.~(4.2)}. The airmass, $X$, depends on the angular distance to the zenith, $Z$, as follows~\citep{1991PASP..103.1033K}:
+
 \begin{equation}
 X = (1 - 0.96\sin{Z})^{-0.5}.
 \end{equation}
@@ -170,19 +151,11 @@ the parameters given by CatSim; and AGNs which are also modeled as point sources
 
 The final products of this pipeline are FITS images with information about the observing conditions. We generated more than 200,000 images in total (including both the \textit{dithered}, and \textit{undithered} fields). The average time to simulate each CCD is $\sim 4300$ seconds and the total production time is $\sim 270,000$ CPU-hours.
 
-% ----------------------------------------------------------------------
-
-%\subsection{PhoSim}
-%\label{sec:phosim_pipeline}
-
-%PhoSim is a complementary approach where we use the photon-shooting software \textsc{PhoSim} to create simulated images.
-%\textcolor{red}{Describe PhoSim. PhoSim inputs and differences with imSim. What are we adding?}
-% ----------------------------------------------------------------------
 \subsection{Image processing}
 \label{sec:image_processing_pipeline}
 
-The outputs of these simulations are then processed using the LSST data management (DM) stack~\citep{Overview,ScienceBook,WhitePaper,2017arXiv170506766B,2015arXiv151207914J} using version 13.0\footnote{\url{https://pipelines.lsst.io/releases/v13_0.html}}. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits. It then combines the single-visit images to produce the so-called coadds. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ (9.7 for the undithered simulation) million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2017arXiv170506766B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
-\textcolor{red}{Ping Jim Chiang/Chris Walter to write something about the processing workflows for DC1.}
+The outputs of these simulations are then processed using the LSST data management (DM) software stack~\citep{Overview,ScienceBook,WhitePaper,2018PASJ...70S...5B,2015arXiv151207914J} using version 13.0\footnote{\url{https://pipelines.lsst.io/releases/v13_0.html}}. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits. It then combines the single-visit images to produce the so-called coadds. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ (9.7 for the undithered simulation) million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2018PASJ...70S...5B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
+\textcolor{red}{Ping Jim Chiang/Chris Walter/Tom G./Tony J.? to write something about the processing workflows for DC1.}
 An example coadd cutout is shown in \figref{coadd_example}.
 
 \rachel{Big picture comment: we don't talk at all about any of the software that drove these things - workflows for the DM processing etc.  Is that sufficiently trivial that it doesn't need to be mentioned?}
@@ -200,161 +173,7 @@ After being processed, the catalogs are stored at the National Energy Research S
 dataframes}~\citep{mckinney-proc-scipy-2010} and databases for each one of the coadds and input catalogs, providing collaborators some flexibility in data access for their own analyses. As mentioned earlier, the output catalogs contain 10.6 (9.7) million objects covering an area
 of $\sim$43 deg$^{2}$. The catalogs include information about position, size, shape and magnitude for every object. They include several flags that give information about the presence of interpolated/saturated pixels in the objects and whether or not these objects are close to the edge of a CCD.
 
-In order to check the level of realism and the accuracy of the processed catalogs we perform several quality assurance tests.
-
-\rachel{Big picture comment: you said earlier that both dithered and undithered simulations are generated and processed, but in the paragraph above and many other places you just quote a single number of objecst in the catalogs.  So is it that most places refer to dithered, and undithered ones are only used in specific subsections?  If that's true, this should be explained somewhere prominent.}
-
-%\subsection{Astrometry checks}
-%\label{sec:astrometry_checks}
-
-%Biases in astrometry can potentially affect both clustering and weak lensing measurements. We follow two approaches to check the quality of the astrometric solutions that we obtained: an \textit{external} check comparing to the input \textit{truth} catalog; and an \textit{internal} check comparing with different visits.
-
-%\subsubsection{External checks}
-%\label{sec:external_astrometry}
-
-%As we have already mentioned, one of the advantages of using simulations is that we have access to the \textit{true} underlying information. We use this information to check the precision of the astrometric measurements in single exposures and coadds. We select stellar objects using the classifier included in the LSST software stack\footnote{To see more details about the classifier, refer to section 4.9.10 in~\citet{2017arXiv170506766B}} and choose objects with \texttt{base\_ClassificationExtendedness\_value==0}.
-%We also require that \texttt{deblend\_nChild==0} to ensure that the objects are completely deblended, i.e., they are primary sources. \rachel{I thought that ``primary'' comes with other conditions, like at the edges of patches some reconciliation is done to figure out which detection is primary?} We match these objects to the stellar sources in the input catalog. In both cases we use a \texttt{KDTree}~\citep{scikit-learn} to retrieve those objects \rachel{for this matching did you use only stars rather than all objects?} in the input catalog with centroids that are within a 0.2\arcsec\ (one pixel) radius of those detected in the output catalog. We select the matched object \rachel{star?} that is closest in magnitude, only considering sources that have a magnitude difference smaller than 0.02 magnitudes. \rachel{That is a very very tight tolerance!  The magnitude errors are larger than that for many objects, so I would expect we miss many objects with this tolerance.} We discuss matching strategies in more detail in \secref{matching}. \rachel{For astrometry tests, have you considered limiting to a bright subsample of stars?  Right now the plots/calculations have a large contributions from noise due to faint objects, I would assume, and it might actually be easier to see the real structure/offsets if you only used bright stars for this plot?}
-
-%We select a representative single visit (visit number $270675$ for the imSim dithered run) and calculate the difference between the measured and the input positions. These are represented in \figref{astrometry_a}. We see that both RA and Dec distributions are compatible with each other, indicating that there are no anisotropies in the detection. \rachel{Why is this $\Delta$RA and not $\Delta$RA~$\cos{(\text{Dec})}$?  I don't think it really makes sense to compare $\Delta$RA and $\Delta$Dec in general.}
-%However, we find that the distributions are asymmetric and that the median is not zero. This effect is even more noticeable in \figref{astrometry_b}, where we accumulated the results for 50 randomly selected visits of the imSim dithered simulation. \rachel{Is there any reason to show a single visit and then 50 randomly selected ones, with the effects of interest are present at similar levels in both?  Why not just jump to the 50 randomly selected ones, and mention that if you pick a single visit the effect is still evident?} This effect is also present in the undithered imSim run. This bias arises from the fact that the objects in the images include proper motion, which is unaccounted for in our \textit{truth tables}. However, this bias is below 15 mas, which is a much smaller scale than the resolution of the input N-body simulation. \rachel{I don't think the input N-body simulation resolution is relevant; it should be sufficient to say that we don't care about galaxy clustering statistics on tiny scales and so astrometric biases on these scales are not an issue.} As a consequence we do not expect that the two point clustering statistics will be affected by this bias. We also checked the mean astrometric residual as a function of magnitude in \figref{astrometry_b}. We notice the same bias for the brightest objects (which are dominated by nearby sources), and so are the most affected by the effects of proper motion.
-
-%\begin{figure}
-%  \centering
- % \includegraphics[width=0.45\textwidth]{astrometry_single_visit_imsim_dithered_hist}
-  %\includegraphics[width=0.45\textwidth]{astrometry_single_visit_imsim_dithered_hist2d}
- % \caption{Top: Distribution of the difference $\Delta=X_{\rm measured}-X_{\rm input}$ in RA (blue) and Dec
- %   (green) coordinates for a randomly selected visit ($270675$ for the dithered run). We cannot see
-  %  any differences between these. The histograms are normalized such that the total sum of the
-   % counts is equal to one. We measure a non-zero median, $\Delta_{\rm median} \approx -2$ mas. Bottom:
-   % 2D histogram showing the bivariate distribution of the difference in RA (horizontal axis) and
-   % Dec (vertical axis). The effect is similar for the undithered simulation. \rachel{Perhaps indicate the median values on the top and bottom, with lines of some sort?  Same comment applies to next figure.}}
-  %\label{fig:astrometry_a}
-%\end{figure}
-
-%\begin{figure}
-  %\centering
-  %\includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_50visits}
-  %\includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_50visits_hist2d}
-  %\includegraphics[width=0.45\textwidth]{astrometry_vs_mag_imsim_50_visits}
-  %\caption{Top: Distribution of the difference $\Delta=X_{\rm measured}-X_{\rm input}$ in RA (blue) and Dec (green) coordinates as in
-  %\figref{astrometry_a} but, accumulating the results for 50 randomly selected visits from the dithered run. Middle: 2D histogram
-  %showing the bivariate distribution of the difference in RA (horizontal axis) and Dec (vertical axis). Bottom: Mean astrometric residual
-  %as a function of magnitude for RA (blue) and Dec (green). These distributions are similar for the undithered run.}
-  %\label{fig:astrometry_b}
-%\end{figure}
-
-%In addition, we wanted to check if there is a preferred orientation for the differences between the input and output position in a single visit. Using the same visit as before, we show the astrometric residuals in \figref{astrometry_c}. We see that the astrometric residuals do not show any noticeable structure and appear to be mostly random with the largest contributions close to the CCD edges.
-
-%\begin{figure}
-  %\centering
-  %\includegraphics[width=0.45\textwidth]{astrometry_imsim_dithered_interp}
- % \caption{Astrometic residuals measured in visit $270675$ from the imSim dithered run. The light blue squares represent the CCD chips in
- % the LSST focal plane. The base of the arrow is on the input matched object. The arrows have been augmented by a factor 3600 for visualization purposes. \rachel{I found this last sentence confusing.  Is it necessary, given that you have an arrow on the plot indicating how large is 200 mas?  I think  you could simply say ``The arrow sizes were set to make the largest ones visually evident; see upper right part of the figure for a guide to the interpretation of arrow sizes.''}}
-  %\label{fig:astrometry_c}
-%\end{figure}
-
-
-%\subsubsection{Internal checks}
-%\label{sec:internal_astrometry}
-
-%Another important test is to ensure the internal consistency of the astrometric solutions between different exposures. We select
-%a small region of the coadded area, which we will refer to as a \textit{patch} \rachel{This isn't just us - this is LSST pipeline jargon, right?}, and compare the positions of the objects detected in the coadd
-%image with the positions of objects detected in individual exposures that overlap with that patch.
-
-%In particular, we randomly choose 10 individual exposures and look for objects that fulfill the following criteria:
-%\begin{itemize}
- % \item \texttt{deblend\_nChild==0}, the object has been completely deblended (it is a primary match).
-%  \item \texttt{base\_PixelFlags\_flag\_edge==0}, the object is not close to an edge.
- % \item \texttt{base\_PixelFlags\_flag\_interpolatedCenter==0}, the object does not have any interpolated pixels in its center.
-%\end{itemize}
-
-%Note that, in this case, we are not requiring the objects to be classified as stars, we are omitting the cut in
-%\texttt{base\_ClassificationExtendedness\_value}, but we are adding some cuts to ensure that the objects were properly measured. Once
-%we perform our selection, the next step is to match the objects in the different exposures. To do so, we use the matching algorithm
-%included in the LSST software stack. We calculate the mean of the difference between the position of each source
-%in the coadd, $X_{{\rm coadd},i}$ and the position of the matched object in each of the exposures where it has been detected, $X_{{\rm visit_{j}},i}$
-%for $j \in [1,10]$, i.e.,
-
-%\begin{equation}
- % \Delta = \langle X_{{\rm coadd},i} - X_{{\rm visit_{j}},i} \rangle
-%\end{equation}
-
-%We only consider matched objects detected in at least 5 exposures. The resulting distribution is shown in \figref{astrometry_internal}. We see that this distribution is noticeably narrower than those shown in \figref{astrometry_a} and \figref{astrometry_b} and no apparent bias is found, indicating that the processing is consistent among different epochs. \rachel{Given that the object selection differs, I'm not sure we can ascribe any significance to the distribution being narrower, right?  Any noise contribution to the centroid determination should differ, so I don't think they can really be compared in this way.}
-
-%\begin{figure}
- % \centering
-  %\includegraphics[width=0.45\textwidth]{astrometry_internal_10visits_imsim_undithered}
-  %\caption{Distribution of the mean difference in position (RA:blue, Dec:green) between the coadd and the different individual exposures
-  %where each source has been detected.}
-  %\label{fig:astrometry_internal}
-%\end{figure}
-
-%\subsection{Photometry checks}
-%\label{sec:photometry_checks}
-
-%As we did in the previous subsection, we perform two different tests to assess the quality of our simulations: first, we compare our output catalogs to the inputs, and second, we check the consistency between different visits for the same objects. \rachel{I'm not sure we can fully frame this as a test of the simulation quality.  It's also a test of the DM processing.  Errors in either stage could affect the photometry and in fact it can be difficult to identify the origin of errors that are found.}
-
-%\subsubsection{External checks}
-%\label{sec:external_photometry}
-
-%We want to analyze the accuracy of the magnitude measurement by comparing the input catalog with the output catalog. This process not only checks
-%the accuracy of the measurement pipeline, but it also tests the quality and level of realism of the image generation pipeline.
-%For these external checks, we use the same 50 randomly selected visits from the previous section.
-%To study the photometric residuals, we use a different matching strategy compared to previous sections. In this case, we eliminate the threshold
-%in magnitude difference, looking for the input source that is closest in magnitude within a 0.2 arcseconds radius around each detected
-%source. \rachel{Source of any kind?  Or star?  The figure 8 label suggests it's stars, but the text here is ambiguous.} In \figref{photometry_a} we can see the distribution of the photometric residuals. This distribution gets wider as we go
-%fainter (as expected). Furthermore, we see that the 0.02 magnitude selection cut is a good proxy to ensure that we account for most sources properly matched. \rachel{Only down to 20th magnitude, not beyond.}
-
-%\begin{figure}
- % \centering
-  %\includegraphics[width=0.45\textwidth]{photometry_imsim_dithered_50visits_hist}
-  %\includegraphics[width=0.45\textwidth]{photometry_imsim_dithered_50visits}
-  %\caption{Top: Distribution of magnitude difference between the input and output catalogs.
-  %Bottom: Difference magnitude between input and output catalogs as a function of the measured magnitude. We considered 50 visits
-  %randomly selected from the imSim dithered run. We find similar results for the imSim undithered run and for the PhoSim run. \rachel{I think this caption may be old - we aren't going to talk about the PhoSim results here, are we?}}
-  %\label{fig:photometry_a}
-%\end{figure}
-
-%\subsubsection{Internal checks}
-%\label{sec:internal_photometry}
-
-%We also checked the consistency of the photometry between different exposures. Using the same approach and sample presented in
-%\secref{internal_astrometry}, we compared the mean difference between the coadded source and 10 random single-visit images. In
-%principle, we would expect that some objects will show differences between different epochs due to their intrinsic variability, however,
-%these effects are not found in the inputs of the simulation for any of the objects, thus, the differences between different epochs are due to
-%statistical fluctuations and different observing conditions. The results from these checks are shown in \figref{internal_photometry_a}.
-
-%\begin{figure}
- % \centering
-  %\includegraphics[width=0.45\textwidth]{photometry_internal_10visits_imsim_undithered}
-  %\caption{Distribution of the mean difference in magnitude between the coadd and the different individual exposures
-  %where each source has been detected. The mean of the distribution is consistent with zero.}
-  %\label{fig:internal_photometry_a}
-%\end{figure}
-
-%In this figure, we see that the mean of the distribution is compatible with zero and that most sources have a magnitude difference lower
-%than 25 mmag given the narrow peak. The presence of long tails is likely due to blends and mismatching or artifacts.
-
-%\subsection{PSF checks}
-%\label{sec:psf_checks}
-
-%In order to ensure the accuracy of shape measurements, a robust and accurate estimation of the PSF is required. In the case of imSim, we have
-%an analytical input PSF that only depends on the airmass at the time of observation. We can check if the measurement pipeline can reconstruct
-%the input PSF. To do so, we select 200 visits randomly, retrieve the measured PSF using the pipeline, and compare this
-%to the input model given the observing conditions. We obtain the residual depicted in \figref{psf_residual}, where we see that the PSF model residuals are very small in the center of the image and that the tails are dominated by noise. \rachel{Are you going to use any of the standard PSF model diagnostics, like fractional size residuals, shape residual distributions, $\rho$ statistics?  It would be useful to have a quantitative rather than qualitative statement here.}
-
-%\begin{figure}
-%\centering
-%\begin{tikzpicture}
- % \node[inner sep=0pt] (A) {\includegraphics[width=0.9\columnwidth]{psf_residual.png}};
- % \node[black] (B) at ($(A.south)!-.01!(A.north)$) {X [pixels]};
- % \node[black,rotate=90] (C) at ($(A.west)!-.01!(A.east)$) {Y [pixels]};
- % \node[black,rotate=90] at ({$(A.west)!1.0!(A.east)$} |- {$(A.south)!.55!(A.north)$}) {PSF$_{output}-$PSF$_{input}$};
-%\end{tikzpicture}
-
-%\caption{Average difference between the input PSF model (41$\times$41 pixels, normalized to unity) and the measured PSF (with the same normalization) for 200 visits.}
-%\label{fig:psf_residual}
-%\end{figure}
+In order to check the level of realism and the accuracy of the processed catalogs we perform several quality assurance tests. These tests will be performed in the dithered simulation, however, unless stated, the procedures and results are similar for the undithered simulation.
 
 \subsection{LSST Science Requirements Document Key Performance Metrics}
 
@@ -364,6 +183,7 @@ The \texttt{validate\_drp} package calculates the Key Performance Metrics (KPMs)
 By design, our simulations do not satisfy some of the requirements in the LSST-SRD, such as the number of filters in the surveyed fields (Filter complement in Table~\ref{tab:kpm_table}) or the number of filters (Nfilt) used in a given night because we only simulate images in $r$-band. On the other hand, our images automatically meet some criteria due to the design choices. For example, the maximum pixel size (pixSize) allowed in the LSST-SRD is 0.22 arcseconds and our simulations have a fixed pixel size of 0.2 arcseconds. Finally, some requirements in both the LSST-SRD and the DESC-SRD cannot be tested with these single-band images, we will ignore such tests in this work.
 
 We start by checking the absolute astrometry by comparing the input and output catalogs. We find a mean (and median) deviation of 38 milliarcseconds between the input and measured positions. This is due to the fact that the corrections for proper motion were not present in the version \texttt{13.0} of the DM stack. However, this bias is still below the design specifications for the absolute astrometric performance of LSST as defined by the LSST-SRD, denoted by AA1, which is 100 milliarcseconds. This can be seen in~\figref{AA1}.
+
 \textcolor{red}{Check with Chris and others: Why does the proper motion bias astrometry in one direction??}
 
 \begin{figure}
@@ -414,7 +234,7 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 \label{fig:validate_drp_check_photometry}
 \end{figure*}
 
-We continue by checking that the zeropoints, $z_{p}$ fulfill the uniformity requirements specified in the LSST-SRD. More concretely, they should have show an RMS lower than 15 mmag (PA3) and no more than 20\% (PF2) of the images should have a deviation larger than 20 mmag (PA4). We randomly select 1000 sensor-visits and check the distribution of the zeropoints, depicted in~\figref{PA34}, finding that the RMS of the distribution is 37 mmag, not fulfilling the requirement. This is not worrisome since we are not interested in the colors of the sources given that we only have single band images. We also find that 19\% of the sensors have a zeropoint that deviates from the median more than 20 mmag in compliance with the requirements. Finally, we compare input and output magnitudes and compute the median difference between both (PA6), finding it to be 17 mmag and smaller than the maximum allowed in the LSST-SRD (20 mmag). More details about how the matching between inputs and outputs was done in order to perform this test can be found in Section~\ref{sec:matching}.
+We continue by checking that the zeropoints, $z_{p}$ fulfill the uniformity requirements specified in the LSST-SRD. More concretely, they should have show an RMS lower than 15 mmag (PA3) and no more than 20\% (PF2) of the images should have a deviation larger than 20 mmag (PA4). We randomly select 1000 sensor-visits and check the distribution of the zeropoints, depicted in~\figref{PA34}, finding that the RMS of the distribution is 37 mmag, not fulfilling the requirement. This is not worrisome since we are not interested in the colors of the sources given that we only have single band images. We also find that 19\% of the sensors have a zeropoint that deviates from the median more than 20 mmag in compliance with the requirements. Finally, we compare input and output magnitudes and compute the median difference between both (PA6), finding it to be 17 mmag and smaller than the maximum allowed in the LSST-SRD (20 mmag). More details about how the matching between inputs and outputs was done in order to perform this test can be found in~\ref{ssec:matching}.
 
 \begin{figure}
 \centering
@@ -468,7 +288,7 @@ for exposures with PSF-FWHM $\approx 0.69\arcsec$ and no more than 10 degrees ap
 |e| = \frac{a^{2} - b^{2}}{a^{2}+b^{2}}
 \end{equation}
 were $a, b$ are the semi-major and semi-minor axes of the 
-in particular, it requires that the median is no larger than 0.05 (SE1) and that no more than 10\% (EF1) of the images exceed 0.1 (SE2). Our analytic (and circularly-symmetric) PSF models should, by design, fulfill these criteria. However, we have to test if the reconstructed PSF also fulfills them. We tested this in the processed data by using the same 520 sensor-visits used to check the DB1 and DF1 criteria. We checked the modulus of the PSF ellipticity in the position of the detected objects in these visits accumulating them in the histogram shown in \figref{SE1_DC1}. We obtained that SE1=0.001 and SE2=0.002, way below the maximum values allowed by the LSST-SRD. In future data challenges, we plan to increase the complexity and realism of the PSF to be closer to the maximum values set by these requirements.
+in particular, it requires that the median is no larger than 0.05 (SE1) and that no more than 10\% (EF1) of the images exceed 0.1 (SE2). Our analytic (and circularly-symmetric) PSF models should, by design, fulfill these criteria. However, we have to test if the reconstructed PSF also fulfills them. The PSF was reconstructed using the PSFEx~\citep{2011ASPC..442..435B} implementation in the LSST software stack. We tested this in the processed data by using the same 520 sensor-visits used to check the DB1 and DF1 criteria. We checked the modulus of the PSF ellipticity in the position of the detected objects in these visits accumulating them in the histogram shown in \figref{SE1_DC1}. We obtained that SE1=0.001 and SE2=0.002, way below the maximum values allowed by the LSST-SRD. In future data challenges, we plan to increase the complexity and realism of the PSF to be closer to the maximum values set by these requirements.
 
 \begin{figure}
 \centering
@@ -499,16 +319,15 @@ In practice, we compute the PSF-corrected moments of stars across the field of v
 \label{fig:TEx}
 \end{figure}
 
-\textcolor{red}{Check with Rachel: Finally, the DESC-SRD requires (WL4-Y10) that the systematic uncertainty in the PSF model defined using the trace of the second moment matrix should not exceed 0.1\% for full-depth (Y10) DESC weak lensing analysis. We randomly select 100 visits, obtain the input and measured PSF, and measure the trace of the second order moments, $T$ with \texttt{GalSim}. We then compute the relative difference, $\Delta T/T$, obtaining the results depicted in \figref{WL4-Y10}. Note: The criterion is for full depth/coadds, I used the median deviation in the individual visits as a proxy but I don't know how well this works...}
-
+Finally, the DESC-SRD requires (WL4-Y10) that the systematic uncertainty in the PSF model defined using the trace of the second moment matrix should not exceed 0.1\% for full-depth (Y10) DESC weak lensing analysis. We randomly select 3000 visits, obtain the input and measured PSF, and measure the trace of the second order moments, $T$ with \texttt{GalSim}. We then compute the relative difference, $\Delta T/T$, obtaining the results depicted in \figref{WL4-Y10}. We find that our dataset shows that the standard deviation of the distribution is 0.05\% lower than the requirement.
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{WL4-Y10}
-\caption{Normalized distribution of the relative difference in the trace of the second order moments, $\Delta T/T$ between input and output PSF. We see that the median of the distribution (WL4-Y10) is 14\%, much larger than the requirement (0.1\%).}
+\caption{Normalized distribution of the relative difference in the trace of the second order moments, $\Delta T/T$ between input and output PSF. We see that the standard deviation of the distribution (WL4-Y10) is 0.05\%, much complying with the requirement (0.1\%).}
 \label{fig:WL4-Y10}
 \end{figure}
 
-We summarize our findings in Table~\ref{tab:kpm_table} and Table~\ref{tab:desc_srd_table}. We see that our images and catalogs pass most of the requirements by a good margin. We can also see that some of the criteria are not passing the requirements due to design choices and do not affect the science analyses that can be performed with this dataset. However, there is a big exception: the TEx requirements (correlations of the residual PSF ellipticity) and WL4-Y10 prevent possible weak lensing analyses. In any case, given that no cosmic shear signal was included in these simulations, the simplicity of the potential sources of systematic uncertainty for cosmic shear analyses, and the lack of photometric redshifts for the sources, this dataset does not offer any new science from the WL point-of-view and no WL analyses are performed on this work. 
+We summarize our findings in Table~\ref{tab:kpm_table} and Table~\ref{tab:desc_srd_table}. We see that our images and catalogs pass most of the requirements by a good margin. We can also see that some of the criteria are not passing the requirements due to design choices and do not affect the science analyses that can be performed with this dataset. However, there is a big exception: the TEx requirements (correlations of the residual PSF ellipticity) which can prevent possible weak lensing analyses. In any case, given that no cosmic shear signal was included in these simulations, the simplicity of the potential sources of systematic uncertainty for cosmic shear analyses, and the lack of photometric redshifts for the sources, this dataset does not offer any new science from the WL point-of-view and no WL analyses are performed on this work. 
 
 \begin{table}[h!]
 \centering
@@ -570,11 +389,12 @@ TE4 & $5 \times 10^{-7}$ & - & N\\
 \end{table}
 
 \begin{table}[h!]
+\centering
 \begin{tabular}{|c|c|c|c|}
 \hline
 Quantity (DESC-SRD) & Maximum & DC1 & Passed \\
 \hline
-WL4-Y10 (\%) & 0.1 & 14 & N\\
+WL4-Y10 (\%) & 0.1 & 0.05 & Y\\
 %WL5-Y10 (\%) & 0.1 & N/A & N/A\\
 \hline
 \end{tabular}
@@ -585,249 +405,226 @@ WL4-Y10 (\%) & 0.1 & 14 & N\\
 %\rachel{Is this all the KPMs?  I thought some have to do with PSF model quality, etc.}
 %\rachel{Note that there are many figures associated with this subsection, but the text doesn't actually refer to or discuss any of them.}
 
-\section{Analysis of the simulated dataset}
-\label{sec:analysis}
-In this section, we analyze the clustering properties of our output catalog from the end-to-end pipeline and compare with the input catalog.
+\section{Data selection and masking}
+\label{sec:data_selection}
+In this section, we describe how we take advantage of the fact that we have full knowledge about the simulated sources in order to get a ``clean" data sample, we also describe the catalog mask and the maps generated for the different observational effects present in the simulation. Unless explicitly stated, the procedures and selections made in this section will be performed in both the dithered and undithered simulations.
 
-\rachel{One persistent source of confusion in this section (and to some extent the previous one) is the question of what sample is being used.  This confusion shows up in two ways: first, a failure to state what selection criteria were imposed (flags, bright star masks, etc.) or magnitude cuts or \dots so as to avoid bad detections (which affects the interpretation).  Second, a lack of clarity - there are places where it says ``objects'' or ``sources'' and then later in the same section it is implied that a sample of galaxies or stars were used.  I would recommend that somewhere before you start showing results, you have a subsection that clearly defines what samples there are, how exactly they are defined, give them unique names, and use them consistently throughout the text.  Finally, I would note that in some of the places where you mention what selection criteria are used, some flags that I normally think of as important to avoid junk detections are not mentioned, so I would encourage a reconsideration of the flags (and a careful interpretation in light of whatever flag cuts we do use in the end).}
+\subsection{Matching inputs and outputs}
+\label{ssec:matching}
 
-\subsection{Sample selection}
-\label{sec:sample_selection}
+Using end-to-end simulations, one can potentially trace each measured photon to its corresponding source and fully characterize the image generation and measurement processes. In practice, this is very difficult to do because of the large data overhead (either each photon would have to be tagged somehow in the final image or each pixel would have to contain information about the sources that contributed to it). 
 
-One of the advantages of using end-to-end simulations is that, since we have complete knowledge of the input sources, we can quickly identify those detected objects that do not correspond to any input source (artifacts, fake detections, etc.) and study a set of quality cuts that ensures a clean galaxy sample. In this section we are going to study the different variables in the output catalogs to get a clean sample for 2-point clustering analyses.
+The simplest way to connect two catalogs is by using the positions of the objects in the sky. This approach has been extensively used in the literature~\citep{1977A&AS...28..211D,1983Obs...103..150B,1986MNRAS.223..279W} and performs reasonably well when blending is low (i.e, when the amount of overlapping sources in the image is low). However, when blending is high, this approach might be not be sufficient. Then, matching other quantities like flux or shape can become useful~\citep{2008ApJ...679..301B}.
 
-\subsection{Matching input and output catalogs}
-\label{sec:matching}
+We compare two different matching strategies: positional matching, where we find the objects in the truth catalog closest to the detected objects, which we will refer to as \textit{pure spatial matching} and will denote as \textsf{S}; and positional matching with magnitude matching, which we will refer to as \textit{spatial+magnitude matching} and denote as \textsf{S+M}, where for each detected object we find objects from the input catalog that lie within a three pixel radius ($0.6 \arcsec$). After this, we select the object that is closest in magnitude as long as the difference in magnitude is less than a certain threshold. In our case, we conservatively choose $1.0$. Using this approach, if none of the neighbors fulfill these conditions, the detected source is considered unmatched. Note that in the case of pure spatial matching all sources are matched to an object in the true catalog.
 
-End-to-end simulations can potentially allow us to trace each measured photon to its corresponding source in order to characterize the measurement process, however this requires large overhead storage. 
+In both cases, we build a \texttt{KDTree}~\citep{scikit-learn} using the positions of detected objects with \texttt{detect\_isPrimary=True} which ensures that the source has been fully deblended and was detected in the inner part of the coadd regions (see~\citet{2018PASJ...70S...5B} and ~\citet{2018PASJ...70S..25M} for more details). In order to speed up the processing and to reduce the usage of computational resources we build the \texttt{KDTree} using output sources from 30 randomly selected coadd regions (patches) in the dithered simulation (the undithered simulation yields the same results and conclusions) containing 975,605 detected sources fulfilling the aforementioned condition (we will refer to these as primary outputs or primary detected sources). Using this sample, we find that 95\% of these sources are matched using the spatial+magnitude matching (by construction all of them are matched using the pure spatial matching approach). An interesting metric to check is the fraction of primary detected sources that have been matched to the same exact object in the input catalog, which we will denote as $f_{\mathrm{multi}}$. This is an unusual occurrence, however, imagine the case where an spurious fluctuation has been marked as a source, this fluctuation is a primary detected source but has no counterpart in the input catalog. Another example are bright objects that have been shredded and are detected as several fainter sources. We find that these kind of matches is $\sim 100$ times more likely to happen using the pure spatial matching ($f_{\mathrm{multi}} = 3 \times 10^{-3}$) than in the spatial+magnitude matching ($ f_{\mathrm{multi}} = 2 \times 10^{-5}$). This is expected because, in the cases where the primary detected source is a random fluctuation or a shredded source, it is unlikely that the measured flux is close to the flux of a neighboring source thus producing an unmatched source in the case of using spatial+magnitude matching. We also find that both approaches select the same best matching source in the input catalog for only 68\% of the primary detected sources for which we found a suitable match. These differences can be due to several reasons, e.g. objects with a poorly determined centroid positions that are close to other objects in the input catalog (remember that the input catalog contains objects up to $r=28$), objects with poorly determined fluxes (low SNR), etc. 
 
-The simplest way to connect two catalogs is by using the positions of the objects in the sky. This approach has been extensively used in the literature~\citep{1977A&AS...28..211D,1983Obs...103..150B,1986MNRAS.223..279W} and performs reasonably well when blending is low, since the probability of confusing two objects is small. However, when blending is high, this approach might be not be sufficient. Then, matching other quantities like flux or shape can become useful~\citep{2008ApJ...679..301B}.
-
-We compare two different matching strategies: positional matching, where we find the objects in the truth catalog closest to the detected objects, which we will refer to as \textit{pure spatial matching}; and positional matching with magnitude matching, which we will refer to as \textit{spatial+magnitude matching}, where for each detected object we find objects from the input catalog that lie within one pixel radius ($0.2 \arcsec$). After this, we select the object that is closest in magnitude as long as the difference in magnitude is less than a certain threshold. In our case, we arbitrarily chose $0.5$. If any of these conditions are not fulfilled, then the object is considered not matched.
-
-In the first approach, all detected objects \rachel{You should comment on whether any flag cuts etc.\ are imposed or it's really everything detected in the DM output catalogs.} are matched to an object in the input catalog where, in principle, the two point statistics should be preserved between the catalogs. \rachel{The overall two-point statistics will be preserved but the two-point statistics for any reasonable color/magnitude-selected subsamples are unlikely to be preserved.} In the second approach, we can potentially bias the results since we omit sources where the accuracy in the magnitude measurement is low. \rachel{However, there are likely to be color/magnitude subsamples where this approach is better.  Also, should clarify ``bias the results'' - what results?  The magnitudes?  The two-point statistics?} To compare both approaches, we check the possible biases in the measured magnitude $\Delta$mag = mag$_{\rm meas} - $mag$_{\rm true}$. In \figref{matching_comparison}, we see that spatial matching is sufficient to ensure a good match in magnitude as evidenced by the median value of $\Delta$mag compared with the spatial+magnitude matching. This figure also shows that spatial matching is more affected by the presence of outliers than the spatial+magnitude matching, as expected by the clipping performed on the latter. The evolution of the mean and median $\Delta$mag with the magnitude shows that objects with magnitudes $\sim 18-21$ usually are measured as having a brighter flux, while objects with magnitudes $\sim 23-25$ appear dimmer than the inputs. This is likely a consequence of the deblender assigning a larger flux to the brightest members of the blend, while the fainter members seem to lose flux. Finally, at the faint end (mag $\sim 26$) we can only detect those that appear brighter than they actually are due to statistical fluctuations. This results in a negative value for the mean and median $\Delta$mag.
+We compare as well the astrometric and photometric residuals using both approaches in~\figref{matching_comparison}. We can see that the median astrometric residuals are similar in both cases and that the search radius (3 pixels=600 mas) for the spatial+magnitude matching is large enough to map the overall distribution. On the other hand, the resulting median photometric residual seems strongly biased in the case of using just pure spatial matching, and the scatter is very large as shown by the error-bars. However, in the case of spatial+magnitude matching, the median residuals and their error-bars are smaller, as expected given the maximum magnitude threshold. We can see that in this case the biases are still significant. This can be mitigated using a smaller tolerance in magnitude (for example using 0.5 mag instead of 1 mag) but that implies an overall reduction of the number of matched primary detected sources. Finally, taking a look at the magnitude difference between inputs and outputs of individual matched sources using the spatial+magnitude technique, we can see that this distribution is centered around zero, except for very bright sources ($r < 17$), where saturation prevents us from having an accurate determination of the fluxes. 
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{matching_comparison_galaxies.pdf}
-\includegraphics[width=0.9\columnwidth]{mag_hist_total.pdf}
-\caption{Mean (top), and median (middle) of $\Delta$mag as a function of the true magnitude, with pure spatial matching (blue) and spatial+magnitude matching (orange). Bottom: Histogram of $\Delta$ mag.}
+\includegraphics[width=0.9\columnwidth]{astrometry_residual_comparison}
+\includegraphics[width=0.9\columnwidth]{photometry_residual_comparison}
+\caption{Top: Normalized distribution of measured astrometric residuals (in the RA axis but similar results are found for the Dec. axis) for pure spatial matching (blue) and spatial+magnitude matching (orange), the median values of each distribution are marked by dashed lines and dashed-dotted lines respectively. Bottom: Median per-bin photometric residual as a function of measured magnitude for pure spatial matching (green), and spatial+magnitude matching (orange) using 30 magnitude bins between $r$-band magnitude 10 and 30. We also show the individual residuals for the matched objects using spatial+magnitude matching (blue dots).}
 \label{fig:matching_comparison}
 \end{figure}
 
-We also compared the angular power spectra \rachel{computed how?  What software?} of the detected objects and the matched input objects in \figref{matching_cls}. We see that the spatial matching recovers the power spectrum well, with some wiggling at very low scales due to mismatches and small differences in position between the detected and the input catalogs. \rachel{Is that really the case?  If you're referring to the wiggles in the blue curve around ell of 2000-5000, then I thought that corresponds to scales of around 0.05 degrees or 2 arcmin, which is much larger than the scales of mismatching or centroid offsets for matches.} In the case of spatial+magnitude matching, we see that the power for the matched catalog is consistently lower. This is due to objects that are detected but not matched to any object in the true catalog, since this effect disappears when we just consider the objects that have been matched. \rachel{What is the interpretation though?  If they are detected but not matched, then are they junk?  I am not sure how to interpret this.  I think this goes back to my question of what selection criteria are being imposed - is this a mix of all stars and galaxies down to very faint magnitudes with no junk detection etc.?}
+At the end of the day, different matching techniques have different potential applications and strengths. In our case, we are going to use these matching techniques to provide a clean (flux-limited) sample to perform two-point clustering analyses. Given that magnitude precision and accuracy will be important for our sample selection, we will use the spatial+magnitude matching technique to clean the sample from artifacts and poorly measured sources.
+
+\subsection{Sample selection}
+\label{ssec:sample_selection}
+
+In this subsection we are going to use the spatial+magnitude technique to identify flags or thresholds in variables that may allow us to get a clean sample for clustering. In principle, given that the LSST DM software stack is essentially the same as the reduction pipeline used in~\citet{2018PASJ...70S..25M}, we could potentially use similar cuts. However, note that we are working in $r$-band only so some of the required cuts cannot be performed. In addition to this, some variables, such as the so-called blendedness parameter, are not available in the version of the LSST DM software stack that we used to process the data (\texttt{v13.0}). As a consequence, we propose our own selection cuts, although we use the criteria in~\citet{2018PASJ...70S..25M} as guidance.
+
+The methodology to perform the selections is simple: we check the primary detected sources that have no match using the spatial+magnitude technique and we compute the fraction of objects that are flagged, $f_{u,i} = N_{flag_{i}, unmatched}/N_{total, unmatched}$, and compare it to the corresponding fraction of flagged matched primary detected sources, $f_{m,i} = N_{flag_{i}, matched}/N_{total, matched}$, for each one of the flags, $flag_{i}$, in the catalog. If the ratio $f_{u,i}/f_{m,i}$ is larger than 50 for a particular flag and $f_{m,i} < 0.01$, i.e., less than 1\% of the matched primary sources have that flag, it means that the presence of that flag is a good indicator of problematic sources. Thus, we eliminate the sources with those flags. We also repeat the same procedure looking for the absence of a certain flag or whether a quantity is frequently measured as \texttt{NaN} and check for redundant cuts.
+
+As a result, we are going to \textbf{eliminate} from our selection all the sources that fulfill one of the following conditions:
+\begin{itemize}
+\item \texttt{detect\_isPrimary = False}. As discussed earlier, this means that the source has not been fully deblended or is outside of the inner region in a coadd.
+\item \texttt{base\_NaiveCentroid\_flag = True}. This means that there is a general failure during the source measurement.
+\item \texttt{base\_SdssShape\_flag\_psf = True}. This means that there is a failure in measuring the PSF model shape in that position.
+\item \texttt{ext\_shapeHSM\_HsmSourceMoments\_flag\_not\_contained = True}. This means that the center of the source is not contained in its footprint bounding box.
+\item \texttt{modelfit\_DoubleShapeletPsfApprox\_flag = True}. This means that there is a general failure while performing the double-shapelet approximation to the PSF model in the position of this source (see Appendix 2 in~\citet{2018PASJ...70S...5B} for more details).
+\item \texttt{base\_PixelFlags\_flag\_interpolated = True}. This means that there are interpolated pixels in the source's footprint.
+\item \texttt{base\_PixelFlags\_flag\_interpolatedCenter = True}. This means that the center of a source is interpolated.
+\item \texttt{base\_PixelFlags\_flag\_saturatedCenter = True}. This means that the center of a source is saturated.
+\item \texttt{base\_ClassificationExtendedness\_flag = True}. This means that there is a general failure when using the extendedness classifier.
+\item \texttt{modelfit\_CModel\_flags\_region\_usedInitialEllipseMin = True}. This means that the pixel region for the final model fit is set to the minimum bound used in the initial fit.
+\item \texttt{base\_SdssShape\_x/y = NaN}. This means that the centroid position (either in the x or y axes) is measured as NaN.
+\item \texttt{base\_SdssCentroid\_x/yErr = NaN}. This means that the error in the centroid position (either in the x or y axis) is measured as NaN.
+\end{itemize}
+
+After these cuts we keep 8.25 million objects in the dithered catalog and 7.51 million objects in the undithered catalog. We will refer to this sample as the \textit{clean sample}. 
+
+We now focus on how many of these objects are matched as a function of magnitude and signal-to-noise ratio. In \figref{snr_mag_selection}, we can see that the fraction of unmatched objects for $r < 26$ is very low and that after this, it greatly increases. We also see that for objects with SNR$>6$ the fraction of unmatched objects starts to be negligible. These two thresholds ($r < 26$ and/or SNR$>6$) look like natural selection cuts to ensure good quality data. However, we will analyze further these magnitude and SNR thresholds before imposing any cuts to the sample in subsequent subsections. In particular, our \textit{final sample} is going to include as well the following selection cuts:
+
+\begin{itemize}
+\item \texttt{base\_ClassificationExtendedness\_value=1}.
+\item $17 \leq$ \texttt{r\_mag\_CModel} $\leq 25.5$. 
+\end{itemize}
+
+These cuts will be justified in subsequent sections.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{cl_comparison_matching.pdf}
-\caption{Relative difference between the angular power spectrum measured for the detected objects and the matched objects in the input catalog with spatial matching compared to all detected objects (blue, solid line), spatial+magnitude matching compared to all detected objects (orange, dash dotted line), and spatial+magnitude matching compared to matched objects using this schema (green dashed line).}
-\label{fig:matching_cls}
+\includegraphics[width=0.9\columnwidth]{unmatched_fraction_magnitude.pdf}
+\includegraphics[width=0.9\columnwidth]{unmatched_fraction_SNR.pdf}
+\caption{Top: Ratio of unmatched to matched primary detected sources after selection cuts as a function of magnitude. The dashed vertical lines show the median depth for the dithered (orange) and undithered (green) fields. Bottom: Ratio of unmatched to matched primary detected sources after selection cuts as a function of SNR.}
+\label{fig:snr_mag_selection}
 \end{figure}
 
-The problem with these matching techniques is the lack of details about blended objects. For analyses involving blending and/or very small scale information, different approaches should be considered.
+\subsection{Star/galaxy classification}
 
-% ----------------------------------------------------------------------
+For weak lensing and clustering analyses, it is important to have a pure galaxy sample, and a good control over the fraction of stars that are classified as galaxies. Our pipeline includes the variable \texttt{base\_ClassificationExtendedness\_value} (see~\citet{2018PASJ...70S...5B} for more details) , which we will refer to as extendedness, which can be used as a proxy to separate stars from galaxies as showed by~\citet{2018PASJ...70S..25M} and~\citet{2018PASJ...70S...5B}. In this work we say that an object has been classified as a galaxy if extendedness=1, and that the object has been classified as a star if extendedness=0. Now we are going to check how extendedness performs as star/galaxy classifier in DC1. In order to do so, we use the \textit{clean sample} with $16 \leq r \leq 26$ in the dithered field, although we find similar results using the undithered field, and match it to our input catalog. After that, we count the number of objects matched to stars that have been classified as stars, as a function of magnitude, and divide this number by the total number of objects matched to stars (which we will mark as Star $\rightarrow$ Star). We do the same with the number of objects matched to stars that have been classified as galaxies, and divide this number by the total number of objects matched to galaxies (Star $\rightarrow$ Galaxy); the number of objects matched to galaxies that have been classified as galaxies divided by the total number of objects matched to galaxies (Galaxy $\rightarrow$ Galaxy); and finally, the total number of objects matched to galaxies that have been classified as stars, divided by the total number of objects matched to stars (Galaxy $\rightarrow$ Star). This way, we know the total stellar (or galaxy) contamination as a function of measured magnitude. The results are depicted in \figref{star_galaxy_separation}. We see that at the brighter end ($r \leq 17$), there are a lot of stars that get classified as galaxies, this is due to two reasons: First, the ratio number of stars to number of galaxies at those magnitudes is larger than at fainter magnitudes, since stars and galaxies have different magnitude distributions. Second, problems related to saturation make difficult to use extendedness as a proxy for distinguishing stars and galaxies. On the other hand, we see that at the fainter end ($r \approx 26$), the purity of the galaxy sample using the extendedness classifier starts to decrease, getting as low as 90\% for the last bin in our analysis, and an overall $f_{star}=2.8\%$ stellar contamination in the \textit{clean sample} after using extendedness=1. This number gets reduced to $f_{star}=1.4\%$ if we only consider galaxies with $r < 25.5$, and $f_{star}=0.7\%$ for $r < 25$. Note that these number are larger than those in~\citet{2018PASJ...70S..25M}. This is mostly due to the fact that our PSF is larger, making the extendedness classifier perform a little bit worse, and that we do not include any cuts in resolution. However, this level of stellar contamination is acceptable for the purposes in this work.
 
-\subsection{Generating depth maps}
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{stellar_contamination}
+\caption{Fraction of objects correctly classified as stars (blue) or galaxies (green), and fraction of objects misclassified as stars (red) or galaxies (orange) as a function of magnitude in the dithered field. The results are equivalent in the undithered case.}
+\label{fig:star_galaxy_separation}
+\end{figure}
+\subsection{Depth maps and footprint masking}
 \label{sec:masking}
 
-In order to estimate the depth in the coadd catalogs, we select stars using the extendedness-based classifier: \texttt{base\_ClassificationExtendedness\_value==0}. This ensures that we are selecting
-PSF-like objects. \rachel{You should  refer to Bosch+18 and use the results there to impose a magnitude cut, since for faint objects such a sample will be heavily contaminated by galaxies.} After this, we use two different approaches:
+In order to estimate the depth in the coadd catalogs we generate a flat-sky map, with resolution of $1.74$ arcminutes, containing the detected primary sources in the \textit{clean sample} from the previous subsection. This resolution ensures having an accurate estimate of the power-spectra up to $\ell \sim 6000$, where the power-spectra will be mostly dominated by shot-noise. Then, for each pixel, we compute the median SNR of the objects in that pixel as a function of the magnitude and use the magnitude at which SNR is closest to 5.
 
-\begin{enumerate}
-\item In the first approach we generate a HEALPix\footnote{\url{http://healpix.sf.net}}~\citep{2005ApJ...622..759G} map containing the PSF-like objects detected with a signal-to-noise ratio (SNR) $\geq 5$ (\texttt{base\_PsfFlux\_flux/base\_PsfFlux\_fluxSigma>=5}), and we assign to each HEALPix pixel the value of the
-dimmest object contained in it. We will refer to this method as method \#1.
-\item The second procedure also generates a HEALPix map containing the PSF-like objects. Here, for each HEALPix pixel, we compute the median SNR as a function of the magnitude and use the magnitude at which SNR is closest to 5. We will refer to this method as method \#2.
-\end{enumerate}
+These maps are shown in \figref{depth_maps}. We can see that the dithered simulation is indeed very uniform ($> 50\%$ of its footprint lie in the same exact depth bin) showing the success of the dither strategy. However, we can see that in the undithered simulation, as expected, there are zones with a higher depth (the overlap of the pointing positions) and a reduced median depth.
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{dithered_depth.png}
+%\includegraphics[width=0.45\textwidth]{dithered_difference.png}
+\includegraphics[width=0.9\columnwidth]{undithered_depth.png}
+%\includegraphics[width=0.45\textwidth]{undithered_difference.png}
+\includegraphics[width=0.9\columnwidth]{depth_comparison_1d.pdf}
+\caption{5-$\sigma$ depth maps for the dithered (top) and undithered (middle) fields. There is an increased depth in the overlapping parts of the pointings in the undithered field but the median depth is lower. The maps have a resolution of $1.74$ arcmin. We also show the 1D distribution of depth (bottom) for both fields for easier comparison.}
+\label{fig:depth_maps}
+\end{figure}
 
-These two procedures yield very similar results (within $\sim 4\%$). We show the relative difference in \figref{depth_maps}. We also check that the maps built selecting galaxies instead of stars are compatible as well. \rachel{For galaxies, did you still use PSF flux?} We will select our footprint according to the depth map using the second methodology \rachel{as applied to stars?}. These maps are also shown in \figref{depth_maps}.
+We also check the depth by checking the detection efficiency of stars as a function of magnitude. To do so, we use the stars in the input catalog and select those that lie within the simulated footprint, after this, we match them using the spatial+magnitude technique described in previous sections. Finally, we compute the number of detected objects in the \textit{clean sample} matched to stars divided by the number of stars in the input catalog as a function of the magnitude of the matched object in the input catalog. The results can be seen in \figref{stellar_detection_efficiency}. We see that there is a high efficiency $> 80\%$ up to $r \approx 25.8$. 
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{stellar_detection_efficiency.pdf}
+\caption{Ratio of number of detected objects matched to stars in the \textit{clean sample} and number of stars in the input catalog as a function of magnitude for the dithered (blue) and undithered (orange).}
+\label{fig:stellar_detection_efficiency}
+\end{figure}
+
+Given the results in the two previous subsections and this subsection, we decide to use only the galaxies that lie in pixels with limiting magnitude $r \geq 25.5$ and select those objects with magnitude $17 \leq r \leq 25.5$. This cut ensures high completeness ($>85\%$), as well as that we eliminate most of the artifacts in the sample, and that we have a low stellar contamination ($f_{star} \approx 1.4\%$). After these cuts and selecting objects with extendedness=1, we obtain 5.1 and 4.8 million objects for the dithered and undithered fields respectively.
+
+\subsection{Bright object masking}
+
+Bright objects produce significant effects in the image that affect the detection and measurement of neighboring objects. Some examples of these effects include saturation, large diffraction spikes, obscuration of neighboring sources, etc. Thus, masking a region around these sources creates a more complicated footprint but greatly simplifies the analysis of systematic effects. In order to avoid possible biases by masking bright galaxies we will only analyze the impact of bright stars in the nearby detected objects. In the following, when we refer to bright object masking we are actually referring to bright star masking.
+
+In order to evaluate the effects, we follow the procedure described in \citet{2018PASJ...70S...7C}, modifying it accordingly to the availability of our input data. Using the position of stars in the input catalog, that lie within the considered footprint, and with input magnitudes in the range $m_{1} < r < m_{2}$ we count all primary detected objects (avoiding any other selection cuts) in a given radius $\theta$, and compute the median of the set, $N_{neighbors}$. We repeat this for different radii and magnitude ranges. Finally, we repeat this process for all stars in the input catalog in the footprint and compute $N_{neighbors, tot}$ and compute the ratio $y = N_{neighbors}/N_{neighbors, tot}$. We fit this ratio to an error function:
+\begin{equation}
+y_{model} = \mathrm{Erf}\left({\theta/\theta_{mask}}\right)
+\end{equation}
+This fit is performed for the first three bins in stellar magnitude that we consider, $r < 14$, $14 < r < 16$, and $16 < r < 18$. We ignore the points with $\theta < 10$ arcsec for the fit. Following \citet{2018PASJ...70S...7C} we use the point where the density reaches 95\% as masking radius, i.e., $r_{mask,fit} = \mathrm{Erf}^{-1}(0.95) \theta_{mask}$. After this, we compare to equation (1) in \citet{2018PASJ...70S..25M}:
+\begin{equation}
+r_{mask,HSC} = 200\times 10^{0.25(7-m_{B*})} + 12 \times 10^{0.05(16-m_{B*})} 
+\end{equation}
+Where $m_{B*}$ is the magnitude of the bright star to mask. Note that this prescription is specific for HSC. However, the LSST instrument and observing conditions are different. This is why we decided to rescale $r_{mask,HSC}$ by the ratio of mean seeing in LSST and HSC.
+\begin{equation}
+r_{mask,LSST} = r_{mask,HSC} \frac{1.04\arcsec}{0.58\arcsec}
+\end{equation}
+Where 1.04\arcsec is the mean seeing in DC1, and 0.58\arcsec is the mean seeing reported in~\citet{2018PASJ...70S..25M}. We obtain the results depicted in \figref{bright_object_masking}. We see that the error function describes well the behavior for $N_{neighbors}/N_{neighbors,tot}$. We also see that the masking radius, $r_{mask,LSST}$, using the rescaled prescription set by \citet{2018PASJ...70S..25M} is a pretty good approximation for our data. In particular, we find that the ratio $r_{mask,fit}/r_{mask,LSST} \approx 1.14$. This 14\% disagreement can be related to the fact that we chose a very simple rescaling based on the mean seeing and due to our simplistic PSF model. As a result, we decide to use $r_{mask, DC1} = 1.14 r_{mask, LSST}$ around stars in the input catalog with $r < 16$, since this is the saturation limit for LSST. We generate a high-resolution mask using flat-sky maps of $\approx 12.9 \arcsec$ resolution, then we downsample this map to a resolution of $\approx 2$ arcmin and eliminate objects that lie within pixels that have more than 50\% of their area masked. This results into a total area loss of $\approx 27.5\%$ of our footprint, which can be seen in \figref{bo_mask}. After these cuts we keep 3.74 million in the dithered field and 3.51 million in the undithered field.
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{bright_object_masking}
+\caption{Ratio of the median number of primary detected objects neighboring a star in a certain magnitude range in the input catalog to the median number of objects detected any star in the input catalog, as a function of the distance to the star $\theta$. Different symbols and colors represent different magnitude ranges for the stars in the input catalog considered. The shadowed regions represent the best fit masking radius, $r_{mask,fit}$ with their uncertainties and the vertical lines correspond to $r_{mask,LSST}$ evaluated at the mean magnitude in each bin.}
+\label{fig:bright_object_masking}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{bo_mask}
+\caption{Bright object (bright star) mask. This map shows with 1 (yellow) the pixels that we will consider for our analysis, and with 0 (blue) the regions of the sky that will not be considered in our analysis using this mask. We use a high-resolution ($\approx 12.9 \arcsec$) map to mask around bright stars ($r < 16$) and then, we downsample the map to a lower resolution ($\approx 1.74 \arcmin$) and get rid of the pixels where the masked area by bright stars is higher than 50\% of the pixel. This bright}
+\label{fig:bo_mask}
+\end{figure} 
+\subsection{Blending}
+As previously mentioned, our output catalogs do not include any estimation of overlap between sources, or \textit{blendedness}~\citep{2018PASJ...70S...5B}. Highly-blended objects are more likely to have biased estimations of the centroid position, shape, and fluxes. This can lead to overall biases in the estimated photometric redshifts and cosmological parameters. Given that the mean seeing in DC1 is larger than in HSC, the impact of blended objects is likely to be larger. In the case of \citet{2018PASJ...70S..25M}, the cut in the blendedness parameter affects only 1\% of the objects; we expect this number to be larger in our case. Using specialized image simulations from~\citet{Sanchez19} with a seeing equal to the seeing in DC1 (1.04\arcsec), in $r$-band, we find that if we select objects with $r < 25.5$ and SNR $\geq 1$, the fraction of objects with blendedness $ >10^{-0.375}$ is $\approx 6.3\%$. If we raise the minimum SNR threshold to 6, this fraction is lowered to $\approx 2.6\%$. This means that our sample will have a fraction of these objects anywhere in the range (2.6\% - 6.3\%) but closer to 2.6\% since the fraction of objects with SNR $\leq 6$ is $\approx 0.3\%$. In any case, we do not expect that the inclusion of these objects in our two point measurements will affect the range of scales that we are going to consider in this work. In order to quantify this, a careful study of the impact of blending in clustering measurements is necessary but this is out of the scope of this work.
+
+\section{Two-point clustering results}
+\label{sec:results}
+
+In this section, we analyze the two point clustering statistics for both the dithered and undithered catalogs in harmonic space and check the consistency between the input and measured observables. We also analyze the impact of different observing conditions in two-point statistics. 
+
+In order to measure the angular power spectrum, we use \texttt{NaMaster}\footnote{\url{https://github.com/LSSTDESC/NaMaster}}~\citep{2019MNRAS.484.4127A}. \texttt{NaMaster} allows us to compute the cross-power-spectra of spin-0 and spin-2 maps, with an arbitrary mask and number of contaminants using the pseudo-$C_{\ell}$ formalism~\citep{1973ApJ...185..413P,2002ApJ...567....2H,2017MNRAS.465.1847E}. In this case, we focus on the angular power spectrum of the density contrast map, $\delta$. Given the lack of photometric redshift measurements in our data, we decided to analyze full \textit{final sample}. We check the range $0 < \ell < 6000$ in bandpowers of $\Delta \ell = 352$ and ignore the first bin due to lack of sensitivity at that range of scales ($\ell=178 \approx 2$ degrees). The choice of $\Delta \ell$ was done so the resulting covariance matrix is close to diagonal although we opted to make 4 times more bins that the optimal $\Delta \ell_{opt} = 1/f_{sky}$, with $f_{sky}$ being the fraction in the footprint. However, we are going to only consider multipoles such that $\ell \geq 1/f_{sky} \approx 1574$. We estimate the Gaussian covariance with \texttt{NaMaster} obtaining the results in~\figref{gaussian_cov}. Given that we are focused on demonstrating the ability to perform end-to-end analysis, this Gaussian covariance will be enough for our purposes. However, careful computation of the non-Gaussian contributions to the covariance should be performed in the case of performing any cosmological analyses given the size of our footprint.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{Gaussian_covariance}
+\caption{Estimated Gaussian covariance using \texttt{NaMaster} in the range of scales considered in our analysis.}
+\label{fig:gaussian_cov}
+\end{figure}
+
+The DC1 simulations also allow us to study the effect of different observational effects in the two-point clustering statistics and how the dithering strategies work to mitigate these effects. We are going to consider the following effects:
+
+\begin{itemize}
+\item Extinction: The CatSim catalog provides the value for the magnitudes corrected for extinction using the map from \citet{1998ApJ...500..525S}, which we refer to as the SFD map.
+\item Stellar contamination: In this case, we build a flat-sky map with all stars in the input catalog.
+\item Sky-background/Sky-brightness: We use the observed background level in each exposure and assign that value to the pixels in the flat-sky map that lie within that exposure. After this we calculate the mean value in each pixel to build the map with the same resolution as the mask ($\approx 2$ arcmin) which we deproject~\citep{2019MNRAS.484.4127A}. 
+\item Sky-noise: We use the observed noise background level in each exposure and proceed as in the previous case to build a map.
+\item Seeing: We proceed as before and use the observed seeing in each exposure and build a map.
+\item Number of visits: We count the number of exposures overlapping with each pixel of our flat-sky maps.
+\end{itemize}
+These maps are shown in \figref{systematic_maps} and \figref{systematic_maps_ud}. We see that the spatial distribution of the different observing conditions are very different between the two simulations, even though the ranges in each of the observing conditions are very similar. 
 
 \begin{figure*}
 \centering
-\includegraphics[width=0.45\textwidth]{dithered_depth.png}
-\includegraphics[width=0.45\textwidth]{dithered_difference.png}
-\includegraphics[width=0.45\textwidth]{undithered_depth.png}
-\includegraphics[width=0.45\textwidth]{undithered_difference.png}
-\caption{Left column: 5-$\sigma$ depth for the dithered (top) and undithered (bottom) fields using the method \#2 in the text. Right column: Relative difference between the depth estimated using the methods presented in the text for the dithered (top) and undithered (bottom) fields.}
-\label{fig:depth_maps}
+\includegraphics[width=0.45\textwidth]{mean_fwhm.png}
+\includegraphics[width=0.45\textwidth]{mean_sky.png}
+\includegraphics[width=0.45\textwidth]{mean_skynoise.png}
+\includegraphics[width=0.45\textwidth]{extinction.png}
+\includegraphics[width=0.45\textwidth]{stellar_density.png}
+\includegraphics[width=0.45\textwidth]{nvisits.png}
+\caption{Maps showing the different foregrounds considered in our analysis of the dithered field. From top left to bottom right: Mean PSF FWHM, mean sky-brightness, mean sky-noise, mean extinction, stellar density and number of visits in each pixel in the flat-sky maps with the same resolution as the depth maps in \figref{depth_maps}. We only show their values in the regions where the 5-$\sigma$ $r$-band depth is larger than 25.5.}
+\label{fig:systematic_maps}
 \end{figure*}
 
-\subsection{Bright objects masking and data selection}
-
-Bright objects produce significant effects in the image that affect the detection and measurement of neighboring objects. Some examples of these effects include saturation, large diffraction spikes, obscuration of neighboring sources, etc. Thus, masking a region around these sources creates a more complicated footprint but greatly simplifies the analysis of systematic effects. In order to evaluate the effects from these sources, we take the stars from the input catalog, bin them according to their magnitude, and count the number of sources detected in a given radius around the stars. One caveat is that the number of stars in an aperture of radius $\theta_{1} > \theta_{0}$, depends on the number of stars on the aperture with radius $\theta_{0}$. \rachel{The previous sentences have some confusion: one says you count ``sources'' which sounds like stars/galaxies with some selection criteria, but the next says you count ``stars''.  The figure actually implies in the vertical axis label that you are counting galaxies.  Should clarify.  Besides the ``sources'' versus ``stars'' question, selection criteria are relevant. (Are you using flags to eliminate spurious detection or not, which affects the interpretation of  the results?)} Therefore, it is better to use a differential measurement. Results of this are shown in \figref{galdens_derivative}. We see that there is an excess of sources at distances less than 10$\arcsec$ for the brightest stars. This is mainly due to the shredding of these bright sources around their outskirts. Bright noisy pixels are detected as individual (point-like) sources resulting in fake source detections. On the other hand, we do not see any obscuration present on scales that we are interested in (1 arcmin and higher). We conclude that no additional masking is required but a careful object selection becomes important for clustering analyses. \rachel{I don't see how you can conclude there is no obscuration from this plot; can you clarify?}
-
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=0.9\columnwidth]{dngal_dtheta.png}
-\caption{Mean increment in the number of detected objects around stars in the 95th flux percentile (magenta), the 75th percentile (cyan), the 55th percentile (red), the 35th percentile (green) and the 15th percentile (blue). We see that for the brightest percentiles there is no obscuration present but a overdensity of targets. These are mainly noise peaks identified as point sources. \rachel{Why would that be happening with equal frequency at all separations on this plot?  At some point the effect has to stop, and until that's been confirmed, I don't think we can definitively say this is the explanation as opposed to other explanations.} \rachel{Big picture question about this plot: why is the area factor not normalized out?  I mean, why are you not showing increment in {\em number density} rather than counts, so that a perfectly flat background of sources would give a flat result?  I think it's far easier to interpret such a plot than a plot of differential counts, which has geometric factors included.}}
-\label{fig:galdens_derivative}
-\end{figure}
+\includegraphics[width=0.45\textwidth]{ud_mean_fwhm.png}
+\includegraphics[width=0.45\textwidth]{ud_mean_sky.png}
+\includegraphics[width=0.45\textwidth]{ud_mean_skynoise.png}
+%\includegraphics[width=0.45\textwidth]{ud_extinction.png}
+%\includegraphics[width=0.45\textwidth]{ud_stellar_density.png}
+\includegraphics[width=0.45\textwidth]{ud_nvisits.png}
+\caption{Same as \figref{systematic_maps} for the undithered dataset. From top left to bottom right: Mean PSF FWHM, mean sky brightness, mean sky noise and number of visits. Note that we use the same extinction and stellar density maps changing the geometry of the mask.}
+\label{fig:systematic_maps_ud}
+\end{figure*}
 
-We also check the detection efficiency of galaxies in our sample. We selected galaxies in the catalog using the variable \texttt{base\_ClassificationExtendedness\_value} as a star/galaxy separator (as in \citealt{2017arXiv170506766B}). Objects where this variable is equal to 1 are more likely to be galaxies, whereas the objects where it is 0 are more likely to be stars. We also make some quality cuts by selecting the objects with \texttt{detect\_isPrimary==True}. The selection in this variable ensures that the object has been fully deblended and that the detection was not close to the edge of a coadded image. The results are in \figref{completeness}, where we compute the ratio of detected objects classified as galaxies and the input number of galaxies, $\varepsilon$, as a function of magnitude. We check this ratio for both the dithered and undithered catalogs and in pixels where the depths were higher than 25.7 and 26.25. We used \texttt{CMODEL\_MAG} as the reference magnitude for the detected objects and the true magnitude for the input galaxies. 
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{completeness.png}
-\caption{Number of detected objects classified as galaxies divided by the number input galaxies as a function of magnitude. We see that the detection efficiency is larger than 80\% for the most part and a considerable fraction of objects with magnitude lower than 20 are being misclassified. \rachel{Caption should say what the numbers in the legend mean.}}
-\label{fig:completeness}
-\end{figure}
-
-\figref{completeness} shows that selecting galaxies with \texttt{base\_ClassificationExtendedness\_value==1}, \texttt{detect\_isPrimary==True} and \texttt{CMODEL\_MAG $>$ 21} is enough to get rid of most potential problems with fake source detections. We confirmed this by performing visual inspection on the images. We noticed that fake sources happen close to very bright objects. In addition, it seems that selecting \texttt{CMODEL\_MAG $<$ 25.3} ensures high completeness ($\sim 80\%$). Uniformity is ensured by selecting the galaxies that lie within HEALPixels where the depth is $\geq 25.3$. After these selection cuts, we obtain 4.4 million galaxies for the dithered field and 4.3 for the undithered field. \rachel{It would be useful to compare the results in this plot with the Bosch+ results for star/galaxy sample completeness and purities, to see if our findings are consistent.  Also, I think we need to discuss this result in light of effects that could be present in the data: e.g., the impact of masking around bright stars, the impact of blending, \dots}
-% ----------------------------------------------------------------------
-
-\subsection{Clustering results}
-\label{sec:results}
-
-\rachel{Big picture question: This subsection starts out ``In this section, we analyze the two point clustering statistics\dots'' - but you don't.  This is a subsection.  It's only in the next subsection that you define and show plots of the two-point statistics.  So I think either this subsection should be combined with the next one, {\em or} the two subsections should be promoted to a section together, perhaps with 6.6 as well.  Perhaps combining the subsections would be better, keeping them within this ``Analysis'' section.}
-
-In this section, we analyze the two point clustering statistics for both the dithered and undithered catalogs in real and harmonic space and check the consistency between the input and measured observables. When comparing the input and output catalogs, some subtleties arise. For example, selecting a galaxy sample in the input catalog with $m_{\rm low} < m_{\rm true} < m_{\rm high}$, where $m_{\rm low}$ is the lower $r$-band magnitude threshold, $m_{\rm true}$ is the true $r$-band magnitude of the object and $m_{\rm high}$ is the upper $r$-band magnitude threshold, and a second galaxy sample in the output catalog with $m_{\rm low} < m_{\rm measured} < m_{\rm high}$, with $m_{\rm measured}$ being the $r$-band measured magnitude, results in a different power-spectra. The power spectrum in the first (selected according to true magnitude) sample will have a larger overall power than the second (selected according to measured magnitude) sample. This is due to the fact that the second sample includes galaxies that are fainter, resulting in a wider window function. \rachel{This sentence is pretty mystifying.  You haven't said how/why does the output catalog are fainter, given the same magnitude cuts.  Presumably, you are referring to the impact of noise, which will preferentially scatter in more faint galaxies than it will cause galaxies to be lost on the bright end.  But what about blends, can we reason about what that should do?  Also, the connection between ``include fainter galaxies'' and ``wider window function'' isn't really made.  I presume you are connecting fainter galaxies with higher redshift, but again, it's better to be explicit.}
-
-\subsection{2-point correlation function}
-Using the samples presented in previous sections \rachel{You've defined several different samples in previous sections, so this statement is not entirely clear.}, we measure the 2-point correlation function using \texttt{TreeCorr}~\citep{2004MNRAS.352..338J}, selecting the Landy \& Szalay estimator~\citep{1993ApJ...412...64L},
-\begin{equation}
-w(\theta) = \frac{DD - 2 DR + RR}{RR}
-\end{equation}
-where $DD, DR$, and $RR$ are the number of pairs of objects from the data $D$ or the random catalog $R$ that cover the footprint. \rachel{How was the random catalog constructed?  What physical effects does it include - masking, depth variations, \dots?} We use 30 angular log-spaced bins between $\theta=0.0001^{\circ}$ \rachel{Maybe say what this is in arcsec/arcmin since that will be more natural to most readers?  Also, why so small?} and $\theta=10^{\circ}$ \rachel{My gut reaction is that for a 40 square degree survey it doesn't make sense to go to 10 degrees.  You should have basically no pairs there.  The plot only goes to 1 degree (which still feels somewhat aspirational) so I was wondering if this  ``10'' is a typo and you really just went to 1?}. We choose the number of bins so that the resulting covariance matrix is nearly diagonal. The covariance matrices are calculated using the delete-one jackknife technique~\citep{Shao:1986:DJB,2009MNRAS.396...19N}. We divide the footprint in $N_{JK}=100$ regions. These regions are defined using the K-means algorithm from the package \texttt{kmeans\_radec}\footnote{\url{https://github.com/esheldon/kmeans\_radec}}. The covariance matrix is computed as
-\begin{equation}
-\mathrm{Cov}_{JK}(\theta_{i},\theta_{j})=\frac{N_{JK}-1}{N_{JK}}\sum_{k=1}^{N_{JK}}\Delta w_{k}(\theta_{i}) \Delta w_{k}(\theta_{j})
-\end{equation}
-\begin{equation}
-\Delta w_{k}(\theta_{i}) = w_{k}(\theta_{i})-\bar{w}(\theta_{i})
-\end{equation}
-where $w_{k}(\theta_{i})$ is the value of the correlation function when deleting the $k$-th region at the scale $\theta_{i}$, and $\bar{w}(\theta_{i})$ is the average correlation function at that same scale. We compute the correlation function on the dithered and undithered catalogs using their respective footprints, and we compare with the predicted correlation function given the $N(z)$ obtained by the spatial matching presented in previous sections, using \texttt{CCL}\footnote{\url{https://github.com/LSSTDESC/CCL}}\citep{2018arXiv181205995C}. \rachel{The theory predictions also require a galaxy bias, so what galaxy bias vs.\ redshift was used in these theory predictions?} The results are shown at \figref{2pt_corr}. We find that both measurements are in good agreement and in agreement with the theoretical prediction for $\theta < 0.3$ degrees. The angular range is mainly limited by our surveyed area. \rachel{How to explain the residual large-scale correlations?}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{w_comp_corr25p3.pdf}
-\includegraphics[width=0.9\columnwidth]{sys_dithered_25p3_v2.pdf}
-\includegraphics[width=0.9\columnwidth]{sys_undithered_25p3_v2.pdf}
-\caption{{\bf Top panel:} Results for the two-point correlation function in the input (green), dithered (blue) and undithered (orange) datasets. We can see that after the correction (triangles) for the systematic effects, presented in Section \ref{ssec:systematics}, the agreement is better than without the correction (circles) between the input and output data especially for the undithered case (for the dithered case the corrections are negligible). {\bf Middle and bottom panels:} Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (middle panel) and undithered (bottom panel) datasets. We show that the correction is at percent level for $\theta<0.03$ degrees and grows beyond the $20\%$ level for $\theta \approx 0.1$ degrees. \rachel{It should say which simulation was used directly on the panels as well.} \rachel{How should we interpret the fact that the correction is incredibly noisy on larger scales?  Does that mean it's not even possible to derive  a correction there?  50\% of the plot is in the region with noisy corrections, so it is worth reconsidering what scales are worth showing.}}
-\label{fig:2pt_corr}
-\end{figure}
-
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{w_dithered_25p3.pdf}
-%\includegraphics[width=0.9\columnwidth]{w_undithered_25p3.pdf}
-
-%\caption{Correction due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (top) and undithered (bottom) datasets. We show that the correction is at percent level for $\theta<0.03$ degrees and grows beyond the $20\%$ level for $\theta \approx 0.1$ degrees.}
-%\label{fig:sys_realspace}
-%\end{figure}
-
-
-%We also show the correlation matrix,
-%\begin{equation}
-%\mathrm{Corr}_{ij}=\frac{\mathrm{Cov}_{ij}}{\sqrt{\mathrm{Cov}_{ii}\mathrm{Cov}_{jj}}}
-%\end{equation}
-%in \figref{2pt_cov} where we can see that in both cases the matrices are almost diagonal.
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{correlation_matrix_dithered_25p3_v2.pdf}
-%\includegraphics[width=0.9\columnwidth]{correlation_matrix_undithered_25p3_v2.pdf}
-%\caption{Correlation matrices for the dithered (top) and undithered catalogs (bottom).}
-%\label{fig:2pt_cov}
-%\end{figure}
-\subsubsection{Angular power spectrum}
-We measure the angular power spectrum using the \texttt{NaMaster}\footnote{\url{https://github.com/LSSTDESC/NaMaster}} package~\citep{2018arXiv180909603A}. \texttt{NaMaster} computes the cross-power-spectra of spin-0 and spin-2 maps, with an arbitrary mask and number of contaminants using a pseudo-$C_{\ell}$ approach~\citep{2002ApJ...567....2H,2017MNRAS.465.1847E}. In this case, we calculate the power spectrum in the range $0 < \ell < 6144$ and $\Delta \ell = 75$. The choice of $\Delta \ell$ was done so the resulting covariance matrix is close to diagonal. We calculate the covariance matrices with three different approaches: The first approach is the same delete-one jackknife technique performed in real space; in the second approach, we compute the covariances using the mode-counting formula~\citep{Dodelson:1282338,2007MNRAS.381.1347C}
-\begin{equation}
-\mathrm{Cov}_{\ell\ell'}=\frac{2}{f_{\rm sky}\Delta\ell}\left(\frac{C_{\ell}^{2}}{2\ell+1}+\frac{1}{\bar{n}^{2}}\right)\delta_{\ell\ell'}
-\end{equation}
-where $\bar{n}$ is the number density (objects per steradian). For the third approach we compute the Gaussian covariance with \texttt{NaMaster}. These three methods give consistent results. We compute the theoretical prediction for the power-spectra with \texttt{CCL}:
+We use the mode deprojection from \texttt{NaMaster}~\citep{2019MNRAS.484.4127A} to correct for the potential contamination of the maps described above. Mode deprojection, assumes that there is a linear dependency between the observed number density of galaxies and the contaminants. We checked that this is a good approximation for the different observing conditions. In addition, we compute the theoretical prediction for the power-spectra with \texttt{CCL}:
 \begin{equation}
 C_{\ell}^{\rm TH} = \frac{2}{\pi}\int{dz} \left(\frac{dn(z)}{dz}\right)^{2} b^{2}(z) \int{dk k^{2} P(k,z)j^{2}_{\ell}(kr(z))}
 \end{equation}
-where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is the number density as a function of redshift. We use the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$,$\Omega_{b}=0.045$,$\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $dn/dz$ built with the input catalog using the same magnitude cuts. \rachel{Need to say what you used for galaxy bias.} The results are depicted in \figref{power_spectra}. We see that the results for both datasets follow the theoretical prediction within errors. \rachel{Interpretation of this result, given the limitations such as mismatch between input/output samples, galaxy bias assumptions, \dots?}
+where $P(k,z)$ is the power spectrum, $b(z)$ is the bias and $\frac{dn}{dz}$ is the number density as a function of redshift. We use the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$,$\Omega_{b}=0.045$,$\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $dn/dz$ built by using the true redshifts in galaxies matched in the input catalog. We use a constant value for the bias $b$ that we fit by minimizing the following $\chi^{2}$:
+\begin{equation}
+\chi^{2}=\sum_{\ell,\ell^{\prime}}\left(C_{\ell}^{data}-b^{2} C_{\ell}^{th}\right)\mathcal{C}_{\ell,\ell^{\prime}}^{-1}\left(C_{\ell}^{data}-b^{2} C_{\ell}^{th}\right)
+\end{equation}
+By doing so we obtain $b = 0.35 ^{+ 0.09}_{- 0.13}$ (considering only $\ell \geq 1574$). We validated these results by comparing with the bias obtained using measurements in real space (two point correlation function), where we obtain results compatible within 1-$\sigma$, even at larger scales than those considered for our analysis. In \figref{power_spectra} we see that the measured power-spectra for both datasets follows the theoretical prediction within errors, even for multipoles $\ell$ smaller than those considered in our fit. We see that the constant linear bias model is a very good approximation in this case with $\chi^{2}=0.44$. However, this is not guaranteed when using smaller redshift slices in real data. This low value for $\chi^{2}$ manifests the need to take into account other contributions to the covariance, such as the super-sample covariance that we ignored in our analysis. In addition, we see that the overall impact of the systematics is smaller than 20\% of the statistical uncertainty in the range of scales considered. We also see that the observing conditions similarly affect both dithered and undithered simulations. Surprisingly, the undithered field seems to be slightly less affected by the observing conditions than the dithered field, especially at larger scales. However, the difference is not statistically significant. This is a consequence of several factors, including the conservative cuts that we impose on our data to ensure well-behaved clustering statistics; that we only deproject using the mean value for the different observing conditions; and the lack of effects, such as vignetting, present in real images. For example, vignetting would affect the number of detected objects close to the edges of the focal plane in the undithered simulation, reducing the uniformity of the survey. However, this effect would be uniform across the footprint in the dithered case. In addition to this, if we decided to push further our data by going deeper, the systematic lack of uniformity of the undithered field would start to play a large role in the impact of the foregrounds. We can also see that, in the $\ell$ range that we consider for our analysis, the presence of bright objects (BO) -- in particular bright stars -- is the dominant systematic effect. In the close neighborhood to bright objects ($r \leq 16$), our ability to detect faint sources diminishes. These faint sources are blended in the core or the tails of the brighter objects, resulting in a lower mean number of detected sources, as shown in \figref{bright_object_masking}. This showcases again the importance of considering the impact of blending in the low scale regime for LSST and should be carefully studied in future Data Challenges. The correction due to the presence of bright objects is comparable in both simulations.
+
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{Cl_25p3_errors}
-\includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
-\caption{{\bf Top panel:} Measured power spectra undithered (open orange circles) and dithered (solid blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed using the Gaussian approximation. All datasets seem to be compatible with the theoretical prediction (green line) within 1-$\sigma$. {\bf Bottom panel:} Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets}
+\includegraphics[width=0.9\columnwidth]{Cl_results_2019_comp}
+\includegraphics[width=0.9\columnwidth]{systematics_comp_abs}
+\caption{{\bf Top panel:} Measured power spectra undithered (orange $\times$) and dithered (open blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed analytically via Gaussian approximation using \texttt{NaMaster}. The best-fit theoretical prediction is shown as the solid black line. The shadowed region corresponds to the 1-$\sigma$ confidence level for the galaxy bias. The vertical black dashed line corresponds to the minimum multipole considered for our analysis $\ell = 1/f_{sky}$. {\bf Bottom panel:} Size of the correction in the power-spectra, $\Delta C_{\ell}$, relative to their uncertainty, $\sigma_{\ell}$, due to deprojection (Dep.) of different observing conditions (blue), due to the presence of bright objects (BO, orange), and the total relative correction (green) for the dithered (solid lines) and undithered (broken lines) simulations.}
 \label{fig:power_spectra}
 \end{figure}
-\subsubsection{Systematic effects}
-\label{ssec:systematics}
-In this section, we analyze  different potential systematic errors affecting the DC1 data. We consider the following observational quantities as sources for systematic uncertainties:
-\begin{itemize}
-\item Extinction: The CatSim catalog provides the value for the magnitudes corrected for extinction using the map from \citet{1998ApJ...500..525S}, which we refer to as the SFD map.
-\item Stellar contamination: In this case, we build a HEALPix map using the input CatSim stellar catalog.
-\item Sky-background: We use the observed background level in each exposure and assign that value to the HEALPixel with $N_{\rm side}=2048$ that corresponds to the center of the field of view for each visit. After this we calculate the median value in each HEALPixel to build a map. The caveat of this approach is that we are not propagating the geometry of the focal plane.
-\item Sky-noise: We use the observed noise background level in each exposure and proceed as in the previous case to build a HEALPix map with which we cross-correlate.
-\item Seeing: We proceed as before and use the observed seeing in each exposure and build a HEALPix map.
-\end{itemize}
-These maps are shown in \figref{systematic_maps} and \figref{systematic_maps2}. \rachel{We've jumped from figure 21 to 25, so perhaps some reordering is needed?}
-
-In the case of the real space measurements, we proceed as in \citet{2016MNRAS.455.4301C} to compute the impact of the different potential sources for systematic uncertainty. We compute the auto and cross-correlations of these maps and our data samples to obtain the corrected correlation function:
-\begin{equation}
-w^{gg}(\theta)_{\rm corr} =w^{gg}(\theta)_{\rm obs} -  \vec{w}_{g,{\rm sys}} \cdot W_{\rm sys,sys}^{-1} \cdot \vec{w}_{g,{\rm sys}}
-\end{equation}
-where $w^{gg}_{\rm corr}$ is the corrected galaxy-galaxy correlation function, $w^{gg}_{\rm obs}$ is the measured galaxy-galaxy autocorrelation, $\vec{w}_{g,{\rm sys}}$ is the vector containing the cross-correlation between the galaxies and the different maps, and $W_{\rm sys,sys}^{-1}$ is the inverse of the matrix containing the cross-correlations between different systematics. For the stellar contamination, we also follow the procedure presented in~\citet{2016MNRAS.455.4301C}. Given a stellar fraction $f_{\rm star}$, the ``true'' galaxy correlation function is given by
-\begin{equation}
-w_{\rm gal} = \left(1+f_{\rm star}\right)^{2}\left(w_{\rm obs} - f_{\rm star}^{2}w_{sg} - \frac{f_{\rm star}^{4}}{\left(1+f_{\rm star}\right)^{2}}\right)
-\end{equation}
-where $w_{sg}$ is the cross-correlation between our stellar map and the observed galaxies. This assumes that the stellar contamination is proportional to the fraction of stars misclassified as galaxies (with a factor that can be dependent on the observing conditions) and that the true correlation between stars and galaxies is zero.
-
-We select those objects classified as galaxies whose centroids lie within 2 pixels of a star from the input catalog and a measured magnitude within 30 mmags of that from the input star. By doing this, we estimate a stellar contamination of $f_{\rm star}=7.2\%$ in our sample. \rachel{I don't understand this at all.  Can you explain?  You're saying that 7.2\% of the galaxy sample is actually stars?  This is totally inconsistent with work from HSC with our fiducial selection criteria, so I suspect that our cuts used in this analysis are not good.  This result is so bad compared to what can be done using the LSST stack that I think anybody would say we should be redefining our cuts, not just using this sample as-is.}
-
-We compare the correction term, $\vec{w}_{g,{\rm sys}} \cdot W_{\rm sys,sys}^{-1} \cdot \vec{w}_{g,{\rm sys}}$, for the different systematics to the measured signal obtaining the results in the middle and bottom panels of \figref{2pt_corr}. We show that the dither strategy works to reduce the impact of systematic effects at the percent level for $\theta < 0.03$ degrees in this ``small'' area, improving the signal-to-noise. \rachel{I do not fully understand the statement about signal-to-noise, can you explain?} This is also seen at the top panel of \figref{2pt_corr}, where we clearly see that the uncorrected and corrected correlation function for the dithered field are essentially the same.
-
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{Cl_25p3_sys_comparison}
-%\caption{Correction in harmonic space due to the different potential sources of systematic uncertainty relative to the value of the measured correlation function of the dithered (solid blue) and undithered (dashed orange) datasets.}
-%\label{fig:sys_harmonic_space}
-%\end{figure}
-
-
-In the case of harmonic space, we use the mode deprojection from \texttt{NaMaster}~\citep{2018arXiv180909603A} to correct for the different templates. In the bottom panel of \figref{power_spectra}, we show the relative size of the correction due to the presence of the considered sources of systematic uncertainty. Again, we see that the dithered strategy diminishes the effect of the potential sources of systematic uncertainty in the power-spectrum measurements.
-
-%\CHECK{Add figure with corrected and uncorrected power-spectra.}
-
-%\subsection{Pushing the dataset further}
-
-%We also wanted to check what happens if we choose a sample where the uniformity across the footprint is still good even though completeness is not as good. We extended our sample by selecting galaxies with \texttt{ $16 < $ CMODEL\_MAG $ < 26.25$} and depth$\geq 26.25$. This increases the sample from 4.3 million galaxies to 6.5 million in the dithered sample, even though the footprint is reduced by $8\%$. However, these selection criteria reduce the number of galaxies to 4.2 million in the undithered sample, as well as the footprint by $35\%$.
-
-%\subsection{Reconstructing the selection function}
-%As mentioned before, one potential application of this kind of end-to-end study is the possibility of analyzing how the pipeline performs data detection and measurement. In terms of the two-point statistics, we could think of this as a selection (window) function. In this section we are going to try to reconstruct the selection function given our input and output catalogs.
-%
-%We use the spatial matching in \secref{matching} to get the magnitude and the error distribution for our detected galaxies. Then, we bin our sample in 100 true-magnitude bins from 18 to 28, and model the difference between input and output flux, $\Delta F$=$F_{\rm meas}$-$F_{\rm true}$, in each bin using a Gaussian mixture model (GMM) with 6 components for objects brighter than 26.4, and 3 components for fainter objects. We chose this threshold since it is close to our faintest $5\sigma$ limiting magnitude. This way, we have 100 models (one per magnitude bin) to distort the true magnitude and get a reconstructed (or emulated) magnitude. An example of this GMM is shown in \figref{example_GMM}. We see that, in a given bin, the GMM captures the overall distribution of $\Delta F$ well, allowing us to model the flux errors as a function of magnitude.
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{example_GMM}
-%\caption{Measured $\Delta F$ (blue solid circles) compared to 69,000 samples of the Gaussian mixture model that we obtain in the bin $22.6 <$ mag$_{\rm true} < 22.7$. We repeated this for 100 bins between $18 <$ mag$_{\rm true} < 28$.}
-%\label{fig:example_GMM}
-%\end{figure}
-%
-%\rachel{The rest of this subsection is one extremely long paragraph.  Need to break it up into paragraphs with well-defined chunks of info.}
-%There are several caveats with this approach: $\Delta F$ is not Gaussian in the center of the distribution, which means that the GMM, regardless of its number of components, will show a slightly larger error than with real data. The second, bigger, caveat is that the models are constructed from detected objects but no information from the non-detected objects biasing the modeled $\Delta F$ is included. When we try to impose some cuts in our reconstructed magnitudes, we recover a larger number of objects than the detected number. This is shown in \figref{emulated_magnitudes}, where we use the emulated magnitudes to resemble the selection made in previous sections, i.e., including selected objects with $21.4 \leq r_{\rm emulated} \leq 25.3$. We see that up to $r _{\rm true} \approx 26$, we have a high level of completeness. We also see that our emulation, even though it gives us a larger number of detected objects, does a good job following the shape of the magnitude distribution. Above $r_{\rm true}=26$, we are dominated by the outliers in the distribution of $\Delta F$ and we detect more objects than we should. We can also see that, if we only use objects such that $21.4 \leq r_{\rm true} \leq 25.3$, we obtain a biased estimation of the two-point statistics, given that in this case we ignore the (heavy) tails of the magnitude distribution.
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{emulated_magnitude_histogram}
-%\caption{True magnitude distribution for the detected objects using spatial matching (blue) and for the emulated objects using the same cuts in measured and emulated magnitude, $25.3 \geq r \geq 21.4$.}
-%\label{fig:emulated_magnitudes}
-%\end{figure}
-%In \figref{emulated_power} we show that the power-spectrum using the true magnitude cuts is very close to the power-spectrum of the detected objects. However, at small scales, it is smaller than the power-spectrum of the detected objects. This is likely due to the presence of fainter objects in the detected  sample. In addition, blended objects can create a small contribution at these scales. Finally, the larger shot-noise can make the residuals at small scales larger. On the other hand, at large scales, the power-spectrum using the true magnitude cuts is slightly larger due to the smaller magnitude range (and likely redshift range) considered. We also see that the power-spectrum for the emulated magnitude cuts is noticeably lower than the one for the detected objects. This is due to the larger magnitude range considered in the emulated sample (so we are averaging over a bigger volume in general). It is clear that this procedure is not good to emulate the selection function of our pipeline, given the sensitivity of LSST. We also see that performing cuts on the true magnitude distribution is not enough to recover the measured power-spectrum at the level of precision that we will have with LSST data. Therefore, more sophisticated ways of emulating the processing pipeline should be implemented, and tools like \texttt{BALROG}~\citep{2016MNRAS.457..786S}, \texttt{imSim}, or \texttt{PhoSim}~\citep{2015ApJS..218...14P} that generate synthetic images applied to random (zero-power-spectra) catalogs are interesting for future studies, in an effort to achieve percent-level sensitivities.
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{emulated_power_spectra}
-%\caption{Shot-noise subtracted measured power-spectra for the detected objects by the LSST stack (solid blue circles), the objects in the true catalog spatially matched (open orange circles), the objects with $21.4 \leq r_{\rm true} \leq 25.3$ (red crosses), and the objects with $21.4 \leq r_{\rm emulated} \leq 25.3$ (green triangles). \rachel{Legend shows magnitude ranges in other direction - should flip them around in the legend.}}
-%\label{fig:emulated_power}
-%\end{figure}
-% ----------------------------------------------------------------------
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-\rachel{Perhaps emphasize further some tests of the pipeline performance?}
+End-to-end simulations are powerful tools for testing the overall performance of any current and future cosmological experiments like the LSST~\citep{Overview}. They allow us to validate and improve on different parts involved in the data processing and analysis, as well as to model and improve our control of systematic uncertainties.
 
-End-to-end simulations are very useful tools to test the overall performance of any current and future cosmological experiments like the LSST~\citep{Overview}. They allow us to test and improve different parts involved in the data processing and analysis, as well as, to model and improve our control of systematic uncertainties.
+In this paper, we have presented a simulated (end-to-end) imaging dataset that resembles single-band, full-depth LSST data, for the first data challenge in the LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithers (\textit{undithered}). We processed these images with the LSST data management software stack and performed several quality assurance tests on its outputs. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets and pass most of the LSST Science Requirements~\citep{LPM-17} and the DESC Science Requirements~\citep{2018arXiv180901669T} allowed by our design choices.
 
-In this paper, we have presented a simulated (end-to-end) imaging dataset that resembles single-band, full-depth LSST data, for the first data challenge in the LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithers (\textit{undithered}). We processed these images with the LSST DM stack. We performed several quality assurance tests on the outputs from the DM stack, including photometry and astrometry checks. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets with good photometry and astrometry (with the caveat of uncorrected proper motion).
+We studied different ways to relate the output catalogs to the inputs. In particular, we studied two different matching strategies. The first, using information about positions only and a second strategy involving positions and magnitudes. We showed that, for clustering analyses, adding information about magnitudes results in a lower incidence of spurious matches. The usage of matching strategies helped us define a clean sample suitable for clustering analyses. However, these matching techniques are likely not suitable for studies on blending or scales smaller than those considered in this work, since they do not include information about undetected sources present in blends. Therefore, an important research topic for these kinds of end-to-end simulations is to find efficient strategies to relate inputs and outputs.
 
-We studied different ways to relate the output catalogs to the inputs. In particular, we studied two different matching strategies. The first, using information about positions only; and a second strategy involving positions and magnitudes. We showed that the angular power-spectrum is recovered at a very high-level of precision in both cases. However, these matching techniques are likely not good enough for studies about blending or very small scale information since they do not include information about undetected sources present in blends. An important research topic for these kind of end-to-end simulations is to find efficient strategies to relate inputs and outputs.
+We estimated the depth of our simulated catalogs and checked the impact of the presence of bright objects in the detected number density. After this, we selected a high-completeness sample to perform clustering analysis in harmonic space and used \texttt{NaMaster} to deproject the impact of simulated foregrounds. We find that in the case where we do not split the sample into different redshift bins, a constant linear bias well describes our data for the dithered and undithered simulations. The results of this analysis indicate that the simulated foregrounds have a low impact ($\approx 5\%$ of the statistical uncertainty) at the scales considered for our study ($1574 \leq \ell < 6000$) in both datasets. However, in this scale-range, the presence of bright objects has a larger impact on the power-spectra, $\approx 20\%$ of the statistical uncertainty, highlighting the impact of blending in LSST. 
 
-Finally, we estimated the depth of our simulated catalogs and selected a high-completeness sample to perform clustering analysis in both real and harmonic space. The results of this analysis, indicate that the simulated foregrounds have a low impact at the scales considered for our study, i.e.\ lower than $5\%$ for $\theta < 0.03^{\circ}$ (or for $100 < \ell < 6000$), especially in the \textit{dithered} dataset. This indicates the success of the dither strategy considered in this study. We also conducted a pilot study to try to reconstruct the selection function of our pipeline. We showed that simple methods cannot capture the complexity of our data given the high sensitivity that we will have in LSST and concluded that more complex methods should be studied in order to create better models.
+Finally, we have been able to perform an end-to-end test of our processing and analysis pipelines, which will allow us to better prepare to exploit future LSST data.
 
-The methodology presented in this work will serve as basis for future DESC data challenges, where we aim to perform multi-band studies in a larger area, analyze complementary image generation strategies (\texttt{PhoSim}), and increase the complexity of the foregrounds included.
+The methodology presented in this work will serve as the basis for future DESC data challenges, where we aim to perform multi-band studies in a larger area, analyze complementary image generation strategies (\texttt{PhoSim}), and increase the complexity of the foregrounds included.
 
 % ----------------------------------------------------------------------
 
@@ -840,38 +637,8 @@ The work of RM was supported by the US Department of Energy Cosmic Frontier prog
 
 \input{acknowledgments}
 
-%{\it Facilities:} \facility{LSST}
-
-% Include both collaboration papers and external citations:
 \bibliography{lsstdesc,main}
 
-\appendix
-\section{Mapping observational effects}
-\label{sec:systematic_maps}
-\begin{figure}
-\centering
-\includegraphics[width=0.45\columnwidth]{median_seeing.png}
-\includegraphics[width=0.45\columnwidth]{median_skybg.png}
-\includegraphics[width=0.45\columnwidth]{median_skynoise.png}
-\includegraphics[width=0.45\columnwidth]{extinction.png}
-\includegraphics[width=0.45\columnwidth]{stellar_density.png}
-\caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
-\label{fig:systematic_maps}
-\end{figure}
-%\begin{figure}
-%\centering
-
-%\caption{HEALPix maps showing the different observational effects that might be potential cause of systematic uncertanties.}
-%\label{fig:systematic_maps2}
-%\end{figure}
-%\section{Comparison of depth estimation methods}
-%\begin{figure}
-%\centering
-%\includegraphics[width=0.9\columnwidth]{dithered_difference.png}
-%\includegraphics[width=0.9\columnwidth]{undithered_difference.png}
-%\caption{Relative difference between the depth calculated using the two methods presented in the text for the dithered (top) and undithered (bottom) fields.}
-%\label{fig:depth_comparison}
-%\end{figure}
 \end{document}
 
 
