@@ -132,12 +132,7 @@ The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we u
 
 \begin{figure}
 \centering
-
-\begin{verbatim}
- \includegraphics[trim={1cm 1cm 1.0cm 0.5cm}, 
-clip, width=1.0\columnwidth]{dc1_workflow}}
-\end{verbatim}
-\as{file not in repo}
+ \includegraphics[trim={1cm 1cm 1.0cm 0.5cm}, clip, width=1.0\columnwidth]{dc1_workflow}
 \caption{Workflow diagram for full data simulations. The image simulation step produces synthetic raw observations from a known truth catalog based on N-body simulations and simulated observing conditions. These data, in the same format as actual observations from the LSST telescope are processed by the data management to first generate calibrated single exposure images. These are calibrated both astrometrically and photometrically and are fed again into data management stacks that produces the image co-adds and a catalog of detected static sources.  \textcolor{red}{Get rid of phosim??}.
   \as{This file seems to be missing from the repo, but from the pdf version
     you send around, it needs work: The output of Image Simulator are raw exposure (eframes or whatever they are called). This is its own circle and it is is importnat. This then feeds into DM, which produces \emph{Calibrated single exposures}. These are then fed again into DM that produces a Co-add and catalog. I've also changed caption. You also need to have a side-arrow for transients for completion. }
