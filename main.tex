@@ -237,7 +237,7 @@ We start by checking the absolute astrometry by comparing the input and output c
 \label{fig:AA1}
 \end{figure}
 
-We also validate the photometric repeatability by comparing the measured magnitude of bright unresolved objects across different visits, i.e., we select stars with signal-to-noise ratio (SNR) $> 100$. The photometric repeatability (PA1) is 6~mmag as measured by the interquartile range (IQR $\equiv$ 75th percentile minus 25th percentile) and is shown in \figref{validate_drp_PA1}. The minimum specification is 8~mmag so, our dataset and pipeline behave as required. The 6~mmag is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
+We also validate the photometric repeatability by comparing the measured magnitude of bright unresolved objects across different visits, i.e., we select stars with signal-to-noise ratio (SNR) $> 100$. The photometric repeatability (PA1) is 6~mmag as measured by the scaled interquartile range (IQR)\footnote{$\equiv$ 75th percentile minus 25th percentile, and then divided by the interquartile range of a Gaussian distribution with $\sigma=1$}, and 15.8~mmag as measured with the RMS; these distributions are shown in \figref{validate_drp_PA1}. The minimum specification is 8~mmag so our dataset and pipeline behave as required. The significantly greater RMS is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
 
 The photometric error model from \citet[][Eq. 4,5]{Overview} is \as{what units is this sigma in?}
 \begin{eqnarray}
