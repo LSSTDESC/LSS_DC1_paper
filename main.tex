@@ -239,13 +239,13 @@ We start by checking the absolute astrometry by comparing the input and output c
 
 We also validate the photometric repeatability by comparing the measured magnitude of bright unresolved objects across different visits, i.e., we select stars with signal-to-noise ratio (SNR) $> 100$. The photometric repeatability (PA1) is 6~mmag as measured by the scaled interquartile range (IQR)\footnote{$\equiv$ 75th percentile minus 25th percentile, and then divided by the interquartile range of a Gaussian distribution with $\sigma=1$}, and 15.8~mmag as measured with the RMS; these distributions are shown in \figref{validate_drp_PA1}. The minimum specification is 8~mmag so our dataset and pipeline behave as required. The significantly greater RMS is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
 
-The photometric error model from \citet[][Eq. 4,5]{Overview} is \as{what units is this sigma in?}
+We can separately look at the reported photometric uncertainty from the processing.  The Science Pipeline processing does not explicitly compare the reported photometric uncertainty to the per-epoch variation.  Thus comparing the quoted uncertainties to the observed variation of stars with no instrinsic variation validates the consistency between the pipeline calculations and the model outlined in \citet[][Eq. 4,5]{Overview}:
 \begin{eqnarray}
 \sigma^2 = \sigma^2_{\rm sys} + \sigma^2_{\rm rand} \\
 \sigma^2_{\rm rand} = (0.04 - \gamma) &10^{0.4(m-m_5)} + \gamma 10^{0.8(m-m_5)}
 \label{eq:photometric_error}
 \end{eqnarray}
-where $\gamma$ describes noise from the sky and detector electronics, and the 5-$\sigma$ point-source depth is given by:
+where $\sigma$ is in magnitudes, $\gamma$ describes noise from the sky and detector electronics, and the 5-$\sigma$ point-source depth is given by:
 \begin{equation}
 \begin{split}
 m_5 = &C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) \\
