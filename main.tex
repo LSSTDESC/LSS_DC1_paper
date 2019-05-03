@@ -271,9 +271,10 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 \centering
 \includegraphics[width=1.8\columnwidth]{DC1-imsim-dithered_r_check_photometry.pdf}
 \caption{Photometric performance in more detail.  (upper left) Horizontal histogram of the RMS distribution for each star for the full sample (grey) and ``bright'' sample (blue).  The blue sample is the same as that shown in Figure~\ref{fig:validate_drp_PA1}. (upper right).  Note that this RMS is the RMS of the measurements for a given star and so each entry in the histogram is one star. Thus, the median value here is 2.4~mmag, even thought the median of all RMS measurements in Figure~\ref{fig:validate_drp_PA1} was 15.8~mmag.  This difference is due to a population of objects that have a poor repeatability. (upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatable measurements, along with a smaller population of objects with much higher scatter to their measurements. (lower left) Per-object median reported magnitude error by the pipeline versus the observed RMS over all of the measurements for an object.  Our $SNR>100$ cut is in the space of median reported error. (lower right) Per-object median pipeline-reported magnitude error versus object magnitude. 
-{\bf TODO: MWV  Are these higher scatter objects galaxies, stars in halos of bright stars, additionally added objects that were done inconsistently with the rest of the catalog?}
-{\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this more.}
 }
+% MWV: A good thing to think about someday, but not necessary for this paper:
+%{\bf TODO: MWV  Are these higher scatter objects galaxies, stars in halos of bright stars, additionally added objects that were done inconsistently with the rest of the catalog?}
+%{\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this more.}
 \label{fig:validate_drp_check_photometry}
 \end{figure*}
 
@@ -293,7 +294,9 @@ We now focus on checking the astrometric performance.  We show the detailed astr
 \includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_check_astrometry.pdf}
 \caption{
 Detailed astrometric performance.  (left) Histogram of the repeatability of distance between pairs of stars.  (right) Astrometric variation as a function of SNR.  We find a systematic floor of 12~milliarcsec.
-{\bf TODO: MWV IS THIS HISTOGRAM DIFFERENT THAN THE check\_photometry histogram in terms of per-pair vs. per-object variation.}}
+}
+% MWV: A good thing to think about someday, but not necessary for this paper:
+% {\bf TODO: MWV IS THIS HISTOGRAM DIFFERENT THAN THE check\_photometry histogram in terms of per-pair vs. per-object variation.}}
 \label{fig:validate_drp_check_astrometry}
 \end{figure}
 
