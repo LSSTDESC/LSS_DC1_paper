@@ -65,7 +65,7 @@ budgets (e.g., assessing sensitivity of the results to certain stages
 of the analysis process by changing some parameters in the
 analysis). These goals will be achieved in practice by a combination
 of reprocessing of the precursor datasets, which have the advantage of
-being realistic and completely synthethic datasets, which have the
+being realistic and completely synthetic datasets, which have the
 advantage of both having a known ground truth and the ability to turn
 various effects on and off and thus study them in a more controlled
 environment.
@@ -73,13 +73,13 @@ environment.
 Both goals of the DCs dictate a gradual increase in the
 sophistication and volume of the simulated data In this paper, we
 present and analyze simulated images from DC1, the first of three such
-data challenges planned withing DESC. The nominal goal of this dataset
+data challenges planned within DESC. The nominal goal of this dataset
 is to produce synthetic data corresponding to 10 years of integration
 in the $r$-band over a contiguous patch of the sky covering approximately 40 deg$^{2}$ of the
 sky. This represents just one of the LSST's six filters and covers a rather 
 small fraction ($\sim$ 0.2\%) of the total LSST area. In this paper we
 describe how this was achieved and  characterize the resulting
-products. We validate the basic photometric and astromatric
+products. We validate the basic photometric and astrometric
 calibration of these products and check the performance of the
 pipeline against the requirements set by LSST and DESC in their
 respective Science Requirements Documents~\citep{LPM-17,
@@ -105,28 +105,12 @@ pipelines for analysis and systematics mitigation of two-point clustering statis
   collaboration activity, but it never turned out that way and as it
   was superseeded by DC2. No need to make LSS somehow responsible for
   DC1. :-) }
-\begin{figure}
-\centering
-\includegraphics[width=0.9\columnwidth]{footprint.png}
-\caption{Footprint of the DC1 dataset. We simulate 4 LSST full focal plane pointings which roughly corresponds to 40 deg$^{2}$.}
-\label{fig:footprint}
-\end{figure}
 
-As a stepping stone to eventually producing images covering hundreds to thousands of square degreees
+As a stepping stone to eventually producing images covering hundreds to thousands of square degrees
 in DC2 and DC3, DC1 covers a $40$ deg$^2$ footprint.  This is sufficient to enable tests of
 two-point clustering statistics up to $\sim 1$ degree scales.  To ensure the simulated image volume is
 tractable, DC1 only includes images in a single band ($r$-band), but goes to full LSST 10-year
-depth. The final footprint can be seen in \figref{footprint}. We simulate observations within this
-footprint using the
-\texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}}
-simulated observing cadence generated with the LSST Operations Simulator
-\citep[OpSim;][]{2014SPIE.9150E..15D}.  While translational and rotational dithering will be employed,
-we enable tests of the impact of dithering by generating two sets of images, both without and with
-the dithering strategy described in more detail in \secref{dithering}.
-\as{I think the text above needs to be refactored with what was
-  original intent of the DC1. We can discuss shortcomings later.
-Also, footprint should be shown after we discuss field selection, etc. e.g. minion stuff is needlessly mentioned twice.}
-
+depth. 
 
 The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we use as inputs the position, shapes and fluxes from a galaxy mock catalog from \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C}, which we describe in more detail in \secref{inputs}, and the observing conditions and strategies described in \secref{dithering} using \texttt{OpSim}~\citep{2014SPIE.9150E..15D}. These are passed to our image simulation packages describe in \secref{imsim_pipeline} that produce raw e-images (i.e., full sensor images without any added instrumental effects such as cross-talk, bleeding, etc.). These e-images are then processed the LSST data management (DM) software stack~\citep{2015arXiv151207914J}. The processing is described in \secref{image_processing_pipeline}. After this, we obtain the calibrated exposures, coadds and catalogs that we use for our analysis.
 
@@ -146,7 +130,15 @@ The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we u
 \label{sec:inputs}
 Image simulations allow us to study in detail the detection and deblending properties of a given image-processing pipeline. For example, if we produce images using an object catalog with random positions uniformly distributed across the sky, as well as uniformly random shapes and fluxes, we can get information about detection efficiencies as a function of flux.  However, the information about blending will not be realistic and we will not be able to capture some correlations present in real data. On the other hand, using N-body simulations as the input to generate artificial images allows us to study all the aforementioned effects. This is why we used the \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C} catalog as our input.  \texttt{CatSim} is a set of simulations provided by the LSST Simulations Team representing a realistic distribution of both Milky Way and extra-galactic sources. In particular, the extra-galactic catalog contains galaxies covering the redshift range $0 < z < 6$ in a 4.5$\times$4.5 degree footprint. The galaxies are generated by populating the dark matter haloes from the Millennium simulation~\citep{2005Nature.435.629S} using a semi-analytic baryon model described in \citet{2006MNRAS.366..499D} including magnitudes BVRIK and bulge-to-disk ratios. For all sources, a spectral energy distribution (SED), is fit to the galaxy colors using \citet{2003MNRAS.344.1000B} spectral synthesis models. Fits are undertaken independently for the bulge and disk and include inclination dependent reddening. Morphologies are modeled using two S\'{e}rsic profiles~\citep{1963BAAA....6...41S} and a single point source (for the AGN). Half-light radii for the bulge components are derived from the absolute-magnitude vs half-light radius relation given by \citet{2011A&A...534A...3G}. Stars are represented as point sources and are drawn from the Galfast model~\citep{2008ApJ...673..864J}. More information about these catalogs can be found at the LSST Simulations webpage\footnote{\url{https://www.lsst.org/scientists/simulations/catsim}}.
 
-For the Data Challenge 1 (DC1), we chose a nominal field at \as{give ra dec coordinates}. This field has a galatic latitude of \as{fill} and a dust extinctions of \as{fill} an thus represent what a typical LSST dataset will be. The \texttt{CatSim} catalog was tiled to generate a $\sim 40$ deg$^{2}$ footprint covering 4 LSST full focal plane pointings. . This approach introduces a periodicity that induces extra correlations in our sample, however, this is not a major defect as we are unable to measure correlations on relevant scales with any useful precision.
+For the Data Challenge 1 (DC1), we chose a nominal field centered at RA $\approx 93^{\circ}$ and Dec $\approx -29^{\circ}$. This field has a galactic latitude of $b \approx -20^{\circ}$ and a dust extinction $0.05 \leq E(B-V) \leq 0.35$ an thus represent what a typical LSST dataset will be. The \texttt{CatSim} catalog was tiled to generate a $\sim 40$ deg$^{2}$ footprint covering 4 LSST full focal plane pointings. This approach introduces a periodicity that induces extra correlations in our sample, however, this is not a major defect as we are unable to measure correlations on relevant scales with any useful precision.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\columnwidth]{footprint.png}
+\caption{Footprint of the DC1 dataset. We simulate 4 LSST full focal plane pointings which roughly corresponds to 40 deg$^{2}$.}
+\label{fig:footprint}
+\end{figure}
+
 
 After tiling, the input catalog contains approximately $63.1$ million sources, of which 97\% are galaxies whose redshift and magnitude distributions are depicted in \figref{catalog_plots} and remaining objects are stars. We simulate images in $r$-band to the LSST full depth ($10$ years). The final footprint can be seen in \figref{footprint}. We simulate observations within this footprint using the \texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}} simulated observing cadence generated with the LSST Operations Simulator (OpSim)~\citep{2014SPIE.9150E..15D}. This gives \as{fill} pointings of our field over 10 years.
 
@@ -163,8 +155,8 @@ After tiling, the input catalog contains approximately $63.1$ million sources, o
 
 As mentioned in \secref{design}, we use OpSim's output, which contains a realization of the LSST observing cadence and the survey footprint. Since OpSim divides the sky with hexagonal tiles, the nominal telescope pointings lead to overlapping regions across adjacent tiles that are observed more often than the non-overlapping part of the field-of-view (FOV), resulting in depth non-uniformity on the scale of $\sim$1 degree and consequent systematic uncertainties \citep{2016ApJ...829...50A}. In an effort to mitigate these effects, we implement \textit{dithers} -- offsets in the nominal telescope pointings. Specifically, here we use \textit{large}, i.e., as large as the FOV, random translational dithers, implemented after every visit, and random rotational dithers implemented after every filter change. The specific translational dither strategy is chosen based on a more extensive study of the various (translational) dither strategies in \citet{2016ApJ...829...50A}, where random dithers after every visit are found to be amongst the most effective.
 
-For our purposes, we consider both the undithered and the dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall out of the DC1 region; these sensors were not simulated in order to save computational resources.
-\as{But for dithered option, presumably the right thing to do would be also considered pointings that are not nominally on our field, but happened to be partially dithered into it. Otherwise, the total depth of the undithered is higher as you never throw anything away? Explain.}
+For our purposes, we consider both the undithered and the dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall out of the DC1 region; these sensors were not simulated in order to save computational resources. However, the sensors that partially overlapped our nominal field of view were simulated.
+\as{But for dithered option, presumably the right thing to do would be also considered pointings that are not nominally on our field, but happened to be partially dithered into it. Otherwise, the total depth of the undithered is higher as you never throw anything away? Explain.} \textcolor{red}{I think this is the confusion between sensor and visit. The visits with sensors within the FOV were simulated. The sensors partially overlapping the footprint were simulated. However, the sensors of these visits that didn't overlap the footprint, were not simulated (so we could save some CPU hours).}
 
 
 
@@ -174,7 +166,7 @@ For our purposes, we consider both the undithered and the dithered observing str
 
 The artificial generation of astronomical images is a complex and computationally demanding process. In the recent
 years, there have been major efforts in the community to create software that enables the generation of astronomical images, with various choices made in terms of level of complexity and fidelity, and computational efficiency, such as \texttt{UFIG}~\citep{2016ApJ...817...25B}, and \textsc{PhoSim}~\citep{2015ApJS..218...14P}. In our case, we model the input sources using imSim\footnote{\url{https://github.com/LSSTDESC/imSim}}\textcolor{red}{Add reference Walter et al., in prep??}, which internally uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library for image rendering, and uses LSST-specific information (e.g., about the geometry of the CCDs and the focal plane, the system throughputs in the different bands, etc.) to generate LSST-like images.
-\as{Are we completely ignoring phosim runs here then? I think we should at least motivate imsim as a fast version of phosim. I'd say we did both, but say that in this first paper we are focusin on imsim results}
+\as{Are we completely ignoring phosim runs here then? I think we should at least motivate imsim as a fast version of phosim. I'd say we did both, but say that in this first paper we are focusing on imsim results}
 
 
 \subsection{imSim}
@@ -202,13 +194,14 @@ An example coadd cutout is shown in \figref{coadd_example}.
 
 \rachel{Big picture comment: we don't talk at all about any of the software that drove these things - workflows for the DM processing etc.  Is that sufficiently trivial that it doesn't need to be mentioned?}
 
-\begin{figure}
+\begin{figure*}
 \centering
-\includegraphics[width=0.9\columnwidth]{sample_coadd_DC1.pdf}
-\caption{Example of a 500 $\times$ 500 pixel cutout from a full depth coadd showing the large density of objects in the LSST full-depth images.
-\as{Change this figure as follows: make a three/four panel figure showing: i) the true sky (basically imsim run with noise and psf, etc switched off); ii) a raw uncalibrated image of the sky; iii) the single calibrated exposure if sufficiently different -- the scale should now how different units and you can draw line of const ra/dec to indicate astrometric calibration and iv) the 10yr coadd.}}
+\includegraphics[width=0.44\textwidth]{calexp_example.png}
+\includegraphics[width=0.44\textwidth]{coadd_example.png}
+\caption{Example of a 1000 $\times$ 1000 pixel cutout from a calibrated exposure (left), i.e. background subtracted, reduced single-epoch image; and a full depth coadd (right). We can see the stark difference in the number of objects that are detectable by eye.
+\as{Change this figure as follows: make a three/four panel figure showing: i) the true sky (basically imsim run with noise and psf, etc switched off); ii) a raw uncalibrated image of the sky; iii) the single calibrated exposure if sufficiently different -- the scale should now how different units and you can draw line of const ra/dec to indicate astrometric calibration and iv) the 10yr coadd.} \textcolor{red}{JS: I don't have the clean imSim image before PSF convolution etc etc... The raw only has the background so I don't know if it's worth adding it}}
 \label{fig:coadd_example}
-\end{figure}
+\end{figure*}
 
 \section{Output catalogs and validation}
 \label{sec:catalogs}
@@ -485,7 +478,7 @@ At the end of the day, different matching techniques have different potential ap
 
 In this subsection we are going to use the spatial+magnitude technique to identify flags or thresholds in variables that may allow us to get a clean sample for clustering. In principle, given that the LSST DM software stack is essentially the same as the reduction pipeline used in~\citet{2018PASJ...70S..25M}, we could potentially use similar cuts. However, note that we are working in $r$-band only so some of the required cuts cannot be performed. In addition to this, some variables, such as the so-called blendedness parameter, are not available in the version of the LSST DM software stack that we used to process the data (\texttt{v13.0}). As a consequence, we propose our own selection cuts, although we use the criteria in~\citet{2018PASJ...70S..25M} as guidance.
 
-The methodology to perform the selections is simple: we check the primary detected sources that have no match using the spatial+magnitude technique and we compute the fraction of objects that are flagged, $f_{u,i} = N_{flag_{i}, unmatched}/N_{total, unmatched}$, and compare it to the corresponding fraction of flagged matched primary detected sources, $f_{m,i} = N_{flag_{i}, matched}/N_{total, matched}$, for each one of the flags, $flag_{i}$, in the catalog. If the ratio $f_{u,i}/f_{m,i}$ is larger than 50 for a particular flag and $f_{m,i} < 0.01$, i.e., less than 1\% of the matched primary sources have that flag, it means that the presence of that flag is a good indicator of problematic sources. Thus, we eliminate the sources with those flags. We also repeat the same procedure looking for the absence of a certain flag or whether a quantity is frequently measured as \texttt{NaN} and check for redundant cuts. The results of this process are shown in \figref{flags_DC1}.
+The methodology to perform the selections is simple: we check the primary detected sources that have no match using the spatial+magnitude technique and we compute the fraction of objects that are flagged, $f_{u,i} = N_{flag_{i}, unmatched}/N_{total, unmatched}$, and compare it to the corresponding fraction of flagged matched primary detected sources, $f_{m,i} = N_{flag_{i}, matched}/N_{total, matched}$, for each one of the flags, $flag_{i}$, in the catalog. If the ratio $f_{u,i}/f_{m,i}$ is larger than 50 for a particular flag and $f_{m,i} < 0.01$, i.e., less than 1\% of the matched primary sources have that flag, it means that the presence of that flag is a good indicator of problematic sources. Thus, we eliminate the sources with those flags. We also repeat the same procedure looking for the absence of a certain flag or whether a quantity is frequently measured as \texttt{NaN} and check for redundant cuts. The results of this process are shown in \figref{flags_DC1}. In this Figure we can see that most of the flags shown affect mostly to objects that have no match in the input catalog (unmatched), being some of them very efficient such as \texttt{base\_ClassificationExtendedness\_flag = True}, which means that there was a failure at the time of deciding whether a source was extended or point-like. We can also see that there are three flags that affect more to unmatched objects than matched objects but, in case of using them, we would lose $\approx 50\%$ of our sample. These include \texttt{modelfit\_CModel\_flags\_smallShape==False} which means that the initial parameter guess did not result in a negative radius (if \texttt{True} the initial guess for the radius would be negative). Intuitively, we expect this flag to be \texttt{False} for well-behaved objects and thus, we should not use this for our selection. Another case where the ratio of flagged unmatched (and matched) objects is very large is \texttt{modelfit\_CModel\_flags\_region\_usedFootprintArea==True}, which means that the pixel region for the initial fit was defined by the area of the footprint. This flag, again, is not necessarily indicative of problems with the measured object. Finally, we see that \texttt{modelfit\_CModel\_flags\_region\_usedPsfArea==False} also affects a very large fraction of unmatched and matched objects. These objects are such that the pixel region for the initial fit was not set to a fixed factor of the PSF area, which is not indicative of any problems with the source. 
 
 \begin{figure*}
 \centering
@@ -510,7 +503,8 @@ As a result, we are going to \textbf{eliminate} from our selection all the sourc
 \item \texttt{base\_SdssCentroid\_x/yErr = NaN}. This means that the error in the centroid position (either in the x or y axis) is measured as NaN.
 \end{itemize}
 
-After these cuts we keep 8.25 million objects in the dithered catalog and 7.51 million objects in the undithered catalog. We will refer to this sample as the \textit{clean sample}. \as{Ok, so this is now potentially the most interesting part of the paper and you effectively skim over it. I would start with a simple magnitude cut catalog containing sources above some $r<25.5$ or whatever. This has a certain purity defined as the number of 1-1 matches (i.e. exclude unmatches objects, but also objects where several match to the same input object -- the latter seem very small anyway). Then apply each of these cuts, see how many good sources it cuts and how many bad sources it cuts and what is its effect on purity. Then decide on some sensible combination. For example, I'm not afraid of interpolated pixels for LSS.
+After these cuts we keep 8.25 million objects in the dithered catalog and 7.51 million objects in the undithered catalog. We will refer to this sample as the \textit{clean sample}. After the cuts, the ratio of unmatched objects decreases by $\approx 64\%$ from $5.6\%$ (of the catalog before cuts) to $3.6\%$ (of the clean sample), while we retain $99.7\%$ of the matched objects.  
+\as{Ok, so this is now potentially the most interesting part of the paper and you effectively skim over it. I would start with a simple magnitude cut catalog containing sources above some $r<25.5$ or whatever. This has a certain purity defined as the number of 1-1 matches (i.e. exclude unmatched objects, but also objects where several match to the same input object -- the latter seem very small anyway). Then apply each of these cuts, see how many good sources it cuts and how many bad sources it cuts and what is its effect on purity. Then decide on some sensible combination. For example, I'm not afraid of interpolated pixels for LSS.
 }. 
 
 \as{DONE FOR NOW. 4/28}
