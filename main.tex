@@ -116,7 +116,7 @@ The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we u
 
 \begin{figure}
 \centering
- \includegraphics[trim={1cm 1cm 1.0cm 0.5cm}, clip, width=1.0\columnwidth]{dc1_workflow}
+ \includegraphics[trim={0cm 1.25cm 0cm 4.05cm}, clip, width=1.0\columnwidth]{dc1_workflow}
 \caption{Workflow diagram for full data simulations. The image simulation step produces synthetic raw observations from a known truth catalog based on N-body simulations and simulated observing conditions. These data, in the same format as actual observations from the LSST telescope are processed by the data management to first generate calibrated single exposure images. These are calibrated both astrometrically and photometrically and are fed again into data management stacks that produces the image co-adds and a catalog of detected static sources.  \textcolor{red}{Get rid of phosim??}.
   \as{This file seems to be missing from the repo, but from the pdf version
     you send around, it needs work: The output of Image Simulator are raw exposure (eframes or whatever they are called). This is its own circle and it is is importnat. This then feeds into DM, which produces \emph{Calibrated single exposures}. These are then fed again into DM that produces a Co-add and catalog. I've also changed caption. You also need to have a side-arrow for transients for completion. }
@@ -140,7 +140,7 @@ For the Data Challenge 1 (DC1), we chose a nominal field centered at RA $\approx
 \end{figure}
 
 
-After tiling, the input catalog contains approximately $63.1$ million sources, of which 97\% are galaxies whose redshift and magnitude distributions are depicted in \figref{catalog_plots} and remaining objects are stars. We simulate images in $r$-band to the LSST full depth ($10$ years). The final footprint can be seen in \figref{footprint}. We simulate observations within this footprint using the \texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}} simulated observing cadence generated with the LSST Operations Simulator (OpSim)~\citep{2014SPIE.9150E..15D}. This gives \as{fill} pointings of our field over 10 years.
+After tiling, the input catalog contains approximately $63.1$ million sources, of which 97\% are galaxies whose redshift and magnitude distributions are depicted in \figref{catalog_plots} and remaining objects are stars. We simulate images in $r$-band to the LSST full depth ($10$ years). The final footprint can be seen in \figref{footprint}. We simulate observations within this footprint using the \texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}} simulated observing cadence generated with the LSST Operations Simulator (OpSim)~\citep{2014SPIE.9150E..15D}. This gives $\approx 4$ pointings with $\approx 184$ visits per pointing over 10 years.
 
 \begin{figure}
 \centering
@@ -155,7 +155,7 @@ After tiling, the input catalog contains approximately $63.1$ million sources, o
 
 As mentioned in \secref{design}, we use OpSim's output, which contains a realization of the LSST observing cadence and the survey footprint. Since OpSim divides the sky with hexagonal tiles, the nominal telescope pointings lead to overlapping regions across adjacent tiles that are observed more often than the non-overlapping part of the field-of-view (FOV), resulting in depth non-uniformity on the scale of $\sim$1 degree and consequent systematic uncertainties \citep{2016ApJ...829...50A}. In an effort to mitigate these effects, we implement \textit{dithers} -- offsets in the nominal telescope pointings. Specifically, here we use \textit{large}, i.e., as large as the FOV, random translational dithers, implemented after every visit, and random rotational dithers implemented after every filter change. The specific translational dither strategy is chosen based on a more extensive study of the various (translational) dither strategies in \citet{2016ApJ...829...50A}, where random dithers after every visit are found to be amongst the most effective.
 
-For our purposes, we consider both the undithered and the dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall out of the DC1 region; these sensors were not simulated in order to save computational resources. However, the sensors that partially overlapped our nominal field of view were simulated.
+For our purposes, we consider both the undithered and the dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall out of the DC1 region; these sensors were not simulated in order to save computational resources. However, the sensors that partially overlapped our nominal field of view were simulated. In total, we simulate $\approx 184600$ sensor/visits for the dithered simulation and $\approx 151000$ for the undithered simulation.
 \as{But for dithered option, presumably the right thing to do would be also considered pointings that are not nominally on our field, but happened to be partially dithered into it. Otherwise, the total depth of the undithered is higher as you never throw anything away? Explain.} \textcolor{red}{I think this is the confusion between sensor and visit. The visits with sensors within the FOV were simulated. The sensors partially overlapping the footprint were simulated. However, the sensors of these visits that didn't overlap the footprint, were not simulated (so we could save some CPU hours).}
 
 
@@ -271,12 +271,12 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 \label{fig:validate_drp_check_photometry}
 \end{figure*}
 
-We continue by checking that the zeropoints, $z_{p}$ fulfill the uniformity requirements specified in the LSST-SRD. More concretely, they should have show an RMS lower than 15 mmag (PA3) and no more than 20\% (PF2) of the images should have a deviation larger than 20 mmag (PA4). We randomly select 1000 sensor-visits and check the distribution of the zeropoints, depicted in~\figref{PA34}, finding that the RMS of the distribution is 37 mmag, not fulfilling the requirement. This is not worrisome since we are not interested in the colors of the sources given that we only have single band images. \as{You can't say things like this! This is not real data and we could have had other bands and then it would be worrisome!} We also find that 19\% of the sensors have a zeropoint that deviates from the median more than 20 mmag in compliance with the requirements. Finally, we compare input and output magnitudes and compute the median difference between both (PA6), finding it to be 17 mmag and smaller than the maximum allowed in the LSST-SRD (20 mmag). More details about how the matching between inputs and outputs was done in order to perform this test can be found in~\ref{ssec:matching}.
+We continue by checking that the error in the zeropoints, $\sigma_{zp}$ fulfill the uniformity requirements specified in the LSST-SRD. More concretely, they should show an RMS lower than 15 mmag (PA3) and no more than 20\% (PF2) of the images should have a deviation larger than 20 mmag (PA4). We randomly select 1000 sensor-visits and check the distribution of the error in the zeropoints, depicted in~\figref{PA34}, finding that the RMS of the distribution is 0.06 mmag fulfilling the requirement. We also find that 0\% of the sensors have an error in the zeropoint that deviates from the median more than 20 mmag in compliance with the requirements. Finally, we compare input and output magnitudes and compute the median difference between both (PA6), finding it to be 17 mmag and smaller than the maximum allowed in the LSST-SRD (20 mmag). More details about how the matching between inputs and outputs was done in order to perform this test can be found in~\ref{ssec:matching}.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{PA234.pdf}
-\caption{Normalized distribution of the change in the zeropoint value, $\Delta z_{p}$ for 1000 randomly selected sensor-visits. We see that the distribution is quite asymmetrical and find that the RMS (PA3) is 37 mmag, larger than the requirements in the LSST-SRD (15 mmag). We also find that only 19\% (PF2) of the visits deviate from the median more than 20 mmag (PA4), in compliance with the LSST-SRD requirements.}
+\caption{Normalized distribution of the error in the zeropoint value, $\sigma_{zp}$ for 1000 randomly selected sensor-visits. We see that the distribution is quite asymmetrical and find that the RMS (PA3) is 0.06 mmag, fulfilling the requirements in the LSST-SRD (15 mmag). We also find that only 0\% (PF2) of the visits deviate from the median more than 20 mmag (PA4), in compliance with the LSST-SRD requirements.}
 \label{fig:PA34}
 \end{figure}
 
@@ -348,7 +348,8 @@ E_{X} (\theta) = \langle \delta e^{(i)}_{1}\delta e^{(j)}_{2} \rangle,
 \end{eqnarray}
 With $\sigma_{1}^{2}, \sigma_{2}^{2}$ are the second order moments of a source along some set of perpendicular axes and $\sigma^{2}_{12}$ is the covariance, $\delta e_{1}, \delta e_{2}$ are the residuals, and the angle brackets indicate averaging over all pairs of stars $i$, $j$ at a given angular separation $\theta$.
 
-In practice, we compute the PSF-corrected moments of stars across the field of view using \texttt{TreeCorr}~\citep{2004MNRAS.352..338J}. Our findings are shown in \figref{TEx}. We can see that for $E_{1}$ and $E_{X}$ the TE1 criteria is fulfilled but the TE2 and others are not. For $E_{2}$ there is a residual flat correlation. \textcolor{red}{Check with Robert/Rachel: This is likely a result of the our analytic PSF input model having some residual shape that cannot be described by the Gaussian profiles that the DM stack used, more suitable for real data?} \as{Ok, we should think more carefully if this is the right test to perform, but it is possible that this failure is real in the sense that PSF modelling in DM is currently not sophisticated enough, so this is a real failure of the SRD}
+In practice, we compute the PSF-corrected moments of high signal-to-noise (SNR $>$ 100) stars across the field of view using \texttt{TreeCorr}~\citep{2004MNRAS.352..338J}. Our findings are shown in \figref{TEx}. We can see that for $E_{1}$, $E_{2}$, and $E_{X}$ the TE1 criteria is fulfilled as well as TE2. 
+\textcolor{red}{I was missing a key detail and it was that basically the test should be done with high-SNR stars...}
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{TEx}
@@ -364,7 +365,7 @@ Finally, the DESC-SRD requires (WL4-Y10) that the systematic uncertainty in the 
 \label{fig:WL4-Y10}
 \end{figure}
 
-We summarize our findings in Table~\ref{tab:kpm_table} and Table~\ref{tab:desc_srd_table}. We see that our images and catalogs pass most of the requirements by a good margin. We can also see that some of the criteria are not passing the requirements due to design choices and do not affect the science analyses that can be performed with this dataset. However, there is a big exception: the TEx requirements (correlations of the residual PSF ellipticity) which can prevent possible weak lensing analyses. \as{well, nobody wanted to do WL analysis using DM code anyway! } In any case, given that no cosmic shear signal was included in these simulations, the simplicity of the potential sources of systematic uncertainty for cosmic shear analyses, and the lack of photometric redshifts for the sources, this dataset does not offer any new science from the WL point-of-view and no WL analyses are performed on this work. 
+We summarize our findings in Table~\ref{tab:kpm_table} and Table~\ref{tab:desc_srd_table}. We see that our images and catalogs pass all the requirements by a good margin. We can also see that some of the criteria are not passing the requirements due to design choices and do not affect the science analyses that can be performed with this dataset.
 
 \begin{table}[h!]
 \centering
@@ -380,8 +381,8 @@ AA1 (milliarcsec) & 100 & 20 & Y\\
 PA1 (millimag) & 8 & 6 & Y\\
 PF1 (\%) & 20 & 17 & Y\\
 PA2 (millimag) & 15 & - & -\\
-PA3 (millimag) & 15 & 37  & N\\
-PF2 (\%) & 20 & 19 & Y\\
+PA3 (millimag) & 15 & 0.06  & Y\\
+PF2 (\%) & 20 & 0 & Y\\
 PA4 (millimag) & 20 & - & -\\
 %PA5 (millimag) & 10 & 1.4 & check\\
 PA6 (millimag) & 20 & 17 & Y\\
@@ -414,11 +415,11 @@ SE2 & 0.1 & 0.002 & Y\\
 SR1 (arcsec) & 0.80 & 0.64 & Y\\
 SR2 (arcsec) & 1.31 & 1.01 & Y\\
 SR3 (arcsec) & 1.81 & 1.79 & Y\\
-TE1 & $3 \times 10^{-5}$ & $1.2\times 10^{-4}$ & N\\
-TE2 & $3 \times 10^{-7}$ & $1.3\times 10^{-4}$ & N\\
-TEF & 15\% & - & -\\
-TE3 & $6 \times 10^{-5}$ & - & N\\
-TE4 & $5 \times 10^{-7}$ & - & N\\
+TE1 & $3 \times 10^{-5}$ & $3\times 10^{-6}$ & Y\\
+TE2 & $3 \times 10^{-7}$ & $9\times 10^{-8}$ & Y\\
+%TEF & 15\% & - & -\\
+%TE3 & $6 \times 10^{-5}$ & - & N\\
+%TE4 & $5 \times 10^{-7}$ & - & N\\
 \hline
 \end{tabular}
 \caption{Table with the Key Performance Metrics (KPMs) that we used to check the quality of our end-to-end pipeline. The criteria that are passed or not due to design choices are shown in blue. We mark with dashes the quantities that we use as auxiliary to compute some of the criteria, e.g., we use EF1 to compute SE2.}
@@ -596,6 +597,10 @@ Where 1.04\arcsec is the mean seeing in DC1, and 0.58\arcsec is the mean seeing 
 \subsection{Blending}
 As previously mentioned, our output catalogs do not include any estimation of overlap between sources, or \textit{blendedness}~\citep{2018PASJ...70S...5B}. Highly-blended objects are more likely to have biased estimations of the centroid position, shape, and fluxes. This can lead to overall biases in the estimated photometric redshifts and cosmological parameters. Given that the mean seeing in DC1 is larger than in HSC, the impact of blended objects is likely to be larger. In the case of \citet{2018PASJ...70S..25M}, the cut in the blendedness parameter affects only 1\% of the objects; we expect this number to be larger in our case. Using specialized image simulations from~\citet{Sanchez19} with a seeing equal to the seeing in DC1 (1.04\arcsec), in $r$-band, we find that if we select objects with $r < 25.5$ and SNR $\geq 1$, the fraction of objects with blendedness $ >10^{-0.375}$ is $\approx 6.3\%$. If we raise the minimum SNR threshold to 6, this fraction is lowered to $\approx 2.6\%$. This means that our sample will have a fraction of these objects anywhere in the range (2.6\% - 6.3\%) but closer to 2.6\% since the fraction of objects with SNR $\leq 6$ is $\approx 0.3\%$. In any case, we do not expect that the inclusion of these objects in our two point measurements will affect the range of scales that we are going to consider in this work. In order to quantify this, a careful study of the impact of blending in clustering measurements is necessary but this is out of the scope of this work.
 
+%%% Commenting out the 2pt results section %%%
+% -------------------------------------------------------------------%
+\iffalse
+%%%%
 \section{Two-point clustering results}
 \label{sec:results}
 
@@ -663,13 +668,18 @@ By doing so we obtain $b = 0.35 ^{+ 0.09}_{- 0.13}$ (considering only $\ell \geq
 \caption{{\bf Top panel:} Measured power spectra undithered (orange $\times$) and dithered (open blue circles) datasets with \texttt{NaMaster} corrected by systematics. The error bars are computed analytically via Gaussian approximation using \texttt{NaMaster}. The best-fit theoretical prediction is shown as the solid black line. The shadowed region corresponds to the 1-$\sigma$ confidence level for the galaxy bias. The vertical black dashed line corresponds to the minimum multipole considered for our analysis $\ell = 1/f_{sky}$. {\bf Bottom panel:} Size of the correction in the power-spectra, $\Delta C_{\ell}$, relative to their uncertainty, $\sigma_{\ell}$, due to deprojection (Dep.) of different observing conditions (blue), due to the presence of bright objects (BO, orange), and the total relative correction (green) for the dithered (solid lines) and undithered (broken lines) simulations.}
 \label{fig:power_spectra}
 \end{figure}
+%%%%
+\fi
+
+%%% Commenting out the 2pt results section %%%
+% -------------------------------------------------------------------%
 
 \section{Conclusions}
 \label{sec:conclusions}
 
 End-to-end simulations are powerful tools for testing the overall performance of any current and future cosmological experiments like the LSST~\citep{Overview}. They allow us to validate and improve on different parts involved in the data processing and analysis, as well as to model and improve our control of systematic uncertainties.
 
-In this paper, we have presented a simulated (end-to-end) imaging dataset that resembles single-band, full-depth LSST data, for the first data challenge in the LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithers (\textit{undithered}). We processed these images with the LSST data management software stack and performed several quality assurance tests on its outputs. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets and pass most of the LSST Science Requirements~\citep{LPM-17} and the DESC Science Requirements~\citep{2018arXiv180901669T} allowed by our design choices.
+In this paper, we have presented a simulated (end-to-end) imaging dataset that resembles single-band, full-depth LSST data, for the first data challenge in the LSST DESC. We simulated images using state of the art tools (\textit{imSim}). We generated two different and complementary datasets, one with random dithers (\textit{dithered}) and the other with no dithers (\textit{undithered}). We processed these images with the LSST data management software stack and performed several quality assurance tests on its outputs. We checked that both the \textit{dithered} and \textit{undithered} are high-quality datasets and pass the LSST Science Requirements~\citep{LPM-17} and the DESC Science Requirements~\citep{2018arXiv180901669T} allowed by our design choices.
 
 We studied different ways to relate the output catalogs to the inputs. In particular, we studied two different matching strategies. The first, using information about positions only and a second strategy involving positions and magnitudes. We showed that, for clustering analyses, adding information about magnitudes results in a lower incidence of spurious matches. The usage of matching strategies helped us define a clean sample suitable for clustering analyses. However, these matching techniques are likely not suitable for studies on blending or scales smaller than those considered in this work, since they do not include information about undetected sources present in blends. Therefore, an important research topic for these kinds of end-to-end simulations is to find efficient strategies to relate inputs and outputs.
 
