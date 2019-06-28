@@ -29,9 +29,32 @@
 %\maketitlepre
 
 \begin{abstract}
+  Data Challenge 1 (DC1) is the first of the planned three synthethic
+  datasets produced by the LSST Dark Energy Science Collaboration
+  (DESC). These are designed to develop and validate data reduction
+  methodologies and to study the impact of systematic effects that
+  will affect the LSST dataset. DC1 is comprised of $r$-band
+  observations of 40 square degrees to 10 year LSST depth. We present
+  how the dataset was generated, reduced using development version of
+  LSST data reduction software and matched to the input catalog. We
+  study performance of the data reduction pipeline compared to the
+  project requirements on key perfomance parameters. We establish a
+  set of pipeline flags that produce a clean extragalactic sample and
+  discuss residual sample contamination, including efficiency of
+  star-galaxy separation and deblending algorithm. We demonstrate the
+  power spectrum measurement on the simulated field. Our main
+  conclusions are: i) realistic and validated synthetic datasets will
+  be required for a successful control of systematics in the upcoming
+  photometric dark energy experiments; ii) within the fidelity of DC1
+  image generation, the LSST pipeline passes all KPPs; iii) there is
+  no unique noiseless method for matching the input and output
+  catalogs; iv) lack of multi-band observations significantly hampers
+  sample definition and cleaning in DC1.
 
-The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the \as{development} version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also analyze different dithering strategies and check their impact mitigating potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
-\as{I'm not sure I like this abstract. It depends how exactly you want to spin it, but I would stress more the 'lessons learned' aspect of DC1}
+  
+
+%The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the \as{development} version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also analyze different dithering strategies and check their impact mitigating potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
+% \as{I'm not sure I like this abstract. It depends how exactly you want to spin it, but I would stress more the 'lessons learned' aspect of DC1}
 
 \end{abstract}
 
@@ -273,7 +296,7 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 
 \begin{figure*}
 \centering
-\includegraphics[width=1.8\columnwidth]{DC1-imsim-dithered_r_check_photometry.pdf}
+\includegraphics[width=1.8\columnwidth]{DC1-imsim-dithered_r_check_photometry.png}
 \caption{Photometric performance in more detail.  (upper left) Horizontal histogram of the RMS distribution for each star for the full sample (grey) and ``bright'' sample (blue).  The blue sample is the same as that shown in Figure~\ref{fig:validate_drp_PA1}. (upper right).  Note that this RMS is the RMS of the measurements for a given star and so each entry in the histogram is one star. Thus, the median value here is 2.4~mmag, even thought the median of all RMS measurements in Figure~\ref{fig:validate_drp_PA1} was 15.8~mmag.  This difference is due to a population of objects that have a poor repeatability. (upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatable measurements, along with a smaller population of objects with much higher scatter to their measurements. (lower left) Per-object median reported magnitude error by the pipeline versus the observed RMS over all of the measurements for an object.  Our $SNR>100$ cut is in the space of median reported error. (lower right) Per-object median pipeline-reported magnitude error versus object magnitude. 
 }
 % MWV: A good thing to think about someday, but not necessary for this paper:
@@ -295,7 +318,7 @@ We now focus on checking the astrometric performance.  We show the detailed astr
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_check_astrometry.pdf}
+\includegraphics[width=0.9\columnwidth]{DC1-imsim-dithered_r_check_astrometry.png}
 \caption{
 Detailed astrometric performance.  (left) Histogram of the repeatability of distance between pairs of stars.  (right) Astrometric variation as a function of SNR.  We find a systematic floor of 12~milliarcsec.
 }
