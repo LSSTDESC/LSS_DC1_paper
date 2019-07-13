@@ -30,13 +30,16 @@
 
 \begin{abstract}
   Data Challenge 1 (DC1) is the first of the planned three synthetic
-  datasets produced by the LSST Dark Energy Science Collaboration
-  (DESC). These are designed to develop and validate data reduction
-  methodologies and to study the impact of systematic effects that
+  datasets produced by the Large Synoptic Survey Telescope (LSST)
+  Dark Energy Science Collaboration (DESC). These are designed to
+  develop and validate data reduction methodologies
+  and to study the impact of systematic effects that
   will affect the LSST dataset. DC1 is comprised of $r$-band
   observations of 40 square degrees to 10 year LSST depth. We present
-  how the dataset was generated, reduced using a development version of
-  LSST Science Pipelines and, finally, matched to the input catalog. We
+  how the dataset was: a) generated, by simulating sources from cosmological
+  simulation in individual sensor-visit images with different observing conditions; b)
+  reduced using a development version of
+  LSST Science Pipelines; and c) matched to the input catalog. We
   study performance of our processed catalogs compared to the
   LSST requirements on key performance metrics (KPMs). We establish a
   set of pipeline flags that produce a clean extragalactic sample and
@@ -46,8 +49,8 @@
   conclusions are: i) realistic and validated synthetic datasets will
   be required for a successful control of systematics in the upcoming
   photometric dark energy experiments; ii) within the fidelity of DC1
-  image generation, the LSST pipeline passes all KPMs;
-   iii) there is no unique noiseless method for matching the input and output
+  image generation, the LSST Science pipelines passes all testable KPMs in DC1;
+   iii) there is no individual noiseless method for matching the input and output
   catalogs; iv) lack of multi-band observations significantly hampers
   sample definition and cleaning in DC1.
 
@@ -66,7 +69,7 @@
 The increase in statistical power from recent cosmological experiments makes the modeling and mitigation of systematic uncertainties key to extracting the maximum amount of information from these surveys. More traditional in high energy particle physics~\citep{Brun:118715, 2006JHEP...05..026S}, end-to-end simulations provide a unique framework to
 model systematics and streamline processing and analysis pipelines since we have a complete understanding of the inputs and outputs. With the increasing availability of computational resources, this approach has also been extended to imaging surveys~\citep{2016ApJ...817...25B}, and similar efforts are being undertaken in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}.
 
-For surveys like the LSST~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
+For surveys like the Large Synoptic Survey Telescope (LSST)~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
 kind of end-to-end simulations enables successful validation and verification of the processing and
 analysis pipelines. With an expected total of $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} after 10 years, the
 data handling becomes challenging even when considering a small subset of the LSST area.  
@@ -79,7 +82,7 @@ pipelines, to ensure adequate control of systematic uncertainties for
 analysis of the LSST data.  An additional goal of these DCs is
 development of the infrastructure for analyzing, storing, and serving
 substantial data volumes; even while using the outputs of the LSST
-Data Management (DM) stack as inputs into analysis pipelines, the
+Science Pipelines as inputs into analysis pipelines, the
 analysis pipelines will need to handle quantities of data beyond those
 seen by ongoing surveys, even after just a single year of LSST data is
 available. Moreover, it is anticipated that non-negligible subsets of
@@ -138,11 +141,11 @@ two-point clustering statistics up to $\sim 1$ degree scales.  To ensure the sim
 tractable, DC1 only includes images in a single band ($r$-band), but goes to full LSST 10-year
 depth. 
 
-The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we use as inputs the position, shapes and fluxes from a galaxy mock catalog from \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C}, which we describe in more detail in \secref{inputs}, and the observing conditions and strategies described in \secref{dithering} using \texttt{OpSim}~\citep{2014SPIE.9150E..15D}. These are passed to our image simulation packages describe in \secref{imsim_pipeline} that produce raw e-images (i.e., full sensor images without any added instrumental effects such as cross-talk, bleeding, etc.). These e-images are then processed by the LSST data management (DM) software stack~\citep{2015arXiv151207914J}, also known as the LSST Science Pipelines. The processing is described in \secref{image_processing_pipeline}. After this, we obtain the calibrated exposures, coadds and catalogs that we use for our analysis.
+The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we use as inputs the position, shapes and fluxes from a galaxy mock catalog from \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C}, which we describe in more detail in \secref{inputs}, and the observing conditions and strategies described in \secref{dithering} using \texttt{OpSim}~\citep{2014SPIE.9150E..15D}. These are passed to our image simulation packages describe in \secref{imsim_pipeline} that produce raw e-images (i.e., full sensor images without any added instrumental effects such as cross-talk, bleeding, etc.). These e-images are then processed by the LSST Science Pipelines~\citep{2015arXiv151207914J}. The processing is described in \secref{image_processing_pipeline}. After this, we obtain the calibrated exposures, coadds and catalogs that we use for our analysis.
 
 \begin{figure}
 \centering
- \includegraphics[trim={0cm 1.25cm 0cm 4.05cm}, clip, width=1.0\columnwidth]{dc1_workflow}
+ \includegraphics[trim={0cm 1.5cm 0cm 1.05cm}, clip, width=1.0\columnwidth]{dc1_workflow}
 \caption{Workflow diagram for full data simulations. The image simulation step produces synthetic raw observations from a known truth catalog based on N-body simulations and simulated observing conditions. These data, in the same format as actual observations from the LSST telescope are processed by the data management to first generate calibrated single exposure images. These are calibrated both astrometrically and photometrically and are fed again into data management stacks that produces the image co-adds and a catalog of detected static sources. 
 }
 
