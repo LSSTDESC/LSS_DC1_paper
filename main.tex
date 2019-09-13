@@ -650,7 +650,7 @@ For weak lensing and clustering analyses, it is important to have a pure galaxy 
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{stellar_contamination}
-\caption{Fraction of objects correctly classified as stars (blue) or galaxies (green) using \texttt{base\_ClassificationExtendedness\_value} as classifier, and fraction of objects misclassified as stars (red) or galaxies (orange) as a function of magnitude in the dithered field. The results are equivalent in the undithered case.}
+\caption{Performance of the \texttt{base\_ClassificationExtendedness\_value} as star-galaxy classifier as a function of magnitude. We show the ratio of the number of stars classified as stars $N_{ss}$ and true stars $N_{s,t}$ (blue), the ratio of the number of stars classified as galaxies $N_{sg}$ and the number of true galaxies $N_{g,t}$ (orange), the ratio of the number of galaxies classified as galaxies $N_{gg}$ and the number of true galaxies $N_{g,t}$, and the ratio of the number of galaxies classified as stars $N_{gs}$ and the number of true stars $N_{s,t}$. We see that the purity of the galaxy sample is $>90\%$ in the magnitude range that we analyze.}
 \label{fig:star_galaxy_separation}
 \end{figure}
 \subsection{Depth maps and footprint masking}
@@ -839,8 +839,9 @@ Detailed astrometric performance.  (left) Histogram of the repeatability of dist
 
 FJS thanks Amanda Pagul and David Alonso for useful comments and discussion. This research used resources of the National Energy Research Scientific Computing Center, a DOE Office of Science User Facility supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC02-05CH11231. We acknowledge the use of \texttt{Pandas, Dask, SciPy, Matplotlib, Jupyter, CCL, NaMaster, Healpy, and scikit-learn} as well as the LSST software stack.
 
-The work of JC, RD, SD, TG, AJ, HK, PJM and BVK was supported by the U.S. Department of Energy under contract number DE-AC02-76SF00515. 
-The work of RM was supported by the US Department of Energy Cosmic Frontier program, grant DE-SC0010118.
+The work of CWW was supported by the US Department of Energy High Energy Physics grant DE-SC0010007. The work of JC, RD, SD, TG, AJ, HK, PJM and BVK was supported by the U.S. Department of Energy under contract number DE-AC02-76SF00515. 
+The work of RM was supported by the US Department of Energy Cosmic Frontier program, grant DE-SC0010118. 
+
 
 \input{acknowledgments}
 
