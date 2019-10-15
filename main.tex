@@ -1,7 +1,7 @@
 \RequirePackage{docswitch}
 \setjournal{\flag}
 
-\documentclass[twocolumn]{aastex62}
+\documentclass[\docopts]{\docclass}
 % Custom commands from LSST DESC, see texmf/styles/lsstdesc_macros.sty
 \usepackage{lsstdesc_macros}
 \usepackage{tikz}
@@ -10,9 +10,11 @@
 \usepackage[htt]{hyphenat}
 \usepackage{graphicx}
 \graphicspath{{./}{./figures/}}
-\bibliographystyle{aj}
+\bibliographystyle{mnras}
 \extrafloats{100}
-\usepackage{hyperref}
+\usepackage{lineno}
+\linenumbers
+%\usepackage[draft]{hyperref}
 % Add your own macros here:
 \newcommand{\rachel}[1]{{\textcolor{cyan}{{\textbf (RM: #1)}}}}
 \newcommand{\as}[1]{{\textcolor{magenta}{{\textbf (AS: #1)}}}}
@@ -25,13 +27,13 @@
 \begin{document}
 
 \title[LSST DESC DC1]{The LSST DESC Data Challenge 1: Generation and Analysis of Synthetic Images for Next Generation Surveys }
-\correspondingauthor{J.~S\'{a}nchez}
-\email{jsanch87@fnal.gov}
-\input{authors}
-%\maketitlepre
+%\correspondingauthor{J.~S\'{a}nchez}
+%#\email{jsanch87@fnal.gov}
+%\input{authors}
+\maketitlepre
 
 \begin{abstract}
-  Data Challenge 1 (DC1) is the first of the planned three synthetic
+  Data Challenge 1 (DC1) is the first of the several planned synthetic
   datasets produced by the Large Synoptic Survey Telescope (LSST)
   Dark Energy Science Collaboration (DESC). These are designed to
   develop and validate data reduction methodologies
@@ -41,25 +43,25 @@
   how the dataset was: a) generated, by simulating sources from cosmological
   simulation in individual sensor-visit images with different observing conditions; b)
   reduced using a development version of
-  LSST Science Pipelines; and c) matched to the input catalog. We
+  LSST Science Pipelines; and c) matched to the input catalog for validation and testing. We
   study performance of our processed catalogs compared to the
   LSST requirements on key performance metrics (KPMs). We establish a
   set of pipeline flags that produce a clean extragalactic sample and
-  discuss residual sample contamination, including efficiency of
-  star-galaxy separation and deblending algorithm. We demonstrate the
+  discuss residual sample contamination, including the residual sample contamination
+  resulting from inefficiency in star-galaxy separation and imperfect deblending. We demonstrate the
   power spectrum measurement on the simulated field. Our main
   conclusions are: i) realistic and validated synthetic datasets will
   be required for a successful control of systematics in the upcoming
   photometric dark energy experiments; ii) within the fidelity of DC1
-  image generation, the LSST Science pipelines passes all testable KPMs in DC1;
+  image generation, the LSST Science Pipelines pass all testable KPMs in DC1;
    iii) there is no individual noiseless method for matching the input and output
   catalogs; iv) lack of multi-band observations significantly hampers
   sample definition and cleaning in DC1.
 
   
 
-%The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the \as{development} version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also analyze different dithering strategies and check their impact mitigating potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
-% \as{I'm not sure I like this abstract. It depends how exactly you want to spin it, but I would stress more the 'lessons learned' aspect of DC1}
+%The success of the Large Synoptic Survey Telescope (LSST) as a dark energy experiment will depend on controlling systematic biases in cosmological probes. Simulations are critical for developing the methodology to estimate and mitigate these systematics. In the first Data Challenge from the LSST Dark Energy Science Collaboration, we evaluate potential systematic biases in observables, with an emphasis on galaxy clustering. We simulate LSST images, then process and analyze them using the development version of the LSST Data Management pipeline. Then we characterize the resulting systematics and implement corrections. We also analyze different dithering strategies and check their impact mitigating potential systematic effects. Our results demonstrate that we can generate realistic LSST-like simulated images and control the systematic effects, after processing these images, at a sufficient level to enable major advances in our knowledge of dark energy and cosmology. The methodology presented here can be easily translated to current and future imaging surveys.
+
 
 \end{abstract}
 
@@ -70,13 +72,11 @@
 
 \section{Introduction}
 \label{sec:intro}
-The increase in statistical power from recent cosmological experiments makes the modeling and mitigation of systematic uncertainties key to extracting the maximum amount of information from these surveys. More traditional in high energy particle physics~\citep{Brun:118715, 2006JHEP...05..026S}, end-to-end simulations provide a unique framework to
-model systematics and streamline processing and analysis pipelines since we have a complete understanding of the inputs and outputs. With the increasing availability of computational resources, this approach has also been extended to imaging surveys~\citep{2016ApJ...817...25B}, and similar efforts are being undertaken in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}.
+The increase in statistical power from recent cosmological experiments makes the modeling and mitigation of systematic uncertainties key to extracting the maximum amount of information from these surveys. End-to-end simulations~\citep{Brun:118715, 2006JHEP...05..026S,AGOSTINELLI2003250} procure a unique framework to
+model systematics and streamline processing and analysis pipelines since they provide a complete understanding of the inputs and outputs. With the increasing availability of computational resources, this approach has also been extended to imaging surveys~\citep{2016ApJ...817...25B}, and similar efforts are being undertaken in spectroscopic surveys such as DESI~\citep{2016arXiv161100036D}.
 
-For surveys like the Large Synoptic Survey Telescope (LSST)~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control of the systematic uncertainties is required, producing these
-kind of end-to-end simulations enables successful validation and verification of the processing and
-analysis pipelines. With an expected total of $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} after 10 years, the
-data handling becomes challenging even when considering a small subset of the LSST area.  
+For surveys like the Large Synoptic Survey Telescope (LSST)~\citep{Overview}, where the expected data volume is very large, and where a highly stringent control over systematic uncertainties is required, producing  end-to-end simulations enables successful validation and verification of the processing and
+analysis pipelines. In addition, the expected data volume of LSST, $\sim 50$ PB of raw data and $\sim 40$ billion objects~\citep{Overview} after 10 years, motivates the use of simulated data sets for the development of data handling and analysis pipelines.  
 
 The LSST Dark Energy Science Collaboration
 (DESC\footnote{\url{http://lsstdesc.org/}}) has planned a series of
@@ -88,8 +88,8 @@ development of the infrastructure for analyzing, storing, and serving
 substantial data volumes; even while using the outputs of the LSST
 Science Pipelines as inputs into analysis pipelines, the
 analysis pipelines will need to handle quantities of data beyond those
-seen by ongoing surveys, even after just a single year of LSST data is
-available. Moreover, it is anticipated that non-negligible subsets of
+seen by ongoing surveys, even after a single year of operation. 
+Moreover, it is anticipated that non-negligible subsets of
 the data may need to be reprocessed to generate systematic error
 budgets (e.g., assessing sensitivity of the results to certain stages
 of the analysis process by changing some parameters in the
@@ -100,7 +100,7 @@ truth and the ability to turn various effects on and off and thus study them in 
 
 Both goals of the DCs dictate a gradual increase in the
 sophistication and volume of the simulated data. In this paper, we
-present and analyze simulated images from DC1, the first of three such
+present and analyze simulated images from DC1, the first of such
 data challenges planned within DESC. The nominal goal of this dataset
 is to produce synthetic data corresponding to 10 years of integration
 in the $r$-band over a contiguous patch of the sky covering approximately 40 deg$^{2}$. This represents just one of the LSST's six filters and covers a rather 
@@ -123,22 +123,15 @@ the design of this data challenge.  In \secref{inputs}, we describe the inputs f
 \label{sec:design}
 
 As mentioned in \secref{intro}, the design of this first data challenge (DC1) is driven by a
-combination of several factors: the need to test analysis pipelines for control of systematic
-uncertainty, and to develop infrastructure for processing and serving data in a way that is useful
-to DESC. The philosophy behind the design of the DESC data challenges is to increase the complexity and level
+combination of several factors: the need to build and test analysis pipelines, to build and test different strategies to mitigate systematic uncertainties affecting different probes, and to develop infrastructure for processing and serving data in a way that is useful to DESC. The philosophy behind the design of the DESC data challenges is to increase the complexity and level
 of realism of the datasets in each subsequent iteration. Thus, DC1 is limited in scope and focus, testing a subset of the systematics affecting the different probes that will be used in DESC.
 
 
 %While the subsequent data challenges DC2 and DC3 are intended to be full-collaboration activities, DC1 is more limited in
 %scope and focus, with a goal of enabling tests of the large-scale structure (LSS) working group
 %pipelines for analysis and systematics mitigation of two-point clustering statistics.
-%\as{Come on, that is absolute bullshit. This was supposed to be a full
- % collaboration activity, but it never turned out that way and as it
- % was superseeded by DC2. No need to make LSS somehow responsible for
- % DC1. :-) }
 
-As a stepping stone to eventually producing images covering hundreds to thousands of square degrees
-in DC2 and DC3, DC1 covers a $40$ deg$^2$ footprint.  This is sufficient to enable tests of
+DC1 covers a $40$ deg$^2$ footprin as a stepping stone to eventually producing images covering hundreds to thousands of square degrees in DC2 and beyond.  This is sufficient to enable tests of
 two-point clustering statistics up to $\sim 1$ degree scales.  To ensure the simulated image volume is
 tractable, DC1 only includes images in a single band ($r$-band), but goes to full LSST 10-year
 depth. 
@@ -148,7 +141,7 @@ The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we u
 \begin{figure}
 \centering
  \includegraphics[trim={0cm 1.5cm 0cm 1.05cm}, clip, width=1.0\columnwidth]{dc1_workflow}
-\caption{Workflow diagram for full data simulations. The image simulation step produces synthetic raw observations from a known truth catalog based on N-body simulations and simulated observing conditions. These data, in the same format as actual observations from the LSST telescope are processed by the data management to first generate calibrated single exposure images. These are calibrated both astrometrically and photometrically and are fed again into data management stacks that produces the image co-adds and a catalog of detected static sources. 
+\caption{Workflow diagram for full data simulations. The image simulation step produces synthetic raw observations from a known truth catalog based on N-body simulations and simulated observing conditions. These data are processed by the LSST Science Pipelines to first generate calibrated single exposure images. These are calibrated both astrometrically and photometrically and are fed again into data management stacks that produces the image co-adds and a catalog of detected static sources. 
 }
 
 \label{fig:dc1_workflow}
@@ -157,7 +150,7 @@ The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we u
 
 \section{Image generation: input catalog}
 \label{sec:inputs}
-Image simulations allow us to study in detail the detection and deblending properties of a given image-processing pipeline. For example, if we produce images using an object catalog with random positions uniformly distributed across the sky, as well as uniformly random shapes and fluxes, we can get information about detection efficiencies as a function of flux.  However, the information about blending will not be realistic and we will not be able to capture some correlations present in real data. On the other hand, using N-body simulations as the input to generate artificial images allows us to study all the aforementioned effects. This is why we used the \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C} catalog as our input.  \texttt{CatSim} is a set of simulations provided by the LSST Simulations Team representing a realistic distribution of both Milky Way and extra-galactic sources. In particular, the extra-galactic catalog contains galaxies covering the redshift range $0 < z < 6$ in a 4.5$\times$4.5 degree footprint. The galaxies are generated by populating the dark matter haloes from the Millennium simulation~\citep{2005Nature.435.629S} using a semi-analytic baryon model described in \citet{2006MNRAS.366..499D} including magnitudes BVRIK and bulge-to-disk ratios. For all sources, a spectral energy distribution (SED), is fit to the galaxy colors using \citet{2003MNRAS.344.1000B} spectral synthesis models. Fits are undertaken independently for the bulge and disk and include inclination dependent reddening. Morphologies are modeled using two S\'{e}rsic profiles~\citep{1963BAAA....6...41S} and a single point source (for the AGN). Half-light radii for the bulge components are derived from the absolute-magnitude vs half-light radius relation given by \citet{2011A&A...534A...3G}. Stars are represented as point sources and are drawn from the Galfast model~\citep{2008ApJ...673..864J}. More information about these catalogs can be found at the LSST Simulations webpage\footnote{\url{https://www.lsst.org/scientists/simulations/catsim}}.
+Image simulations allow us to assess the detection and deblending performance of a given image-processing pipeline. For example, if we produce images using an object catalog with random positions uniformly distributed across the sky, as well as uniformly random shapes and fluxes, we can get information about detection efficiencies as a function of flux. However, the effects of source blending may not be realistic as we will not be able capture some correlations present in real data. On the other hand, using N-body simulations as the input to generate artificial images allows us to study all the aforementioned effects. We used the \texttt{CatSim}~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C} catalog as our input to account for these effects, and to be able to test our analysis pipelines. \texttt{CatSim} is a set of simulations provided by the LSST Simulations Team representing a realistic distribution of both Milky Way and extra-galactic sources. In particular, the extra-galactic catalog contains galaxies covering the redshift range $0 < z < 6$ in a 4.5$\times$4.5 degree footprint. The magnitude and redshift distributions are shown in \figref{catalog_plots}. The galaxies are generated by populating the dark matter haloes from the Millennium simulation~\citep{2005Nature.435.629S} using a semi-analytic baryon model described in \citet{2006MNRAS.366..499D} including magnitudes BVRIK, LSST-ugrizy, and bulge-to-disk ratios. For all sources, a spectral energy distribution (SED), is fit to the galaxy colors using \citet{2003MNRAS.344.1000B} spectral synthesis models. Fits are undertaken independently for the bulge and disk and include inclination dependent reddening. Morphologies are modeled using two S\'{e}rsic profiles~\citep{1963BAAA....6...41S} and a single point source (for the AGN). Half-light radii for the bulge components are derived from the absolute-magnitude vs half-light radius relation given by \citet{2011A&A...534A...3G}. Stars are represented as point sources and are drawn from the Galfast model~\citep{2008ApJ...673..864J}. More information about these catalogs can be found at the LSST Simulations webpage\footnote{\url{https://www.lsst.org/scientists/simulations/catsim}}.
 
 \begin{figure}
 \centering
@@ -168,7 +161,7 @@ Image simulations allow us to study in detail the detection and deblending prope
 \end{figure}
 
 
-For the Data Challenge 1 (DC1), we chose a nominal field centered at RA $\approx 93^{\circ}$ and Dec $\approx -29^{\circ}$. This field has a galactic latitude of $b \approx -20^{\circ}$ and a dust extinction $0.05 \leq E(B-V) \leq 0.35$ and thus represent a typical LSST dataset. The \texttt{CatSim} catalog was tiled to generate a $\sim 40$ deg$^{2}$ footprint covering 4 LSST full focal plane pointings. This approach introduces a periodicity that induces extra correlations in our sample, however, this is not a major defect as we are unable to measure correlations on relevant scales ($> 1$ deg.) with any useful precision.
+For DC1, we chose a nominal field centered at RA $\approx 93^{\circ}$ and Dec $\approx -29^{\circ}$. This field has a Galactic latitude of $b \approx -20^{\circ}$ and a dust extinction $0.05 \leq E(B-V) \leq 0.35$ and thus represent a typical region in the LSST wide-fast-deep survey~\citep{Overview}. The \texttt{CatSim} catalog was tiled to generate a $\sim 40$ deg$^{2}$ footprint covering 4 LSST full focal plane pointings. This approach introduces a periodicity that induces extra correlations in our sample, however, this is not a major issue as we are unable to measure correlations on relevant scales ($> 1$ deg.) with any useful precision.
 
 \begin{figure}
 \centering
@@ -177,15 +170,15 @@ For the Data Challenge 1 (DC1), we chose a nominal field centered at RA $\approx
 \label{fig:footprint}
 \end{figure}
 
-After tiling, the input catalog contains approximately $63.1$ million sources, of which 97\% are galaxies whose redshift and magnitude distributions are depicted in \figref{catalog_plots} and remaining objects are stars. We simulate images in $r$-band to the LSST full depth ($10$ years). The final footprint can be seen in \figref{footprint}. We simulate observations within this footprint using a simulated observing cadence generated with the LSST Operations Simulator (OpSim)~\citep{2014SPIE.9150E..15D}. In particular, we use the \texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}} database, which contains simulated pointing position, observation date and filter. It also contains information about simulated observing conditions, such as, seeing, sky brightness, moon position, etc. We use $\approx 4$ pointings with $\approx 184$ visits per pointing over 10 years from this database for DC1.
+After tiling, the input catalog contains approximately $63.1$ million sources, of which 97\% are galaxies whose redshift and magnitude distributions are depicted in \figref{catalog_plots} and remaining objects are stars. We simulate $r$-band observation to the LSST full depth ($10$ years, 30-second exposures). The final footprint can be seen in \figref{footprint}. We simulate observations within this footprint using a simulated observing cadence generated with the LSST Operations Simulator (OpSim)~\citep{2014SPIE.9150E..15D}. In particular, we use the \texttt{minion\_1016}\footnote{\url{https://www.lsst.org/scientists/simulations/opsim/opsim-v335-benchmark-surveys}} database, which contains simulated pointing position, observation date and filter. It also contains information about simulated observing conditions, such as, seeing, sky brightness, moon position, etc. We use 4 pointings with $\approx 184$ visits per pointing over 10 years from this database for DC1.
 
 \section{Dither strategy}
 \label{sec:dithering}
 
-As mentioned in \secref{design}, we use OpSim's output, which contains a realization of the LSST observing cadence and the survey footprint. Since OpSim divides the sky with hexagonal tiles, the nominal telescope pointings lead to overlapping regions across adjacent tiles that are observed more often than the non-overlapping part of the field-of-view (FOV), resulting in depth non-uniformity on the scale of $\sim$1 degree and consequent systematic uncertainties \citep{2016ApJ...829...50A}. In an effort to mitigate these effects, and following the same approach that will be taken with LSST data, we implement \textit{dithers} -- offsets in the nominal telescope pointings. Specifically, here we use \textit{large}, i.e., as large as the FOV, random translational dithers, implemented after every visit, and random rotational dithers implemented after every filter change. The specific translational dither strategy is chosen based on a more extensive study of the various (translational) dither strategies in \citet{2016ApJ...829...50A}, where random dithers after every visit are found to be amongst the most effective.
+As mentioned in \secref{design}, we use OpSim's output, which contains a realization of the LSST observing cadence and the survey footprint. Since OpSim divides the sky into hexagonal tiles, the nominal telescope pointings lead to overlapping regions across adjacent tiles that are observed more often than the non-overlapping part of the field-of-view (FOV), resulting in depth non-uniformity on the scale of $\sim$1 degree and consequently can introduce systematic uncertainties \citep{2016ApJ...829...50A}. In an effort to mitigate these effects, and following the same approach that will be taken with LSST data, we implement \textit{dithers} -- offsets in the nominal telescope pointings. Specifically, here we use \textit{large}, i.e., as large as the FOV, random translational dithers, implemented after every visit, and random rotational dithers implemented after every visit. The specific translational dither strategy is chosen based on a more extensive study of the various (translational) dither strategies in \citet{2016ApJ...829...50A}, where random dithers after every visit are found to be amongst the most effective.
 
-For our purposes, we consider both an undithered and a dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall out of the DC1 region; these sensors were not simulated in order to save computational resources. However, the sensors that partially overlapped our nominal field of view were simulated. In total, we simulate $\approx 184600$ sensor/visits for the dithered simulation and $\approx 151000$ for the undithered simulation.
-\as{But for dithered option, presumably the right thing to do would be also considered pointings that are not nominally on our field, but happened to be partially dithered into it. Otherwise, the total depth of the undithered is higher as you never throw anything away? Explain.}\js{I think this is the confusion between sensor and visit. The visits with sensors within the FOV were simulated. The sensors partially overlapping the footprint were simulated. However, the sensors of these visits that didn't overlap the footprint, were not simulated (so we could save some CPU hours).}
+For our purposes, we consider both an undithered and a dithered observing strategy. For the dithered strategy, some visits will contain sensors that fall outside of the DC1 region; these sensors were not simulated in order to save computational resources. However, the sensors that partially overlapped our nominal field of view were simulated. In total, we simulate $\approx 184600$ sensor/visits for the dithered simulation and $\approx 151000$ for the undithered simulation.
+
 
 
 
@@ -194,22 +187,22 @@ For our purposes, we consider both an undithered and a dithered observing strate
 % ---------------------------------------------------------------------
 
 The artificial generation of astronomical images is a complex and computationally demanding process. In recent
-years, there have been major efforts in the community to create software that enables the generation of astronomical images, with various choices made in terms of level of complexity and fidelity, and computational efficiency, such as \texttt{UFIG}~\citep{2016ApJ...817...25B}, and \textsc{PhoSim}~\citep{2015ApJS..218...14P}. In our case, we model the input sources using
-two independent approaches. Firstly, we use \textsc{PhoSim}, a fast photon Monte Carlo code that enables the generation of images with a high-level of realism. We use a custom configuration that enables some
-approximations on the sky background in order to reduce the overall computing time needed to produce the images.
+years, there have been major efforts in the community to create software that enables the generation of astronomical images, with various choices made in terms of level of complexity, fidelity, and computational efficiency, such as \texttt{UFIG}~\citep{2016ApJ...817...25B}, and \textsc{PhoSim}~\citep{2015ApJS..218...14P}. In our case, we model the input sources using
+two independent approaches. 
 
-We also employ imSim\footnote{\url{https://github.com/LSSTDESC/imSim}} (Walter et al., In prep.), which internally uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library for image rendering, and uses LSST-specific information (e.g., about the geometry of the CCDs and the focal plane, the system throughputs in the different bands, etc.) to generate LSST-like images. imSim, in the configuration used for DC1, performs a series of approximations that allow us to complete the image simulations significantly faster ($\sim 60\times$) than \textsc{PhoSim}, at the expense of losing realism. In this work, we will focus on the results obtained from the images generated by imSim.
+Firstly, we use \textsc{PhoSim}, a fast photon Monte Carlo code that enables the generation of images with a high-level of realism. We use a custom configuration that enables some
+approximations to be made when generating the sky background in order to reduce the overall computing time needed to produce the images.
 
-\as{Are we completely ignoring phosim runs here then? I think we should at least motivate imsim as a fast version of phosim. I'd say we did both, but say that in this first paper we are focusing on imsim results}
+We also employ imSim\footnote{\url{https://github.com/LSSTDESC/imSim}} (Walter et al., In prep.), which internally uses \textsc{GalSim}~\citep{2015A&C....10..121R} as a library for image rendering, and uses LSST-specific information (e.g., the geometry of the CCDs and the focal plane, the system throughputs in the different bands, etc.) to generate LSST-like images. imSim, in the configuration used for DC1, performs a series of approximations that allow us to complete the image simulations significantly faster ($\sim 60\times$) than \textsc{PhoSim}, at the expense of a slight loss in realism. In this work, we will focus on the results obtained from the images generated by imSim.
 
 
 \subsection{imSim}
 \label{sec:imsim_pipeline}
 
-imSim is an open-source image simulation software package that uses GalSim with a modular approach. It allows the user to change the level of realism of the simulations by changing the complexity of PSF, background and source modeling. In particular, we used a pre-release version specifically meant to perform the DC1 simulations: \texttt{imSim v.0.1.0}\footnote{\url{https://github.com/LSSTDESC/imSim/releases/tag/0.1.0}}.
+imSim is an open-source image simulation software package that uses GalSim. It allows the user to change the level of realism of the simulations, by increasing the complexity of PSF, background and source modeling. In particular, we used a pre-release version specifically meant to perform the DC1 simulations: \texttt{imSim v.0.1.0}\footnote{\url{https://github.com/LSSTDESC/imSim/releases/tag/0.1.0}}.
 
 
-For DC1, we simulate each CCD of the focal plane individually, we generate a single image with a 30-second exposure time to simplify the data handling. We omit instrumental effects and variability in the optical model across the focal plane. Since this is the first DESC data challenge, we want to ensure that we are able to generate and process the simplest cases, and then, building upon this base, increasing the complexity and level of realism for future data challenges. Our sky brightness model is based off the \citet{1991PASP..103.1033K} model provided by OpSim, refined by the detailed wavelength dependence of the phenomenological model from~\citet{2016SPIE.9910E..1AY}. The PSF model is a Gaussian for the system with a full-width half-maximum airmass dependence\footnote{From LSST-20160 eqn.~(4.1) \rachel{should link to this document / name it}}\textcolor{red}{LSST-20160 is not public...}, this is done to mimic the degradation in the image quality due to, e.g., gravity load\footnote{See LSE-30~\url{http://ls.st/lse-30} p.80}. A Kolmogorov profile is used to model the atmosphere which is also airmass dependent\footnote{From LSST-20160 eqn.~(4.2)}. The airmass, $X$, depends on the angular distance to the zenith, $Z$, as follows~\citep{1991PASP..103.1033K}:
+For DC1, we simulate each CCD of the focal plane individually, we generate a single image with a 30-second exposure time to simplify the data handling. We omit instrumental effects and variability in the optical model across the focal plane. Since this is the first DESC data challenge, we want to ensure that we are able to generate and process the simplest cases, and then, building upon this base, increasing the complexity and level of realism for future data challenges. Our sky brightness model is based off the \citet{1991PASP..103.1033K} model provided by OpSim, refined by the detailed wavelength dependence of the phenomenological model from~\citet{2016SPIE.9910E..1AY}. The PSF model is a Gaussian for the system with a full-width half-maximum airmass dependence, this is done to mimic the degradation in the image quality due to, e.g., gravity load\footnote{See LSE-30~\url{http://ls.st/lse-30} p.80}. A Kolmogorov profile is used to model the atmosphere which is also airmass dependent. The airmass, $X$, depends on the angular distance to the zenith, $Z$, as follows~\citep{1991PASP..103.1033K}:
 
 \begin{equation}
 X = (1 - 0.96\sin^{2}{Z})^{-0.5}.
@@ -222,20 +215,15 @@ The final products of this pipeline are FITS images with information about the o
 \subsection{Image processing}
 \label{sec:image_processing_pipeline}
 
-The outputs of these simulations are then processed using the LSST Science Pipelines~\citep{Overview,ScienceBook,WhitePaper,2018PASJ...70S...5B,2015arXiv151207914J} using version 13.0\footnote{\url{https://pipelines.lsst.io/releases/v13_0.html}}, which we will refer to as the DM stack. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. A brief schematic of some of the steps in the image processing pipeline can be seen in \figref{dc1_workflow} as green squares. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits. It then combines the single-visit images to produce the so-called coadds. This is done by computing a weighted average of resampled overlapping sensor images. For more information about this process, see Section 3.3 in~\citet{2018PASJ...70S...5B}. After assembling the coadd images, the DM stack performs measurements on them producing a catalog. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ (9.7 for the undithered simulation) million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2018PASJ...70S...5B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}.
-\js{Ping Jim Chiang/Chris Walter/Tom G./Tony J.? to write something about the processing workflows for DC1.}
-An example coadd cutout is shown in \figref{coadd_example}.
+The outputs of these simulations are then processed using the LSST Science Pipelines~\citep{Overview,ScienceBook,WhitePaper,2018PASJ...70S...5B,2015arXiv151207914J} using version 13.0\footnote{\url{https://pipelines.lsst.io/releases/v13_0.html}}, which we will refer to as the DM stack. The DM stack is an open-source, high-performance data processing and analysis system intended for use in optical and infrared survey data. The code can be found at \url{dm.lsst.org} and \url{pipelines.lsst.io}. A brief schematic of some of the steps in the image processing pipeline can be seen in \figref{dc1_workflow} as green squares. The raw, uncalibrated single exposures are used as inputs. The software performs the reduction, detection, deblending and measurement on individual visits. It then combines the single-visit images to produce the so-called coadds. This is done by computing a weighted average of resampled overlapping sensor images. For more information about this process, see Section 3.3 in~\citet{2018PASJ...70S...5B}. After assembling the coadd images, the DM stack performs measurements on them producing a catalog. The DM stack provides calibrated images and source catalogs for the individual visits and coadds stored in \texttt{FITS} files. In total, we detect and measure $\sim 10.6$ (9.7 for the undithered simulation) million objects with position, flux and shape information. We activated optional extensions for the pipeline to include \texttt{CMODEL} fluxes (see \cite{2018PASJ...70S...5B} for more details) and \texttt{HSM} shapes~\citep{2003MNRAS.343..459H,2005MNRAS.361.1287M}. An example coadd cutout is shown in \figref{coadd_example}.
 
 The reduction pipeline is essentially the same as for HSC~\citep{2018PASJ...70S...5B}. This is going to allow us to use the HSC selection criteria as basis for our analysis, and can potentially enable direct comparisons between datasets for further validation.
 
-\rachel{Big picture comment: we don't talk at all about any of the software that drove these things - workflows for the DM processing etc.  Is that sufficiently trivial that it doesn't need to be mentioned?}
-
 \begin{figure*}
 \centering
-\includegraphics[width=0.44\textwidth]{calexp_example.png}
-\includegraphics[width=0.44\textwidth]{coadd_example.png}
-\caption{Example of a 1000 $\times$ 1000 pixel cutout from a calibrated exposure (left), i.e. background subtracted, reduced single-epoch image; and a full depth coadd (right). We can see the stark difference in the number of objects that are detectable by eye.
-\as{Change this figure as follows: make a three/four panel figure showing: i) the true sky (basically imsim run with noise and psf, etc switched off); ii) a raw uncalibrated image of the sky; iii) the single calibrated exposure if sufficiently different -- the scale should now how different units and you can draw line of const ra/dec to indicate astrometric calibration and iv) the 10yr coadd.} \js{I don't have the clean imSim image before PSF convolution etc etc... The raw only has the background so I don't know if it's worth adding it}}
+\includegraphics[width=0.4\textwidth]{calexp_example.png}
+\includegraphics[width=0.4\textwidth]{coadd_example.png}
+\caption{Example of a 1000 $\times$ 1000 pixel cutout from a calibrated exposure (left), i.e. background subtracted, reduced single-epoch image; and a full depth coadd (right). We can see the stark difference in the number of objects that are detectable by eye.}
 \label{fig:coadd_example}
 \end{figure*}
 
@@ -256,19 +244,19 @@ The \texttt{validate\_drp} package calculates the Key Performance Metrics (KPMs)
 By design, our simulations do not satisfy some of the requirements in the LSST-SRD, such as the number of filters in the surveyed fields (Filter complement in Table~\ref{tab:kpm_table}) or the number of filters (Nfilt) used in a given night because we only simulate images in $r$-band. On the other hand, our images automatically meet some criteria due to the design choices, e.g., requirements about the pixels size since it is fixed. However, some requirements in both the LSST-SRD and the DESC-SRD cannot be tested with these single-band images (for example, KPMs involving colors) and we will ignore such tests in this work.
 
 The results of {\bf these checks are summarized in Table~\ref{tab:kpm_table}}. We proceed now to provide a description of these tests. More details about these tests and their motivation can be found in both the LSST-SRD~\citep{LPM-17} and the DESC-SRD~\citep{2018arXiv180901669T}.
-
-\begin{deluxetable*}{cccccc}
-\tablecaption{Summary of Key Performance Metrics (KPMs) and DESC-SRD requirements that we check to test the quality of our end-to-end pipeline. The criteria that fixed due to design choices are shown in blue.} %We mark with dashes the quantities that we use as auxiliary to compute some of the criteria, e.g., we use EF1 to compute SE2.}
-\label{tab:kpm_table}
+\begin{table*}
+%\begin{deluxetable*}{cccccc}
+%\tablecaption{Summary of Key Performance Metrics (KPMs) and DESC-SRD requirements that we check to test the quality of our end-to-end pipeline. The criteria that fixed due to design choices are shown in blue.} %We mark with dashes the quantities that we use as auxiliary to compute some of the criteria, e.g., we use EF1 to compute SE2.}
+%\label{tab:kpm_table}
 %%\centering
-%%\begin{tabular}{|c|c|c|c|c|c|}
-%%\hline
-%%KPM/Requirement & Minimum & DC1 & Passed & Section & Figure(s)\\
-%%\hline
-\tablehead{
-\colhead{KPM/Requirement} & \colhead{Minimum} & \colhead{DC1} & \colhead{Passed (Y/N)} & \colhead{Section} & \colhead{Figure(s)}
-}
-\startdata
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+KPM/Requirement & Minimum & DC1 & Passed & Section & Figure(s)\\
+\hline
+%\tablehead{
+%\colhead{KPM/Requirement} & \colhead{Minimum} & \colhead{DC1} & \colhead{Passed (Y/N)} & \colhead{Section} & \colhead{Figure(s)}
+%}
+%\startdata
 Filter complement & ugrizy & r & \textcolor{blue}{N} & & \\
 Nfilters & 3 & 1 & \textcolor{blue}{N} & & \\
 Nv1 & 184 & 184 & \textcolor{blue}{Y} & &\\
@@ -324,9 +312,12 @@ WL4-Y10 (\%) & 0.1 & 0.05 & Y & & \ref{fig:WL4-Y10}\\
 %%%TE3 & $6 \times 10^{-5}$ & - & N\\
 %%%TE4 & $5 \times 10^{-7}$ & - & N\\
 %%%\hline
-\enddata
-%%\end{tabular}
-\end{deluxetable*}
+%\enddata
+\end{tabular}
+\caption{Summary of Key Performance Metrics (KPMs) and DESC-SRD requirements that we check to test the quality of our end-to-end pipeline. The criteria that fixed due to design choices are shown in blue.} %We mark with dashes the quantities that we use as auxiliary to compute some of the criteria, e.g., we use EF1 to compute SE2.}
+\label{tab:kpm_table}
+\end{table*}
+%\end{deluxetable*}
 
 \subsubsection{Astrometric performance}
 \label{sssec:astrometry}
@@ -388,7 +379,7 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 
 \begin{figure*}
 \centering
-\includegraphics[width=1.8\columnwidth]{DC1-imsim-dithered_r_check_photometry.png}
+\includegraphics[width=1.6\columnwidth]{DC1-imsim-dithered_r_check_photometry.png}
 \caption{Photometric performance in more detail.  (upper left) Horizontal histogram of the RMS distribution for each star for the full sample (grey) and ``bright'' sample (blue).  The blue sample is the same as that shown in Figure~\ref{fig:validate_drp_PA1}. (upper right).  Note that this RMS is the RMS of the measurements for a given star and so each entry in the histogram is one star. Thus, the median value here is 2.4~mmag, even thought the median of all RMS measurements in Figure~\ref{fig:validate_drp_PA1} was 15.8~mmag.  This difference is due to a population of objects that have a poor repeatability. (upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatable measurements, along with a smaller population of objects with much higher scatter to their measurements. (lower left) Per-object median reported magnitude error by the pipeline versus the observed RMS over all of the measurements for an object.  Our $SNR>100$ cut is in the space of median reported error. (lower right) Per-object median pipeline-reported magnitude error versus object magnitude. 
 }
 % MWV: A good thing to think about someday, but not necessary for this paper:
@@ -403,7 +394,7 @@ In order to obtain accurate photometric redshifts we need stable zeropoints acro
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{PA234.pdf}
+\includegraphics[width=0.85\columnwidth]{PA234.pdf}
 \caption{Normalized distribution of the error in the zeropoint value, $\sigma_{zp}$ for 1000 randomly selected sensor-visits. We see that the distribution is quite asymmetrical and find that the RMS (PA3) is 0.06 mmag, fulfilling the requirements in the LSST-SRD (15 mmag). We also find that only 0\% (PF2) of the visits deviate from the median more than 20 mmag, in compliance with the LSST-SRD requirements.}
 \label{fig:PA34}
 \end{figure}
@@ -422,7 +413,7 @@ We obtain a total of 520 sensor-visits fulfilling these criteria. We then comput
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{m5_goals}
+\includegraphics[width=0.85\columnwidth]{m5_goals}
 \caption{Measured depth in visits with Altitude $>80$ deg., $0.68 \arcsec <$ seeing $ < 0.71 \arcsec$ and Sky-brightness (in $r$-band) $\geq 21$ (blue histogram) compared to the predicted depth by \texttt{OpSim} (solid orange histogram). The median of this distribution (dashed line) is very close to the LSST-SRD minimum depth D1=24.3 (red vertical line), the 20th percentile is also shown and we can appreciate that is larger than Z1=24.0 as established by the LSST-SRD.}
 \label{fig:DF1_checks}
 \end{figure}
@@ -437,7 +428,7 @@ were $a, b$ are the semi-major and semi-minor axes of the PSF. We test exposures
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{PSF_ellipticity_DC1}
+\includegraphics[width=0.85\columnwidth]{PSF_ellipticity_DC1}
 \caption{PSF ellipticity distribution accumulated for 520 sensor-visits measured at the position of detected objects. The median (SE1=0.001) and 90th (SE2=0.002) percentiles are shown as the dashed lines. Note that these values are an order of magnitude lower than the specifications by the LSST-SRD (SE1=0.05 and SE2=0.1, respectively).}
 \label{fig:SE1_DC1}
 \end{figure}
@@ -460,7 +451,7 @@ In practice, we compute the PSF-corrected moments of high signal-to-noise (SNR $
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{TEx}
+\includegraphics[width=0.85\columnwidth]{TEx}
 \caption{Auto and cross-correlation functions, $E_{1}$ (blue), $E_{2}$ (orange), $E_{X}$ (green) of the PSF residuals as a function of the aperture angle $\theta$. We see that our data fulfill the LSST-SRD requirements.}
 \label{fig:TEx}
 \end{figure}
@@ -468,7 +459,7 @@ In practice, we compute the PSF-corrected moments of high signal-to-noise (SNR $
 Finally, the DESC-SRD requires (WL4-Y10) that the systematic uncertainty in the PSF model defined using the trace of the second moment matrix should not exceed 0.1\% for full-depth (Y10) DESC weak lensing analysis. We randomly select 3000 visits, obtain the input and measured PSF, and measure the trace of the second order moments, $T$ with \texttt{GalSim}. We then compute the relative difference, $\Delta T/T$, obtaining the results depicted in \figref{WL4-Y10}. We find that our dataset shows that the standard deviation of the distribution is 0.05\% lower than the requirement.
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{WL4-Y10}
+\includegraphics[width=0.85\columnwidth]{WL4-Y10}
 \caption{Normalized distribution of the relative difference in the trace of the second order moments, $\Delta T/T$ between input and output PSF. We see that the standard deviation of the distribution (WL4-Y10) is 0.05\%, much complying with the requirement (0.1\%).}
 \label{fig:WL4-Y10}
 \end{figure}
@@ -548,9 +539,6 @@ As seen in Table~\ref{tab:kpm_table}, our images and catalogs pass all the requi
 %\label{tab:desc_srd_table}
 %\end{table}
 
-%\rachel{Is this all the KPMs?  I thought some have to do with PSF model quality, etc.}
-%\rachel{Note that there are many figures associated with this subsection, but the text doesn't actually refer to or discuss any of them.}
-
 \section{Data selection and masking}
 \label{sec:data_selection}
 In this section, we describe how we take advantage of the fact that we have full knowledge about the simulated sources in order to get a ``clean" data sample, we also describe the catalog mask and how we generate maps of different observational effects (seeing, sky-brightness, etc.) present in the simulation. Unless explicitly stated, the procedures and selections made in this section are performed in both the dithered and undithered simulations.
@@ -571,8 +559,8 @@ We compare as well the astrometric and photometric residuals using both approach
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{astrometry_residual_comparison}
-\includegraphics[width=0.9\columnwidth]{photometry_residual_comparison}
+\includegraphics[width=0.85\columnwidth]{astrometry_residual_comparison}
+\includegraphics[width=0.85\columnwidth]{photometry_residual_comparison}
 \caption{Top: Normalized distribution of measured astrometric residuals (in the RA axis but similar results are found for the Dec. axis) for pure spatial matching (blue) and spatial+magnitude matching (orange), the median values of each distribution are marked by dashed lines and dashed-dotted lines respectively. Bottom: Median per-bin photometric residual as a function of measured magnitude for pure spatial matching (green), and spatial+magnitude matching (orange) using 30 magnitude bins between $r$-band magnitude 10 and 30. We also show the individual residuals for the matched objects using spatial+magnitude matching (blue dots).}
 \label{fig:matching_comparison}
 \end{figure}
@@ -665,11 +653,11 @@ In order to estimate the depth in the coadd catalogs we generate a flat-sky map,
 These maps are shown in \figref{depth_maps}. We can see that the dithered simulation is indeed very uniform ($> 50\%$ of its footprint lie in the same exact depth bin) showing the success of the dither strategy. However, we can see that in the undithered simulation, as expected, there are zones with a higher depth (the overlap of the pointing positions) and a reduced median depth.
 \begin{figure}
 \centering
-\includegraphics[width=0.9\columnwidth]{dithered_depth.png}
+\includegraphics[width=0.85\columnwidth]{dithered_depth.png}
 %\includegraphics[width=0.45\textwidth]{dithered_difference.png}
-\includegraphics[width=0.9\columnwidth]{undithered_depth.png}
+\includegraphics[width=0.85\columnwidth]{undithered_depth.png}
 %\includegraphics[width=0.45\textwidth]{undithered_difference.png}
-\includegraphics[width=0.9\columnwidth]{depth_comparison_1d.pdf}
+\includegraphics[width=0.85\columnwidth]{depth_comparison_1d.pdf}
 \caption{5-$\sigma$ depth maps for the dithered (top) and undithered (middle) fields. There is an increased depth in the overlapping parts of the pointings in the undithered field but the median depth is lower. The maps have a resolution of $1.74$ arcmin. We also show the 1D distribution of depth (bottom) for both fields for easier comparison.}
 \label{fig:depth_maps}
 \end{figure}
@@ -759,24 +747,24 @@ These maps are shown in \figref{systematic_maps} and \figref{systematic_maps_ud}
 
 \begin{figure*}
 \centering
-\includegraphics[width=0.45\textwidth]{mean_fwhm.png}
-\includegraphics[width=0.45\textwidth]{mean_sky.png}
-\includegraphics[width=0.45\textwidth]{mean_skynoise.png}
-\includegraphics[width=0.45\textwidth]{extinction.png}
-\includegraphics[width=0.45\textwidth]{stellar_density.png}
-\includegraphics[width=0.45\textwidth]{nvisits.png}
+\includegraphics[width=0.30\textwidth]{mean_fwhm.png}
+\includegraphics[width=0.30\textwidth]{mean_sky.png}
+\includegraphics[width=0.30\textwidth]{mean_skynoise.png}
+\includegraphics[width=0.30\textwidth]{extinction.png}
+\includegraphics[width=0.30\textwidth]{stellar_density.png}
+\includegraphics[width=0.30\textwidth]{nvisits.png}
 \caption{Maps showing the different foregrounds considered in our analysis of the dithered field. From top left to bottom right: Mean PSF FWHM, mean sky-brightness, mean sky-noise, mean extinction, stellar density and number of visits in each pixel in the flat-sky maps with the same resolution as the depth maps in \figref{depth_maps}. We only show their values in the regions where the 5-$\sigma$ $r$-band depth is larger than 25.5.}
 \label{fig:systematic_maps}
 \end{figure*}
 
 \begin{figure*}
 \centering
-\includegraphics[width=0.45\textwidth]{ud_mean_fwhm.png}
-\includegraphics[width=0.45\textwidth]{ud_mean_sky.png}
-\includegraphics[width=0.45\textwidth]{ud_mean_skynoise.png}
-%\includegraphics[width=0.45\textwidth]{ud_extinction.png}
-%\includegraphics[width=0.45\textwidth]{ud_stellar_density.png}
-\includegraphics[width=0.45\textwidth]{ud_nvisits.png}
+\includegraphics[width=0.30\textwidth]{ud_mean_fwhm.png}
+\includegraphics[width=0.30\textwidth]{ud_mean_sky.png}\\
+\includegraphics[width=0.30\textwidth]{ud_mean_skynoise.png}
+%\includegraphics[width=0.40\textwidth]{ud_extinction.png}
+%\includegraphics[width=0.40\textwidth]{ud_stellar_density.png}
+\includegraphics[width=0.30\textwidth]{ud_nvisits.png}
 \caption{Same as \figref{systematic_maps} for the undithered dataset. From top left to bottom right: Mean PSF FWHM, mean sky brightness, mean sky noise and number of visits. Note that we use the same extinction and stellar density maps changing the geometry of the mask.}
 \label{fig:systematic_maps_ud}
 \end{figure*}
