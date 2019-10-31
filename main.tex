@@ -137,7 +137,7 @@ two-point clustering statistics up to $\sim 1$ degree scales.  To ensure the sim
 tractable, DC1 only includes images in a single band ($r$-band), but goes to full LSST 10-year
 depth. 
 
-The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we use as inputs the positions, shapes and fluxes from a galaxy mock catalog from CatSim~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C}, which we describe in more detail in \secref{inputs}, and the observing conditions and strategies described in \secref{dithering} using \texttt{OpSim}~\citep{2014SPIE.9150E..15D}. These are passed to our image simulation packages described in \secref{imsim_pipeline} that produce raw e-images (i.e., full sensor images without any added instrumental effects such as cross-talk, bleeding, etc.). These e-images are then processed by the LSST Science Pipelines~\citep{2015arXiv151207914J, 2018PASJ...70S...5B}. The processing is described in \secref{image_processing_pipeline}. After this, we obtain the calibrated exposures, coadds and catalogs that we use for our analysis.
+The full simulation workflow is depicted in \figref{dc1_workflow}. Briefly, we use as inputs the positions, shapes and fluxes from a galaxy mock catalog from CatSim~\citep{2010SPIE.7738E..1OC,2014SPIE.9150E..14C}, which we describe in more detail in \secref{inputs}, and the observing conditions and strategies described in \secref{dithering} using OpSim~\citep{2014SPIE.9150E..15D}. These are passed to our image simulation packages described in \secref{imsim_pipeline} that produce raw e-images (i.e., full sensor images without any added instrumental effects such as cross-talk, bleeding, etc.). These e-images are then processed by the LSST Science Pipelines~\citep{2015arXiv151207914J, 2018PASJ...70S...5B}. The processing is described in \secref{image_processing_pipeline}. After this, we obtain the calibrated exposures, coadds and catalogs that we use for our analysis.
 
 \begin{figure}
 \centering
@@ -275,7 +275,7 @@ The results of {\bf these checks are summarized in \tabref{kpm_table}}. We proce
 \begin{table*}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
-KPM/Requirement & Minimum & DC1 & Passed & Section & Figure(s)\\
+KPM/Requirement & Pass/Fail Criterion & DC1 test result & Passed & Section & Figure(s)\\
 \hline
 Filter complement & ugrizy & r & \textcolor{blue}{N} & & \\
 Nfilters & 3 & 1 & \textcolor{blue}{N} & & \\
@@ -367,26 +367,28 @@ We find that our dataset pass all of these astrometric requirements, guaranteein
 \label{sssec:photometry}
 Accurate and consistent photometry is important in order to have a robust flux limited sample, and well behaved photometric redshifts. This is why we also validate the photometric repeatability given by our processing pipeline by comparing the measured magnitude of bright (SNR $> 100$) unresolved objects across different visits. This test validates that the pipeline is reconstructing fluxes of objects consistently across epochs, but also, that different epochs are produced consistently in our image simulations. The photometric repeatability (PA1) is 6~mmag as measured by the scaled interquartile range\footnote{IQR$\equiv$ 75th percentile minus 25th percentile, and then divided by the interquartile range of a Gaussian distribution with $\sigma=1$}, and 15.8~mmag as measured with the RMS; these distributions are shown in \figref{validate_drp_PA1}. The minimum specification is in the LSST-SRD is 8~mmag so our dataset and pipeline behave as required. The significantly greater RMS is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
 
-We can separately look at the reported photometric uncertainty from the processing.  The Science Pipeline processing does not explicitly compare the reported photometric uncertainty to the per-epoch variation.  Thus comparing the quoted uncertainties to the observed variation of stars with no intrinsic variation validates the consistency between the pipeline calculations and the model outlined in \citet[][Eq. 4,5]{Overview}:
-\begin{eqnarray}
-\sigma^2 = \sigma^2_{\rm sys} + \sigma^2_{\rm rand}; \\
-\sigma^2_{\rm rand} = (0.04 - \gamma) &10^{0.4(m-m_5)} + \gamma 10^{0.8(m-m_5)};
-\label{eq:photometric_error}
-\end{eqnarray}
-where $\sigma$ is in magnitudes, $\gamma$ describes noise from the sky and detector electronics, and the 5-$\sigma$ point-source depth is given by:
-\begin{equation}
-\begin{split}
-m_5 = &C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) \\
-&+ 2.5 \log_{10} (0.7{\arcsec}/\theta_{\rm eff}) \\
-&+ 1.25 \log_{10} (t_{\rm vis} / 30~{\rm s}) - k_m (X-1);
-\label{eq:photometric_m5}
-\end{split}
-\end{equation}
-where $C_m$ summarizes the throughput of the telescope optics and camera, $m_{\rm sky}$ is the sky brightness, $\theta_{\rm eff}$ is the seeing, $t_{\rm vis}$ is the exposure time, $k_m$ is the airmass coefficient, and $X$ is the airmass. Note that the filter dependence is encoded in $C_{m}, m_{\rm sky}, \theta_{\rm eff}$, and $k_{m}$.
+%We can separately look at the reported photometric uncertainty from the processing.  The Science Pipelines processing does not explicitly compare the reported photometric uncertainty to the per-epoch variation.  Thus comparing the quoted uncertainties to the observed variation of stars with no intrinsic variation validates the consistency between the pipeline calculations and the model outlined in \citet[][Eq. 4,5]{Overview}:
+%\begin{eqnarray}
+%\sigma^2 = \sigma^2_{\rm sys} + \sigma^2_{\rm rand}; \\
+%\sigma^2_{\rm rand} = (0.04 - \gamma) &10^{0.4(m-m_5)} + \gamma 10^{0.8(m-m_5)};
+%\label{eq:photometric_error}
+%\end{eqnarray}
+%where $\sigma$ is in magnitudes, $\gamma$ describes noise from the sky and detector electronics, and the 5-$\sigma$ point-source depth is given by:
+%\begin{equation}
+%\begin{split}
+%m_5 = &C_m + 0.50 (m_{\rm sky} - 21~{\rm mag/{\rm arcsec}^2}) \\
+%&+ 2.5 \log_{10} (0.7{\arcsec}/\theta_{\rm eff}) \\
+%&+ 1.25 \log_{10} (t_{\rm vis} / 30~{\rm s}) - k_m (X-1);
+%\label{eq:photometric_m5}
+%\end{split}
+%\end{equation}
+%where $C_m$ summarizes the throughput of the telescope optics and camera, $m_{\rm sky}$ is the sky brightness, $\theta_{\rm eff}$ is the seeing, $t_{\rm vis}$ is the exposure time, $k_m$ is the airmass coefficient, and $X$ is the airmass. Note that the filter dependence is encoded in $C_{m}, m_{\rm sky}, \theta_{\rm eff}$, and $k_{m}$.
 
-Our fits find $m_5$ = 24.2~mag/arcsec$^2$ and $\gamma=0.038$ for $r$-band which are consistent with the \citet[][Table 2]{Overview} values of $m_5=24.35$~mag/arcsec$^2$, $\gamma=0.039$.  This demonstrates that we generate simulations of the telescope, detector, and sky in accordance with the \citet{Overview} estimates, as expected, since our inputs are based on these models.
+%Our fits find $m_5$ = 24.2~mag/arcsec$^2$ and $\gamma=0.038$ for $r$-band which are consistent with the \citet[][Table 2]{Overview} values of $m_5=24.35$~mag/arcsec$^2$, $\gamma=0.039$.  This demonstrates that we generate simulations of the telescope, detector, and sky in accordance with the \citet{Overview} estimates, as expected, since our inputs are based on these models.
 
-Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the idealized simulations we run for DC1 with no additional systematic sources of errors. We also check the fraction of photometric, bright unresolved sources that deviate more than 15 mmag, finding only PF1=17\% over this threshold, in compliance with the requirements (PF1=20\%).
+%Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the idealized simulations we run for DC1 with no additional systematic sources of errors. 
+
+We also check the fraction of photometric, bright unresolved sources that deviate more than 15 mmag, finding only PF1=17\% over this threshold, in compliance with the requirements (PF1=20\%).
 
 \begin{figure}
 \centering
@@ -395,16 +397,16 @@ Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the ideali
 \label{fig:validate_drp_PA1}
 \end{figure}
 
-\begin{figure*}
-\centering
-\includegraphics[width=1.6\columnwidth]{DC1-imsim-dithered_r_check_photometry.png}
-\caption{Photometric performance of the LSST DESC DC1.  (upper left) Horizontal histogram of the RMS distribution for each star for the full sample (grey) and ``bright'' sample (blue).  The blue sample is the same as that shown in Figure~\ref{fig:validate_drp_PA1}. Note that this RMS is the RMS of the measurements for a given star and so each entry in the histogram is one star. Thus, the median value here is 2.4~mmag, even thought the median of all RMS measurements in Figure~\ref{fig:validate_drp_PA1} was 15.8~mmag.  This difference is due to a population of objects that have a poor repeatability. (upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatable measurements, along with a smaller population of objects with much higher scatter to their measurements. (lower left) Per-object median reported magnitude error by the pipeline versus the observed RMS over all of the measurements for an object.  Our $SNR>100$ cut is in the space of median reported error. (lower right) Per-object median pipeline-reported magnitude error versus object magnitude. 
-}
+%\begin{figure*}
+%\centering
+%\includegraphics[width=1.6\columnwidth]{DC1-imsim-dithered_r_check_photometry.png}
+%\caption{Photometric performance of the LSST DESC DC1.  (upper left) Horizontal histogram of the RMS distribution for each star for the full sample (grey) and ``bright'' sample (blue).  The blue sample is the same as that shown in Figure~\ref{fig:validate_drp_PA1}. Note that this RMS is the RMS of the measurements for a given star and so each entry in the histogram is one star. Thus, the median value here is 2.4~mmag, even thought the median of all RMS measurements in Figure~\ref{fig:validate_drp_PA1} was 15.8~mmag.  This difference is due to a population of objects that have a poor repeatability. (upper right) The RMS distribution as a function of magnitude of the star.  Here you can see the tight core of very repeatable measurements, along with a smaller population of objects with much higher scatter to their measurements. (lower left) Per-object median reported magnitude error by the pipeline versus the observed RMS over all of the measurements for an object.  Our $SNR>100$ cut is in the space of median reported error. (lower right) Per-object median pipeline-reported magnitude error versus object magnitude. 
+%}
 % MWV: A good thing to think about someday, but not necessary for this paper:
 %{\bf TODO: MWV  Are these higher scatter objects galaxies, stars in halos of bright stars, additionally added objects that were done inconsistently with the rest of the catalog?}
 %{\bf TODO: MWV  The lower-left plot has never actually made sense to me.  I should investigate this more.}
-\label{fig:validate_drp_check_photometry}
-\end{figure*}
+%\label{fig:validate_drp_check_photometry}
+%\end{figure*}
 
 \subsubsection{Zeropoint uniformity}
 \label{sssec:zeropoints}
@@ -765,7 +767,7 @@ The power-spectra computation and correction for the effect of systematics is pe
 \centering
 \includegraphics[width=0.9\columnwidth]{Cl_results_2019_comp}
 \includegraphics[width=0.9\columnwidth]{systematics_comp_abs}
-\caption{{\bf Top panel:} Measured power spectra undithered (orange $\times$) and dithered (open blue circles) datasets with NaMaster corrected by systematics. The error bars are computed using jackknife. A theoretical prediction is shown as the solid black line to demonstrate the overall agreement between the measurements and the data. The vertical black dashed line corresponds to $\ell = 1/f_{sky}$ and the horizontal dashed line corresponds to a correction of 50\% of the statistical uncertainty to provide visual guidance. {\bf Bottom panel:} Size of the correction in the power-spectra, $\Delta C_{\ell}$, relative to their uncertainty, $\sigma_{\ell}$, due to deprojection (blue) of different observing conditions, and the correction due to weighting by the bright object mask (orange) for the dithered (solid lines) and undithered (broken lines) simulations. We see that the largest impact comes from the presence of bright objects, and that it is important to account for the area lost by masking via weighting.}
+\caption{{\bf Top panel:} Measured power spectra undithered (orange $\times$) and dithered (open blue circles) datasets with NaMaster corrected by systematics. The error bars are computed using jackknife. A theoretical prediction is shown as the solid black line to demonstrate the overall agreement between the measurements and the data. The vertical black dashed line corresponds to $\ell = 1/f_{sky}=1192$ ($k \sim 0.9$ Mpc$^{-1}$ at the mean redshift of the final sample $\bar{z} \approx 1.51$) and the horizontal dashed line corresponds to a correction of 50\% of the statistical uncertainty to provide visual guidance. {\bf Bottom panel:} Size of the correction in the power-spectra, $\Delta C_{\ell}$, relative to their uncertainty, $\sigma_{\ell}$, due to deprojection (blue) of different observing conditions, and the correction due to weighting by the bright object mask (orange) for the dithered (solid lines) and undithered (broken lines) simulations. We see that the largest impact comes from the presence of bright objects, and that it is important to account for the area lost by masking via weighting.}
 \label{fig:power_spectra}
 \end{figure}
 
