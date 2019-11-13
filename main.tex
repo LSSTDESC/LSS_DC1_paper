@@ -162,7 +162,7 @@ Image simulations allow us to assess the detection and deblending performance of
 \end{figure}
 
 
-For DC1, we chose a nominal field centered at RA $\approx 93^{\circ}$ and Dec $\approx -29^{\circ}$. This field has a Galactic latitude of $b \approx -20^{\circ}$ and a dust extinction $0.05 \leq E(B-V) \leq 0.35$ and thus represent a typical region in the LSST wide-fast-deep survey~\citep{Overview}. The CatSim catalog was tiled to generate a $\sim 40$ deg$^{2}$ footprint covering 4 LSST full focal plane pointings. This approach introduces a periodicity that induces extra correlations in our sample, however, this is not a major issue as we are unable to measure correlations on relevant scales ($> 1$ deg.) with any useful precision.
+For DC1, we chose a nominal field centered at RA $\approx 93^{\circ}$ and Dec $\approx -29^{\circ}$. This field has a Galactic latitude of $b \approx -20^{\circ}$ and a dust extinction $0.05 \leq E(B-V) \leq 0.35$ and thus represents a typical region in the LSST wide-fast-deep survey~\citep{Overview}. The CatSim catalog was tiled to generate a $\sim 40$ deg$^{2}$ footprint covering 4 LSST full focal plane pointings. This approach introduces a periodicity that induces extra correlations in our sample, however, this is not a major issue as we are unable to measure correlations on relevant scales ($> 1$ deg.) with any useful precision.
 
 \begin{figure}
 \centering
@@ -211,7 +211,7 @@ For DC1, we simulate each CCD of the focal plane individually, we generate a sin
 X = (1 - 0.96\sin^{2}{Z})^{-0.5}.
 \end{equation}
 For DC1, imSim can generate three different types of objects: stars, which are modeled as PSF-like objects; galaxies, which are modeled as composite (bulge plus disk) S\'{e}rsic profiles~\citep{1963BAAA....6...41S} using
-the parameters given by CatSim; and AGNs which are also modeled as point sources and, for simplicity, without any variability. Newer versions of imSim have the ability to generate more complex galaxy morphologies (e.g., they can include random Gaussian knots). The brightness for these sources is computed using the magnitudes from CatSim, which are converted to counts using the latest version of the LSST throughputs\footnote{\url{https://github.com/lsst/throughputs}}. In DC1, we clip the objects at magnitude 10 in order to improve the computational efficiency.
+the parameters given by CatSim; and AGNs which are also modeled as point sources and, for simplicity, without any variability. Newer versions of imSim have the ability to generate more complex galaxy morphologies (e.g., they can include random Gaussian knots). The brightness for these sources is computed using the magnitudes from CatSim, which are converted to counts using the latest version of the LSST throughputs\footnote{\url{https://github.com/lsst/throughputs}}. In DC1, we clip the objects at magnitude 10 in order to improve the computational efficiency. Saturation is emulated by clipping the maximum number of counts per pixel at 100,000.
 
 The final products of this pipeline are FITS images with information about the observing conditions contained in the header. We generated more than 300,000 images in total (including both the \textit{dithered}, and \textit{undithered} fields). The average time to simulate each CCD is $\sim 4300$ seconds and the total production time is $\sim 270,000$ CPU-hours.
 
@@ -229,6 +229,8 @@ The reduction pipeline is essentially the same as for HSC~\citep{2018PASJ...70S.
 \caption{Example of a 1000 $\times$ 1000 pixel cutout from a calibrated exposure (left), i.e. background subtracted, reduced single-epoch image; and a full depth coadd (right). We can see the stark difference in the number of objects that are detectable by eye.}
 \label{fig:coadd_example}
 \end{figure*}
+
+The total processing time for our data is $\approx 29,000$ CPU-hours.
 
 \section{Matching inputs and outputs}
 \label{sec:matching}
@@ -259,7 +261,7 @@ Different matching techniques have different potential applications and strength
 \label{sec:catalogs}
 %\subsection{Output Catalogs}
 After being processed, the catalogs are stored at the National Energy Research Scientific Computing Center (NERSC)\footnote{\url{http://www.nersc.gov}} and accessible to DESC collaborators. We generate \texttt{pandas
-DataFrames}~\citep{mckinney-proc-scipy-2010} and databases for each one of the coadds and input catalogs, providing collaborators some flexibility in data access for their own analyses. As mentioned earlier, the output catalogs contain 10.6 (9.7) million objects covering an area
+DataFrames}~\citep{mckinney-proc-scipy-2010} and databases for each one of the coadds and input catalogs, providing collaborators some flexibility in data access for their own analyses. As mentioned earlier, the output catalogs contain 10.6 million objects (9.7 million in the undithered case) covering an area
 of $\sim$43 deg$^{2}$. The catalogs include information about position, size, shape and magnitude for every object. They also include several flags that give information about the presence of interpolated/saturated pixels in the objects and whether or not these objects are close to the edge of a CCD.
 
 \subsection{LSST Science Requirements Document Key Performance Metrics and DESC Science Requirements Document}
@@ -276,11 +278,11 @@ The results of {\bf these checks are summarized in \tabref{kpm_table}}. We proce
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
 KPM/Requirement & Pass/Fail Criterion & DC1 test result & Passed & Section & Figure(s)\\
-\hline
-Filter complement & ugrizy & r & \textcolor{blue}{N} & & \\
-Nfilters & 3 & 1 & \textcolor{blue}{N} & & \\
-Nv1 & 184 & 184 & \textcolor{blue}{Y} & &\\
-pixSize (arcsec) & 0.22 & 0.2 & \textcolor{blue}{Y} & &\\
+%\hline
+%Filter complement & ugrizy & r & \textcolor{blue}{N} & & \\
+%Nfilters & 3 & 1 & \textcolor{blue}{N} & & \\
+%Nv1 & 184 & 184 & \textcolor{blue}{Y} & &\\
+%pixSize (arcsec) & 0.22 & 0.2 & \textcolor{blue}{Y} & &\\
 \hline
 AA1 (milliarcsec) & 100 & 20 & Y & \ref{sssec:astrometry} & \ref{fig:AA1} \\
 AM1 (milliarcsec) & 20 & 8 & Y  & & \ref{fig:validate_drp_AMx}\\
@@ -365,7 +367,7 @@ We find that our dataset pass all of these astrometric requirements, guaranteein
 
 \subsubsection{Photometric performance}
 \label{sssec:photometry}
-Accurate and consistent photometry is important in order to have a robust flux limited sample, and well behaved photometric redshifts. This is why we also validate the photometric repeatability given by our processing pipeline by comparing the measured magnitude of bright (SNR $> 100$) unresolved objects across different visits. This test validates that the pipeline is reconstructing fluxes of objects consistently across epochs, but also, that different epochs are produced consistently in our image simulations. The photometric repeatability (PA1) is 6~mmag as measured by the scaled interquartile range\footnote{IQR$\equiv$ 75th percentile minus 25th percentile, and then divided by the interquartile range of a Gaussian distribution with $\sigma=1$}, and 15.8~mmag as measured with the RMS; these distributions are shown in \figref{validate_drp_PA1}. The minimum specification is in the LSST-SRD is 8~mmag so our dataset and pipeline behave as required. The significantly greater RMS is dominated by a tail of scattered objects, see \figref{validate_drp_check_photometry}.
+Accurate and consistent photometry is important in order to have a robust flux limited sample, and well behaved photometric redshifts. This is why we also validate the photometric repeatability given by our processing pipeline by comparing the measured magnitude of bright (SNR $> 100$) point-like objects across different visits. This test validates that the pipeline is reconstructing fluxes of objects consistently across epochs, but also, that different epochs are produced consistently in our image simulations. The photometric repeatability (PA1) is 6~mmag as measured by the scaled interquartile range\footnote{IQR$\equiv$ 75th percentile minus 25th percentile, and then divided by the interquartile range of a Gaussian distribution with $\sigma=1$}, and 15.8~mmag as measured with the RMS; these distributions are shown in \figref{validate_drp_PA1}. The minimum specification is in the LSST-SRD is 8~mmag so our dataset and pipeline behave as required. The significantly greater RMS is dominated by a tail of scattered objects.%, see \figref{validate_drp_check_photometry}.
 
 %We can separately look at the reported photometric uncertainty from the processing.  The Science Pipelines processing does not explicitly compare the reported photometric uncertainty to the per-epoch variation.  Thus comparing the quoted uncertainties to the observed variation of stars with no intrinsic variation validates the consistency between the pipeline calculations and the model outlined in \citet[][Eq. 4,5]{Overview}:
 %\begin{eqnarray}
@@ -388,7 +390,7 @@ Accurate and consistent photometry is important in order to have a robust flux l
 
 %Note that we find $\sigma_{\rm sys}=0$~mmag, which is consistent with the idealized simulations we run for DC1 with no additional systematic sources of errors. 
 
-We also check the fraction of photometric, bright unresolved sources that deviate more than 15 mmag, finding only PF1=17\% over this threshold, in compliance with the requirements (PF1=20\%).
+We also check the fraction of photometric, bright point-like sources that deviate more than 15 mmag, finding only PF1=17\% over this threshold, in compliance with the requirements (PF1=20\%).
 
 \begin{figure}
 \centering
@@ -428,7 +430,7 @@ In order to observe the object number density required to fulfill the science go
 \item $0.68\arcsec <$ seeing (FWHM) $ < 0.71\arcsec$
 \item Sky-brightness (in $r$-band) $ \geq 21$ 
 \end{itemize}
-We obtain a total of 520 sensor-visits fulfilling these criteria. We then compute the median 5-$\sigma$ depth  using the magnitude errors (as described later in the text) and compare with the predicted depth by OpSim. After this, we check that the median of the depth distribution is larger the minimum depth (D1=DB1=24.3 mag) as defined in the LSST-SRD. In order to have a uniform, well characterized sample, depth uniformity is already required. This is why we also check that no more than 20\% of the visits have a depth lower than Z1=24.0 by computing the lower 20th percentile in the depth distribution. The results of these checks are depicted in \figref{DF1_checks}. We find that the median of the depth distribution in the selected visits, $24.297 \pm 0.009$ mag, is compatible (within a standard deviation of the mean) with the minimum depth set in the LSST-SRD. We find as well that the 20th percentile, Z1=24.1, is larger than the minimum value set in the LSST-SRD. We also check that in a given visit, the variation in the field-of-view is within the requirements. The LSST-SRD establishes that, in a representative visit with depth D1 no more than 20\% of the field-of-view will be (Z2) 0.4 magnitudes brighter than the nominal (24.3). We select visit 2218486 since its median depth is 24.3. We find that the 20th percentile is 24.29 fulfilling the criteria. This test demonstrates that we generate images with the required depth and in concordance with our inputs.
+We obtain a total of 520 sensor-visits fulfilling these criteria. We then compute the median 5-$\sigma$ depth  using the magnitude errors (as described later in the text) and compare with the predicted depth by OpSim. After this, we check that the median of the depth distribution is larger than the minimum depth (D1=DB1=24.3 mag) as defined in the LSST-SRD. In order to have a uniform, well characterized sample, depth uniformity is already required. This is why we also check that no more than 20\% of the visits have a depth lower than Z1=24.0 by computing the lower 20th percentile in the depth distribution. The results of these checks are depicted in \figref{DF1_checks}. We find that the median of the depth distribution in the selected visits, $24.297 \pm 0.009$ mag, is compatible (within a standard deviation of the mean) with the minimum depth set in the LSST-SRD. We find as well that the 20th percentile, Z1=24.1, is larger than the minimum value set in the LSST-SRD. We also check that in a given visit, the variation in the field-of-view is within the requirements. The LSST-SRD establishes that, in a representative visit with depth D1 no more than 20\% of the field-of-view will be (Z2) 0.4 magnitudes brighter than the nominal (24.3). We select visit 2218486 since its median depth is 24.3. We find that the 20th percentile is 24.29 fulfilling the criteria. This test demonstrates that we generate images with the required depth and in concordance with our inputs.
 
 \begin{figure}
 \centering
@@ -559,7 +561,7 @@ As seen in Table~\ref{tab:kpm_table}, our images and catalogs pass all the requi
 
 \section{Data selection and masking}
 \label{sec:data_selection}
-In this section, we describe how we take advantage of the fact that we have full knowledge about the simulated sources in order to get a ``clean" data sample, we also describe the catalog mask and how we generate maps of different observational effects (seeing, sky-brightness, etc.) present in the simulation. Unless explicitly stated, the procedures and selections made in this section are performed in both the dithered and undithered simulations.
+In this section, we describe how we take advantage of the fact that we have full knowledge about the simulated sources in order to get a ``clean" data sample for clustering tests, we also describe the catalog mask and how we generate maps of different observational effects (seeing, sky-brightness, etc.) present in the simulation. Unless explicitly stated, the procedures and selections made in this section are performed in both the dithered and undithered simulations.
 
 \subsection{Sample selection}
 \label{ssec:sample_selection}
@@ -643,7 +645,7 @@ For galaxies, true positive are objects classified as galaxies and matched to ga
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{stellar_contamination_v2}
-\caption{Performance of the \texttt{base\_ClassificationExtendedness\_value} as star-galaxy classifier as a function of magnitude. This classifier has been optimized for galaxy purity and completeness. We show the true positive rate (TPR) for stars (dark crosses) and galaxies (light crosses) and the positive predictive value (PPV) for stars (dark open circles) and galaxies (dark open circles). Both the TPR and PPV for galaxies is high in the range of magnitudes that we are studying.}
+\caption{Performance of the \texttt{base\_ClassificationExtendedness\_value} as star-galaxy classifier as a function of magnitude. This classifier has been optimized for galaxy purity and completeness. We show the true positive rate (TPR) for stars (dark crosses) and galaxies (light crosses) and the positive predictive value (PPV) for stars (dark open circles) and galaxies (light open circles). Both the TPR and PPV for galaxies is high in the range of magnitudes that we are studying.}
 \label{fig:star_galaxy_separation}
 \end{figure}
 \subsection{Depth maps and footprint masking}
@@ -762,12 +764,12 @@ These maps are shown in \figref{systematic_maps} and \figref{systematic_maps_ud}
 \label{fig:systematic_maps_ud}
 \end{figure*}
 
-The power-spectra computation and correction for the effect of systematics is performed using NaMaster~\citep{2019MNRAS.484.4127A}. The systematics correction is also performed with NaMaster via mode deprojection, which assumes that there is a linear dependence between the observed number density of galaxies and the contaminants. For our study, we choose $\Delta \ell = 352$ and compute the power-spectra in the range $0 \leq \ell \leq 6000$. This choice for $\Delta\ell$ is not optimal for cosmological analyses, but it gives us a reasonably large number of bandpowers to visually check the estimated power-spectra. The results for the power-spectra are shown in~\figref{power_spectra}, where we can see that both the dithered and undithered catalogs yield similar results. The error-bars shown and corresponding covariances are estimated using two complimentary methods: On the one hand by computing the Gaussian covariance with NaMaster, and on the other hand by considering 155 jackknife equal area regions in our footprint. We find both approaches to give similar results and we choose to use the results from the jackknife computation.
+The power-spectra computation and correction for the effect of systematics is performed using NaMaster~\citep{2019MNRAS.484.4127A}. The systematics correction is also performed with NaMaster via mode deprojection, which assumes that there is a linear dependence between the observed number density of galaxies and the contaminants. For our study, we choose $\Delta \ell = 352$ and compute the power-spectra in the range $0 \leq \ell \leq 6000$. This choice for $\Delta\ell$ is not optimal for cosmological analyses, but it gives us a reasonably large number of bandpowers to visually check the estimated power-spectra. The results for the power-spectra are shown in~\figref{power_spectra}, where we can see that both the dithered and undithered catalogs yield similar results. The error-bars shown and corresponding covariances are estimated using two complementary methods: On the one hand by computing the Gaussian covariance with NaMaster, and on the other hand by considering 155 jackknife equal area regions in our footprint. We find both approaches to give similar results and we choose to use the results from the jackknife computation.
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{Cl_results_2019_comp}
 \includegraphics[width=0.9\columnwidth]{systematics_comp_abs}
-\caption{{\bf Top panel:} Measured power spectra undithered (orange $\times$) and dithered (open blue circles) datasets with NaMaster corrected by systematics. The error bars are computed using jackknife. A theoretical prediction is shown as the solid black line to demonstrate the overall agreement between the measurements and the data. The vertical black dashed line corresponds to $\ell = 1/f_{sky}=1192$ ($k \sim 0.9$ Mpc$^{-1}$ at the mean redshift of the final sample $\bar{z} \approx 1.51$) and the horizontal dashed line corresponds to a correction of 50\% of the statistical uncertainty to provide visual guidance. {\bf Bottom panel:} Size of the correction in the power-spectra, $\Delta C_{\ell}$, relative to their uncertainty, $\sigma_{\ell}$, due to deprojection (blue) of different observing conditions, and the correction due to weighting by the bright object mask (orange) for the dithered (solid lines) and undithered (broken lines) simulations. We see that the largest impact comes from the presence of bright objects, and that it is important to account for the area lost by masking via weighting.}
+\caption{{\bf Top panel:} Measured power spectra undithered (orange $\times$) and dithered (open blue circles) datasets with NaMaster corrected by systematics. The error bars are computed using jackknife. A theoretical prediction is shown as the solid black line to demonstrate the overall agreement between the measurements and the data. The vertical black dashed line corresponds to $\ell = 1/f_{sky}=1192$ ($k \sim 0.9$ Mpc$^{-1}$ at the mean redshift of the final sample $\bar{z} \approx 1.51$). {\bf Bottom panel:} Size of the correction in the power-spectra, $\Delta C_{\ell}$, relative to their uncertainty, $\sigma_{\ell}$, due to deprojection (blue) of different observing conditions, and the correction due to weighting by the bright object mask (orange) for the dithered (solid lines) and undithered (broken lines) simulations. We see that the largest impact comes from the presence of bright objects, and that it is important to account for the area lost by masking via weighting. The horizontal dashed line corresponds to a correction of 50\% of the statistical uncertainty to provide visual guidance.} 
 \label{fig:power_spectra}
 \end{figure}
 
