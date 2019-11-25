@@ -12,6 +12,10 @@ make  [mnras]
 
 At present, the Makefile is only used to compile latex. In future, we hope to enable compilation of jupyter notebooks, `Markdown` and `reStructuredText` format notes into PDF as well.
 
+## Internal review
+
+The LSST-DESC internal review page is located [here](https://confluence.slac.stanford.edu/pages/viewpage.action?pageId=263758426)
+
 ## Comments/questions?
 
 Please send an email to jsanch87@fnal.gov or open an issue if you have any comments, questions or suggestions.
