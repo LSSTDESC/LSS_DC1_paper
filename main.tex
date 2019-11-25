@@ -33,29 +33,31 @@
 \maketitlepre
 
 \begin{abstract}
-  Data Challenge 1 (DC1) is the first of the several planned synthetic
+  Data Challenge 1 (DC1) is the first of the planned synthetic
   datasets produced by the Large Synoptic Survey Telescope (LSST)
   Dark Energy Science Collaboration (DESC). These are designed to
   develop and validate data reduction methodologies
   and to study the impact of systematic effects that
   will affect the LSST dataset. DC1 is comprised of $r$-band
-  observations of 40 square degrees to 10 year LSST depth. We present
+  observations of 40 deg$^{2}$ to 10 year LSST depth. We present
   how the dataset was: a) generated, by synthesizing sources from cosmological
   N-body simulations in individual sensor-visit images with different observing conditions; b)
   reduced using a development version of
   LSST Science Pipelines; and c) matched to the input cosmological catalog for validation and testing. We
-  study performance of our processed catalogs compared to the
+  study the performance of our processed catalogs compared to the
   LSST requirements on key performance metrics (KPMs). We establish a
   set of pipeline flags that produce a clean extragalactic sample and
-  discuss residual sample contamination, including the residual sample contamination
-  resulting from inefficiency in star-galaxy separation and imperfect deblending. We demonstrate the
+  discuss residual sample contamination, including the contributions from 
+  inefficiency in star-galaxy separation and imperfect deblending. We demonstrate the
   power spectrum measurement on the simulated field. Our main
   conclusions are: i) realistic and validated synthetic datasets will
-  be required for a successful control of systematics; ii) within the fidelity of DC1
-  image generation, the LSST Science Pipelines pass all testable KPMs;
+  be required for successfully controlling systematics; ii) within the fidelity of DC1,
+   the LSST Science Pipelines pass all testable KPMs;
    iii) there is no individual noiseless method for matching the input and output
-  catalogs; iv) lack of multi-band observations significantly hampers
-  sample definition and cleaning in DC1.
+  catalogs; iv) lack of multi-band observations hampers
+  sample definition and cleaning in DC1; v) the presence of bright objects has a significant
+  impact (2- to 6-$\sigma$) in the estimated power-spectra at small scales ($\ell > 1200$),
+  highlighting the impact of blending in small-scale studies in LSST; vi) the impact of foregrounds considered in this study is not significant ($ < 1\sigma$) partially due to their simplicity, which will be refined in future data challenges.
 
   
 
@@ -191,7 +193,7 @@ The artificial generation of astronomical images is a complex and computationall
 years, there have been major efforts in the community to create software that enables the generation of astronomical images, with various choices made in terms of level of complexity, fidelity, and computational efficiency, such as \texttt{UFIG}~\citep{2016ApJ...817...25B}, and PhoSim~\citep{2015ApJS..218...14P}. In our case, we model the input sources using
 two independent approaches. 
 
-Firstly, we use PhoSim, a fast photon Monte Carlo code that enables the generation of images with a high level of realism. We use PhoSim version \textbf{??} with a custom configuration that enables some
+Firstly, we use PhoSim, a fast photon Monte Carlo code that enables the generation of images with a high level of realism. We use PhoSim version 3.6 with a custom configuration\footnote{\url{https://github.com/LSSTDESC/SSim_DC1/issues/27}} that enables some
 approximations (photon-bundling) to be made when generating the sky background in order to reduce the overall computing time needed to produce the images.
 
 We also employ imSim\footnote{\url{https://github.com/LSSTDESC/imSim}} (Walter et al., {\em in prep.}), which internally uses GalSim~\citep{2015A&C....10..121R} as a library for image rendering, and uses LSST-specific information (e.g., the geometry of the CCDs and the focal plane, the system throughputs in the different bands, etc.) to generate LSST-like images. For this simulation campaign we use an early pre-release version of imSim, version \texttt{v.0.1.0}, which performs a series of approximations that allow us to complete the image simulations significantly faster ($\sim 60\times$) than PhoSim, at the expense of a loss in realism. These approximations include simplifications in the PSF model (PhoSim performs ray-tracing through the atmosphere, while this version of imSim uses simple parametric models for the PSF) and lack of sensor effects, which were deemed acceptable given the goals of DC1.
@@ -782,7 +784,7 @@ In this figure we also compare with the theoretical prediction for the power-spe
 \begin{equation}
 C_{\ell}^{\rm TH} = \frac{2}{\pi}\int{dz} \left(\frac{dn(z)}{dz}\right)^{2} b^{2}(z) \int{dk k^{2} P(k,z)j^{2}_{\ell}(kr(z))},
 \end{equation}
-where $P(k,z)$ is the power spectrum, $b(z)$ is the galaxy bias and $\frac{dn}{dz}$ is the number density as a function of redshift. In particular, we use the linear power-spectrum with the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$, $\Omega_{b}=0.045$, $\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $dn/dz$ obtained using the true redshifts of galaxies matched in the input catalog. We use a bias, $b(z) = b_{0}/D_{+}(z)$, inversely proportional to the linear growth factor, $D_{+}(z)$, and see that, qualitatively speaking, there is a good agreement between the measurements and the prediction, as shown in~\figref{power_spectra}. %The best-fit value that we find for $b_{0}=0.45$. This low value for the galaxy bias is a consequence of the addition of non-clustered galaxies at the fainter end ($r > 25$) in order to match the expected number density for LSST (Connolly private comm.). 
+where $P(k,z)$ is the power spectrum, $b(z)$ is the galaxy bias and $\frac{dn}{dz}$ is the number density as a function of redshift. In particular, we use the Halofit~\citep{2012ApJ...761..152T} power-spectrum with the Millenium cosmological parameters~\citep{2005Nature.435.629S} ($\Omega_{m}=0.25$, $\Omega_{b}=0.045$, $\Omega_{\Lambda}=0.75$, $n=1$, $\sigma_{8}=0.9$, $h=0.73$), and the $dn/dz$ obtained using the true redshifts of galaxies matched in the input catalog. We use a bias, $b(z) = b_{0}/D_{+}(z)$, inversely proportional to the linear growth factor, $D_{+}(z)$, and see that, qualitatively speaking, there is a good agreement between the measurements and the prediction, as shown in~\figref{power_spectra}. %The best-fit value that we find for $b_{0}=0.45$. This low value for the galaxy bias is a consequence of the addition of non-clustered galaxies at the fainter end ($r > 25$) in order to match the expected number density for LSST (Connolly private comm.). 
 However, we do not expect to be able to fully describe the measured power-spectra, given the highly-nonlinear nature of the scales considered in our analysis.
 
 In addition, we also see in~\figref{power_spectra} that the overall impact of the systematics is smaller than statistical uncertainty, $\sigma_{\ell}$, (about 50\% the size of $\sigma_{\ell}$) and that they similarly affect both dithered and undithered simulations. We do not find any statistically significant difference between the correction due to systematics for the dithered and undithered simulations. This is a consequence of several factors, including the conservative cuts that we impose on our data to ensure well-behaved clustering statistics; that we only deproject using the mean value for the different observing conditions; and the lack of effects, such as vignetting, present in real images. For example, vignetting would affect the number of detected objects close to the edges of the focal plane in the undithered simulation, reducing the uniformity of the survey. However, this effect would be uniform across the footprint in the dithered case. In addition to this, if we decided to push our data further by going deeper, the systematic lack of uniformity of the undithered field would start to play a large role in the impact of the observing conditions over the clustering signal. We can also see that, in the $\ell$ range considered in our analysis, the presence of bright objects -- in particular bright stars -- is the dominant systematic effect. In the close neighborhood to bright objects our ability to detect faint sources diminishes. These faint sources are blended in the core or the tails of the brighter objects, resulting in a lower mean number of detected sources, as shown in \figref{bright_object_masking}. The correction due to weighting by the fraction of area covered in each pixel has a considerable impact at small-scales, being larger than the statistical uncertainty in this regime. This showcases again the importance of considering the impact of blending in the small-scale regime for LSST and should be carefully studied in future Data Challenges. The correction due to the presence of bright objects is comparable in both simulations. We expect that for future versions of the LSST Science Pipelines this effect will be smaller due to improvements in the deblending and measurement algorithms.

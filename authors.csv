@@ -3,13 +3,14 @@ S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Department of Physics and Astronom
 S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Fermi National Accelerator Laboratory, P.O. Box 500, Batavia, IL, U.S.A.","led study",jsanch87@fnal.gov
 Walter, Chris W., C.~W.Walter,False,"Duke University, Department of Physics, Durham, NC, U.S.A.","led image generation",chris.walter@duke.edu
 Slosar, An\v{z}e, A.~Slosar,False,"Brookhaven National Laboratory, Upton, NY, U.S.A.","Participated in analysis and preliminary tests",anze@bnl.gov
-Kirkby, David. P., D.~Kirkby,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA","Participated and advised in analysis",dkirkby@uci.edu
+Kirkby, David. P., D.~Kirkby,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","Participated and advised in analysis",dkirkby@uci.edu
 Chiang, James, J.~Chiang,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","One of the main developers of imSim, participated in image generation and data distribution",jchiang@slac.stanford.edu
 Glanzman, Tom, T.~Glanzman,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Generated artificial images",Tom.Glanzman@stanford.edu
 Daniel, Scott F.,S.~F.~Daniel,False,"Department of Astronomy, University of Washington, Seattle, WA, U.S.A.","Developed imSim and CatSim",scottvalscott@gmail.com
 Awan, Humna, H.~Awan,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",awan@physics.rutgers.edu
 Gawiser, Eric, E.~Gawiser,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",gawiser@physics.rutgers.edu
 Wood-Vasey, Michael, W.~M.~Wood-Vasey,False,"Pittsburgh Particle Physics, Astrophysics, and Cosmology Center (PITT PACC). Physics and Astronomy Department, University of Pittsburgh, Pittsburgh, PA 15260, U.S.A.","Ran validation software and wrote part of the document", wmwv@pitt.edu
+Mandelbaum, Rachel, R.~Mandelbaum,False,"McWilliams Center for Cosmology, Department of Physics, Carnegie Mellon University, Pittsburgh, PA, U.S.A.","Provided feedback on DC1 design, analysis, and paper draft",rmandelb@andrew.cmu.edu
 AlSayyad, Yusra, Y.~AlSayyad,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines",yusra@astro.princeton.edu
 Burke, Colin, C.~Burke,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
 Burke, Colin, C.~Burke,False,"Department of Astronomy, University of Illinois at Urbana-Champaign, Urbana, IL, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
@@ -21,7 +22,6 @@ Johnson, Tony, T.~Johnson,False,"SLAC National Accelerator Laboratory,2575 Sand 
 Kelly, Heather, H.~Kelly,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","DMstack librarian at NERSC",heather@slac.stanford.edu
 Krughoff, Simon, S.~Krughoff,False,"LSST Project Management Office, Tucson, AZ, U.S.A.","Contributions to LSST Science Pipelines and DC1 workflow",simon.krughoff@gmail.com
 Lupton, Robert H., R.~H.~Lupton,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines, overall QA",rhl@astro.princeton.edu
-Mandelbaum, Rachel, R.~Mandelbaum,False,"McWilliams Center for Cosmology, Department of Physics, Carnegie Mellon University, Pittsburgh, PA, U.S.A.","Provided feedback on DC1 design, analysis, and paper draft",rmandelb@andrew.cmu.edu
 Marshall, Phil, P.~J.~Marshall,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Led the ``Twinkles'' DC1 pathfinder project.",pjm@stanford.edu
 Mustafa, Mustafa, M.~Mustafa, False,"Lawrence Berkeley National Laboratory, One Cyclotron Rd, Berkeley, CA U.S.A.","NERSC workflow",mmustafa@lbl.gov
 Peng, En-Hsin,E.~-H.~Peng,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim", epeng@purdue.edu 
