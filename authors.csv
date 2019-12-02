@@ -2,15 +2,15 @@ Lastname,Firstname,Authorname,JoinedAsBuilder,Affiliation,Contribution,Email
 S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","led study",jsanch87@fnal.gov
 S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Fermi National Accelerator Laboratory, P.O. Box 500, Batavia, IL, U.S.A.","led study",jsanch87@fnal.gov
 Walter, Chris W., C.~W.Walter,False,"Duke University, Department of Physics, Durham, NC, U.S.A.","led image generation",chris.walter@duke.edu
-Slosar, An\v{z}e, A.~Slosar,False,"Brookhaven National Laboratory, Upton, NY, U.S.A.","Participated in analysis and preliminary tests",anze@bnl.gov
-Kirkby, David. P., D.~Kirkby,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","Participated and advised in analysis",dkirkby@uci.edu
-Chiang, James, J.~Chiang,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","One of the main developers of imSim, participated in image generation and data distribution",jchiang@slac.stanford.edu
-Glanzman, Tom, T.~Glanzman,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Generated artificial images",Tom.Glanzman@stanford.edu
-Daniel, Scott F.,S.~F.~Daniel,False,"Department of Astronomy, University of Washington, Seattle, WA, U.S.A.","Developed imSim and CatSim",scottvalscott@gmail.com
 Awan, Humna, H.~Awan,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",awan@physics.rutgers.edu
+Chiang, James, J.~Chiang,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","One of the main developers of imSim, participated in image generation and data distribution",jchiang@slac.stanford.edu
+Daniel, Scott F.,S.~F.~Daniel,False,"Department of Astronomy, University of Washington, Seattle, WA, U.S.A.","Developed imSim and CatSim",scottvalscott@gmail.com
 Gawiser, Eric, E.~Gawiser,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",gawiser@physics.rutgers.edu
-Wood-Vasey, Michael, W.~M.~Wood-Vasey,False,"Pittsburgh Particle Physics, Astrophysics, and Cosmology Center (PITT PACC). Physics and Astronomy Department, University of Pittsburgh, Pittsburgh, PA 15260, U.S.A.","Ran validation software and wrote part of the document", wmwv@pitt.edu
+Glanzman, Tom, T.~Glanzman,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Generated artificial images",Tom.Glanzman@stanford.edu
+Kirkby, David. P., D.~Kirkby,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","Participated and advised in analysis",dkirkby@uci.edu
 Mandelbaum, Rachel, R.~Mandelbaum,False,"McWilliams Center for Cosmology, Department of Physics, Carnegie Mellon University, Pittsburgh, PA, U.S.A.","Provided feedback on DC1 design, analysis, and paper draft",rmandelb@andrew.cmu.edu
+Slosar, An\v{z}e, A.~Slosar,False,"Brookhaven National Laboratory, Upton, NY, U.S.A.","Participated in analysis and preliminary tests",anze@bnl.gov
+Wood-Vasey, Michael, W.~M.~Wood-Vasey,False,"Pittsburgh Particle Physics, Astrophysics, and Cosmology Center (PITT PACC). Physics and Astronomy Department, University of Pittsburgh, Pittsburgh, PA 15260, U.S.A.","Ran validation software and wrote part of the document", wmwv@pitt.edu
 AlSayyad, Yusra, Y.~AlSayyad,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines",yusra@astro.princeton.edu
 Burke, Colin, C.~Burke,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
 Burke, Colin, C.~Burke,False,"Department of Astronomy, University of Illinois at Urbana-Champaign, Urbana, IL, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
