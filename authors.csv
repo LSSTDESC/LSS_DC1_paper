@@ -12,22 +12,22 @@ Mandelbaum, Rachel, R.~Mandelbaum,False,"McWilliams Center for Cosmology, Depart
 Slosar, An\v{z}e, A.~Slosar,False,"Brookhaven National Laboratory, Upton, NY, U.S.A.","Participated in analysis and preliminary tests",anze@bnl.gov
 Wood-Vasey, Michael, W.~M.~Wood-Vasey,False,"Pittsburgh Particle Physics, Astrophysics, and Cosmology Center (PITT PACC). Physics and Astronomy Department, University of Pittsburgh, Pittsburgh, PA 15260, U.S.A.","Ran validation software and wrote part of the document", wmwv@pitt.edu
 AlSayyad, Yusra, Y.~AlSayyad,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines",yusra@astro.princeton.edu
-Burke, Colin, C.~Burke,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
-Burke, Colin, C.~Burke,False,"Department of Astronomy, University of Illinois at Urbana-Champaign, Urbana, IL, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
-Cheng, Jun, J.~Cheng,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim",cheng109@purdue.edu
+#Burke, Colin, C.~Burke,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
+#Burke, Colin, C.~Burke,False,"Department of Astronomy, University of Illinois at Urbana-Champaign, Urbana, IL, U.S.A.","Contributions to PhoSim",colinjb2@illinois.edu
+#Cheng, Jun, J.~Cheng,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim",cheng109@purdue.edu
 Digel, Seth, S.~W.~Digel,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Workflow and validation",digel@stanford.edu
-Dubois, Richard, R.~Dubois,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Workflow and management",richard@slac.stanford.edu
-Jarvis, Mike, M.~Jarvis,False,"Department of Physics and Astronomy, University of Pennsylvania, Philadelphia, PA, U.S.A.","Contributions to imSim and validation",mjarvis@physics.upenn.edu
+#Dubois, Richard, R.~Dubois,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Workflow and management",richard@slac.stanford.edu
+#Jarvis, Mike, M.~Jarvis,False,"Department of Physics and Astronomy, University of Pennsylvania, Philadelphia, PA, U.S.A.","Contributions to imSim and validation",mjarvis@physics.upenn.edu
 Johnson, Tony, T.~Johnson,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Workflow, data generation and processing",tony_johnson@slac.stanford.edu
 Kelly, Heather, H.~Kelly,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","DMstack librarian at NERSC",heather@slac.stanford.edu
 Krughoff, Simon, S.~Krughoff,False,"LSST Project Management Office, Tucson, AZ, U.S.A.","Contributions to LSST Science Pipelines and DC1 workflow",simon.krughoff@gmail.com
 Lupton, Robert H., R.~H.~Lupton,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines, overall QA",rhl@astro.princeton.edu
 Marshall, Phil, P.~J.~Marshall,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Led the ``Twinkles'' DC1 pathfinder project.",pjm@stanford.edu
-Mustafa, Mustafa, M.~Mustafa, False,"Lawrence Berkeley National Laboratory, One Cyclotron Rd, Berkeley, CA U.S.A.","NERSC workflow",mmustafa@lbl.gov
-Peng, En-Hsin,E.~-H.~Peng,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim", epeng@purdue.edu 
+#Mustafa, Mustafa, M.~Mustafa, False,"Lawrence Berkeley National Laboratory, One Cyclotron Rd, Berkeley, CA U.S.A.","NERSC workflow",mmustafa@lbl.gov
+#Peng, En-Hsin,E.~-H.~Peng,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","Contributions to PhoSim", epeng@purdue.edu 
 Peterson,John R., J.~R.~Peterson,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","PhoSim Development for DC1",peters11@purdue.edu
-Price, Paul, P.~Price,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines",price@astro.princeton.edu
-Sembroski, Glenn,G.~Sembroski,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","PhoSim Development for DC1",sembrosk@physics.purdue.edu
-Van Klaveren, Brian,B.~Van Klaveren,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","DC1 workflow",bvan@slac.stanford.edu
+#Price, Paul, P.~Price,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines",price@astro.princeton.edu
+#Sembroski, Glenn,G.~Sembroski,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","PhoSim Development for DC1",sembrosk@physics.purdue.edu
+#Van Klaveren, Brian,B.~Van Klaveren,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","DC1 workflow",bvan@slac.stanford.edu
 Wiesner, Matthew P., M. P.~Wiesner,False,"Benedictine University, 5700 College Road, Lisle, IL, U.S.A.","Completed a study on astrometry in PhoSim making it possible to improve astrometry in PhoSim for DC1", mwiesner@ben.edu
 Xin, Bo, B.~Xin,False,"Large Synoptic Survey Telescope, Tucson, AZ, U.S.A.", "Contributions to ImSim and PhoSim", bxin@lsst.org
