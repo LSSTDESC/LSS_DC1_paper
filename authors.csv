@@ -1,7 +1,7 @@
 Lastname,Firstname,Authorname,JoinedAsBuilder,Affiliation,Contribution,Email
-S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","led study",jsanch87@fnal.gov
+S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Department of Physics and Astronomy, University of California, Irvine, Frederick Reines Hall, Irvine, CA, U.S.A.","Led study",jsanch87@fnal.gov
 S\'{a}nchez, F. Javier, J.~S\'{a}nchez,False,"Fermi National Accelerator Laboratory, P.O. Box 500, Batavia, IL, U.S.A.","led study",jsanch87@fnal.gov
-Walter, Chris W., C.~W.Walter,False,"Duke University, Department of Physics, Durham, NC, U.S.A.","led image generation",chris.walter@duke.edu
+Walter, Chris W., C.~W.~Walter,False,"Duke University, Department of Physics, Durham, NC, U.S.A.","DC1 production planning and oversight, imSim development, astrometric checks, and comments on manuscript ",chris.walter@duke.edu
 Awan, Humna, H.~Awan,False,"Department of Physics \& Astronomy, Rutgers, The State University of New Jersey, 136 Frelinghuysen Rd, Piscataway, NJ U.S.A.","Participated in analysis and designed dithering strategy",awan@physics.rutgers.edu
 Chiang, James, J.~Chiang,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","One of the main developers of imSim, participated in image generation and data distribution",jchiang@slac.stanford.edu
 Daniel, Scott F.,S.~F.~Daniel,False,"Department of Astronomy, University of Washington, Seattle, WA, U.S.A.","Developed imSim and CatSim",scottvalscott@gmail.com
@@ -20,7 +20,7 @@ Digel, Seth, S.~W.~Digel,False,"SLAC National Accelerator Laboratory,2575 Sand H
 #Jarvis, Mike, M.~Jarvis,False,"Department of Physics and Astronomy, University of Pennsylvania, Philadelphia, PA, U.S.A.","Contributions to imSim and validation",mjarvis@physics.upenn.edu
 Johnson, Tony, T.~Johnson,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Workflow, data generation and processing",tony_johnson@slac.stanford.edu
 Kelly, Heather, H.~Kelly,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","DMstack librarian at NERSC",heather@slac.stanford.edu
-Krughoff, Simon, S.~Krughoff,False,"LSST Project Management Office, Tucson, AZ, U.S.A.","Contributions to LSST Science Pipelines and DC1 workflow",simon.krughoff@gmail.com
+Krughoff, Simon, S.~Krughoff,False,"LSST Project Office, Tucson, AZ, U.S.A.","Contributions to LSST Science Pipelines and DC1 workflow",simon.krughoff@gmail.com
 Lupton, Robert H., R.~H.~Lupton,False,"Princeton University, Princeton, NJ, U.S.A.","LSST Science Pipelines, overall QA",rhl@astro.princeton.edu
 Marshall, Phil, P.~J.~Marshall,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","Led the ``Twinkles'' DC1 pathfinder project.",pjm@stanford.edu
 #Mustafa, Mustafa, M.~Mustafa, False,"Lawrence Berkeley National Laboratory, One Cyclotron Rd, Berkeley, CA U.S.A.","NERSC workflow",mmustafa@lbl.gov
@@ -30,4 +30,4 @@ Peterson,John R., J.~R.~Peterson,False,"Department of Physics and Astronomy, Pur
 #Sembroski, Glenn,G.~Sembroski,False,"Department of Physics and Astronomy, Purdue University, West Lafayette, IN, U.S.A.","PhoSim Development for DC1",sembrosk@physics.purdue.edu
 #Van Klaveren, Brian,B.~Van Klaveren,False,"SLAC National Accelerator Laboratory,2575 Sand Hill Rd, Menlo Park, CA, U.S.A.","DC1 workflow",bvan@slac.stanford.edu
 Wiesner, Matthew P., M. P.~Wiesner,False,"Benedictine University, 5700 College Road, Lisle, IL, U.S.A.","Completed a study on astrometry in PhoSim making it possible to improve astrometry in PhoSim for DC1", mwiesner@ben.edu
-Xin, Bo, B.~Xin,False,"Large Synoptic Survey Telescope, Tucson, AZ, U.S.A.", "Contributions to ImSim and PhoSim", bxin@lsst.org
+Xin, Bo, B.~Xin,False,"Large Synoptic Survey Telescope, Tucson, AZ, U.S.A.", "Contributions to imSim and PhoSim", bxin@lsst.org
