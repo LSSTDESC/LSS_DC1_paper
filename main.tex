@@ -707,7 +707,7 @@ Here $1.04\arcsec$ is the mean seeing in DC1, and 0.58\arcsec~is the mean seeing
 \begin{figure}
 \centering
 \includegraphics[width=0.9\columnwidth]{bo_mask}
-\caption{Bright object (bright star) map. This map shows the unmasked fraction in each pixel. We use a high-resolution ($\approx 6.4 \arcsec$) map to mask around bright stars ($r < 22$) and then, we downsample the map to a lower resolution ($\approx 1.7 \arcmin$) and get rid of the pixels where the masked area by bright stars is higher than 75\% of the pixel.}
+\caption{Map showing the unmasked fraction in each pixel. We use a high-resolution ($\approx 6.4 \arcsec$) map to mask around bright stars ($r < 22$) and then, we downsample the map to a lower resolution ($\approx 1.7 \arcmin$) and get rid of the pixels where the masked area by bright stars is higher than 75\% of the pixel. We weight the galaxy counts in each pixel of the map by the inverse of this mask fraction to compensate for the area loss.}
 \label{fig:bo_mask}
 \end{figure} 
 
