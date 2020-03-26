@@ -30,7 +30,7 @@ tables=$(tabdir)/*.tex
 styles=./texmf/styles/*.{sty,cls}
 bibs=./texmf/bib/*.bst
 source=$(main).{tex,bbl,bib} lsstdesc.bib authors.tex acknowledgments.tex
-
+arxiv=\def\flag{mnras}
 tarfiles=$(figures) $(tables) $(styles) $(bibs) $(source)
 
 all: export flag=\def\flag{$(default)}
@@ -45,12 +45,12 @@ main :
 	-pdflatex='openout_any=a pdflatex %O -interaction=nonstopmode "${flag}\input{%S}"'  \
 	${main}
 
-tar : main
-	mkdir -p ${tardir}
-	cp ${tarfiles} ${tardir} | true
-	cp ${outname}.pdf ${tardir}/${outname}.pdf
-	cd ${tardir} && tar -czf ../${outname}.tar.gz . && cd ..
-	rm -rf ${tardir}
+#tar : main
+#	mkdir -p ${tardir}
+#	cp ${tarfiles} ${tardir} | true
+#	cp ${outname}.pdf ${tardir}/${outname}.pdf
+#	cd ${tardir} && tar -czf ../${outname}.tar.gz . && cd ..
+#	rm -rf ${tardir}
 
 TARGETS=aastex62 apj apjl aj prd prl mnras tex jcappub
 $(TARGETS): export flag = \def\flag{$(@)}
